@@ -34,4 +34,9 @@ class Lesson extends Model
     {
         return $this->HasMany(Attendance::class);
     }
+
+    public function school_classes(): BelongsTo
+    {
+        return $this->belongsTo(SchoolClass::class);
+    }
 }

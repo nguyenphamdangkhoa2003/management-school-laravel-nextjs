@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string("img")->nullable();
             $table->enum("sex", ["MALE", "FEMALE"]);
             $table->string("bloodType");
+            $table->dateTime(column: "birthday");
             $table->timestamps();
         });
     }

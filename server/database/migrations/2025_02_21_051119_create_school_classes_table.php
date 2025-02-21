@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->id();
             $table->string("name");
             $table->integer("capacity");
-            $table->foreignIdFor(Teacher::class, "supervisor_id")->constrained();
+            $table->foreignIdFor(Teacher::class, "supervisor_id")->nullable();
             $table->timestamps();
         });
         Schema::table("students", function (Blueprint $table) {

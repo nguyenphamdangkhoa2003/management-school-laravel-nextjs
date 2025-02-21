@@ -14,8 +14,8 @@ return new class extends Migration {
         Schema::create('assignments', function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->dateTime("startTime");
-            $table->dateTime("endTime");
+            $table->dateTime("startDate");
+            $table->dateTime("dueDate");
             $table->foreignIdFor(Lesson::class)->constrained();
             $table->timestamps();
         });

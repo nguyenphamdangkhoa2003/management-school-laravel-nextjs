@@ -17,7 +17,8 @@ class Student extends Model
         "address",
         "img",
         "sex",
-        "bloodType"
+        "bloodType",
+        "birthday"
     ];
 
     public function guardians(): BelongsTo
