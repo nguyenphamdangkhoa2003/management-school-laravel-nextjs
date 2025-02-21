@@ -22,7 +22,7 @@ class Teacher extends Model
 
     public function school_classes(): HasMany
     {
-        return $this->HasMany(SchoolClass::class);
+        return $this->HasMany(SchoolClass::class, "supervisor_id");
     }
 
 }

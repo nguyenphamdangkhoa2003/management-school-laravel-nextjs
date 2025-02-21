@@ -77,6 +77,12 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        for ($i = 1; $i <= 6; $i++) {
+            SchoolClass::where("id", $i)->update(["supervisor_id" => $i % 16 + 1]);
+        }
+        for ($i = 1; $i <= 9; $i++) {
+            Subject::where("id", $i)->update(["teacher_id" => $i % 16 + 1]);
+        }
         //Lesson
         for ($i = 0; $i <= 30; $i++) {
             Lesson::create([
