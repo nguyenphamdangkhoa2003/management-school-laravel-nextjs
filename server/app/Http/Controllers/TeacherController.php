@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class TeacherController extends Controller
 {
@@ -14,7 +16,6 @@ class TeacherController extends Controller
      */
     public function index()
     {
-
         $teacher = Teacher::paginate(10);
         return TeacherResource::collection($teacher);
     }
@@ -22,9 +23,17 @@ class TeacherController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTeacherRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        if ($request->hasFile('img')) {
+            $imagePath = $request->file('img')->store('images/teachers', 'public');
+            $validatedData['img'] = $imagePath;
+        }
+
+        $teacher = Teacher::create($validatedData);
+
+        return response()->json($teacher, 201);
     }
 
     /**
@@ -56,15 +65,38 @@ class TeacherController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $teacher = Teacher::findOrFail($id);
+
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('img')) {
+            if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
+                Storage::disk('public')->delete($teacher->img);
+            }
+
+            $imagePath = $request->file('img')->store('images/teachers', 'public');
+            $validatedData['img'] = $imagePath;
+        }
+
+        $teacher->update($validatedData);
+
+        return response()->json($teacher, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $teacher = Teacher::findOrFail($id);
+
+        if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
+            Storage::disk('public')->delete($teacher->img);
+        }
+
+        $teacher->delete();
+
+        return response()->json(['message' => 'Teacher deleted successfully'], 200);
     }
 
     public function search(Request $request)
