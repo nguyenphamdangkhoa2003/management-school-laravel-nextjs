@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TeacherController extends Controller
 {
@@ -31,9 +32,25 @@ class TeacherController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
+        try {
+            $teacher = Teacher::findOrFail($id);
 
+            return response()->json([
+                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK, // 200
+                "data" => $teacher
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND, // 404
+                "message" => "Teacher not found",
+            ], \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR, // 500
+                "message" => "An error occurred while retrieving the teacher",
+            ], \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -48,5 +65,39 @@ class TeacherController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->query("name");
+        $username = $request->query("username");
+
+        $query = Teacher::query();
+
+        if ($name) {
+            $query->where("name", "like", "%" . $name . "%");
+        }
+        if ($username) {
+            $query->where("username", "like", "%" . $username . "%");
+        }
+
+        $teachers = $query->paginate(10);
+
+        if (!$teachers->isEmpty()) {
+            return response()->json(
+                [
+                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK,
+                    'message' => 'Teachers retrieved successfully.',
+                    "data" => $teachers,
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND,
+                    'message' => 'No teachers found.',
+                ]
+            );
+        }
     }
 }

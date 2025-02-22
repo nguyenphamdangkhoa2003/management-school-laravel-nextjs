@@ -8,4 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get("/teacher", [TeacherController::class, "index"]);
+Route::get("/teachers", [TeacherController::class, "index"]);
+Route::get("/teachers/{id}", [TeacherController::class, "show"])->where('id', '[0-9]+');
+;
+Route::get("/teachers/search", [TeacherController::class, "search"]);
