@@ -6,7 +6,6 @@ import Link from "next/link";
 
 const menuItems = [
   {
-    title: "DANH MỤC",
     items: [
       {
         icon: "/home.png",
@@ -100,39 +99,14 @@ const menuItems = [
       },
     ],
   },
-  {
-    title: "KHÁC",
-    items: [
-      {
-        icon: "/profile.png",
-        label: "Hồ sơ",
-        href: "/profile",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
-        icon: "/setting.png",
-        label: "Cài đặt",
-        href: "/settings",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
-        icon: "/logout.png",
-        label: "Đăng xuất",
-        href: "/logout",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-    ],
-  },
+
 ];
 
 const Menu = () => {
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (
-        <div className="flex flex-col gap-1" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light">
-            {i.title}
-          </span>
+        <div className="flex flex-col gap-1">
           {i.items.map((item) => {
             if (item.visible.includes(role)) {
               return (
