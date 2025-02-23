@@ -16,6 +16,18 @@ const menuItems = [
       },
       {
         icon: "/teacher.png",
+        label: "Lịch dạy",
+        href: "/teacher",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/teacher.png",
+        label: "Lịch học",
+        href: "/student",
+        visible: ["admin", "student"],
+      },
+      {
+        icon: "/teacher.png",
         label: "Giáo viên",
         href: "/list/teachers",
         visible: ["admin", "teacher"],
@@ -75,12 +87,6 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
-        icon: "/calendar.png",
-        label: "Sự kiện",
-        href: "/list/events",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
         icon: "/message.png",
         label: "Tin nhắn",
         href: "/list/messages",
@@ -123,8 +129,8 @@ const Menu = () => {
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (
-        <div className="flex flex-col gap-2" key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
+        <div className="flex flex-col gap-1" key={i.title}>
+          <span className="hidden lg:block text-gray-400 font-light">
             {i.title}
           </span>
           {i.items.map((item) => {
