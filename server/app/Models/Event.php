@@ -11,7 +11,8 @@ class Event extends Model
         "title",
         "description",
         "startTime",
-        "endTime"
+        "endTime",
+        "school_class_id",
     ];
 
     public function school_classes(): BelongsTo

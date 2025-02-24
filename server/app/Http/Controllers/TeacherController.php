@@ -7,6 +7,7 @@ use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class TeacherController extends Controller
@@ -103,7 +104,6 @@ class TeacherController extends Controller
     {
         $name = $request->query("name");
         $username = $request->query("username");
-
         $query = Teacher::query();
 
         if ($name) {

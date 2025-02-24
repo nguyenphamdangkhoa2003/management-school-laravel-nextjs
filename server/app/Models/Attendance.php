@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Attendance extends Model
 {
-    public $fillable = ["date", "present"];
+    public $fillable = ["date", "present", "student_id", "lesson_id"];
 
     public function students(): BelongsTo
     {

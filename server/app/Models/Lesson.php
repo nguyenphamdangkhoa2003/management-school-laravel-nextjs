@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
-    public $fillable = ["name", "day", "startTime", "endTime"];
+    public $fillable = ["name", "day", "startTime", "endTime","subject_id", "teacher_id", "school_class_id"];
 
     public function subjects(): HasMany
     {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Result extends Model
 {
-    public $fillable = ["score"];
+    public $fillable = ["score", "exam_id", "assignment_id", "student_id"];
 
     public function exams(): BelongsTo
     {
