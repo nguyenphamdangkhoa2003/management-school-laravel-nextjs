@@ -10,11 +10,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
-<<<<<<< HEAD
-    "@types/react-big-calendar": "^1.8.9",
-=======
     "@types/react-big-calendar": "^1.16.1",
->>>>>>> 71ea08436460784490220868e510af10c10fd941
+    "axios": "^1.7.9",
     "lucide-react": "^0.475.0",
     "moment": "^2.30.1",
     "next": "^14.2.24",

@@ -1,13 +1,21 @@
 "use client";
-
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
 
-// USE LAZY LOADING
+const getIcon = (type: string) => {
+  switch (type) {
+    case "create":
+      return "/plus.png";
+    case "update":
+      return "/edit.png";
+    case "delete":
+      return "/delete.png";
+    default:
+      return "";
+  }
+};
 
-// import TeacherForm from "./forms/TeacherForm";
-// import StudentForm from "./forms/StudentForm";
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -20,7 +28,7 @@ const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
 } = {
   teacher: (type, data) => <TeacherForm type={type} data={data} />,
-  student: (type, data) => <StudentForm type={type} data={data} />
+  student: (type, data) => <StudentForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -79,7 +87,7 @@ const FormModal = ({
         className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
         onClick={() => setOpen(true)}
       >
-        <Image src={`/${type}.png`} alt="" width={16} height={16} />
+        <Image src={getIcon(type)} alt={`${type} icon`} width={16} height={16} />
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
@@ -89,7 +97,7 @@ const FormModal = ({
               className="absolute top-4 right-4 cursor-pointer"
               onClick={() => setOpen(false)}
             >
-              <Image src="/close.png" alt="" width={14} height={14} />
+              <Image src="/close.png" alt="Close icon" width={14} height={14} />
             </div>
           </div>
         </div>
