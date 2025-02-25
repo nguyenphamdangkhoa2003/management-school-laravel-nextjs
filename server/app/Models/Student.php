@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class Student extends Model
 {
+    use HasApiTokens;
+
     public $fillable = [
         "username",
         "name",
@@ -18,7 +21,8 @@ class Student extends Model
         "img",
         "sex",
         "bloodType",
-        "birthday"
+        "birthday",
+        "password"
     ];
 
     public function guardians(): BelongsTo

@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => "api",
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -34,11 +34,27 @@ return [
     | Supported: "session"
     |
     */
-
     'guards' => [
-        'web' => [
-            'driver' => 'session',
+        'api' => [
+            'driver' => 'token',
             'provider' => 'users',
+            'hash' => false,
+        ],
+        'student' => [
+            'driver' => 'sanctum',
+            'provider' => 'students',
+        ],
+        'parent' => [
+            'driver' => 'sanctum',
+            'provider' => 'parents',
+        ],
+        'teacher' => [
+            'driver' => 'sanctum',
+            'provider' => 'teachers',
+        ],
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
         ],
     ],
 
@@ -65,10 +81,22 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
+        'parents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Guardian::class,
+        ],
+        'teachers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Teacher::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
     ],
 
     /*

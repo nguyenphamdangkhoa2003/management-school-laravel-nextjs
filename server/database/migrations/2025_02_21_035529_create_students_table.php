@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->enum("sex", ["MALE", "FEMALE"]);
             $table->string("bloodType");
             $table->dateTime(column: "birthday");
+            $table->string("password");
             $table->timestamps();
         });
     }

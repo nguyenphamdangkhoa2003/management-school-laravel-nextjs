@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuardianController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\PersonalAccessTokenController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -144,3 +146,7 @@ Route::get("/tokens/search", [PersonalAccessTokenController::class, "search"]);
 Route::post('/tokens', [PersonalAccessTokenController::class, 'store']);
 Route::put('/tokens/{id}', [PersonalAccessTokenController::class, 'update']);
 Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy']);
+
+//Auth Routes
+Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
+

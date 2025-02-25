@@ -21,9 +21,10 @@ return new class extends Migration {
             $table->string("address");
             $table->string("job")->nullable();
             $table->enum("sex", ["MALE", "FEMALE"]);
+            $table->string("password");
             $table->timestamps();
         });
-        
+
         Schema::table("students", function (Blueprint $table) {
             $table->foreignIdFor(Guardian::class)->constrained();
         });

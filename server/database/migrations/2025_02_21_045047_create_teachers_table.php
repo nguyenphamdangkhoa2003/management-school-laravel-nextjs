@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->string("bloodType");
             $table->dateTime("birthday");
             $table->foreignIdFor(Subject::class)->nullable();
+            $table->string("password");
             $table->enum("sex", ["MALE", "FEMALE"]);
             $table->timestamps();
         });

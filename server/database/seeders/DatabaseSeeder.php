@@ -20,6 +20,7 @@ use App\Models\Teacher;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Testing\Fakes\Fake;
 
 class DatabaseSeeder extends Seeder
@@ -32,7 +33,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         Admin::create([
-            "username" => "admin"
+            "username" => "admin",
+            "password" => Hash::make("12345678"),
         ]);
 
         // GRADE
@@ -73,6 +75,7 @@ class DatabaseSeeder extends Seeder
                 "sex" => $i % 2 === 0 ? "MALE" : "FEMALE",
                 "img" => fake()->imageUrl(),
                 "birthday" => fake()->date(),
+                "password" => Hash::make("12345678"),
                 "subject_id" => $i % 8 + 1,
             ]);
         }
@@ -105,6 +108,7 @@ class DatabaseSeeder extends Seeder
                 "email" => fake()->email,
                 "phone" => fake()->phoneNumber,
                 "address" => fake()->address,
+                "password" => Hash::make("12345678"),
                 "sex" => $i % 2 === 0 ? "MALE" : "FEMALE",
             ]);
         }
@@ -125,6 +129,7 @@ class DatabaseSeeder extends Seeder
                 "img" => fake()->imageUrl(),
                 "guardian_id" => $i % 25 + 1,
                 "grade_id" => $i % 6 + 1,
+                "password" => Hash::make("12345678"),
                 "school_class_id" => $i % 6 + 1,
                 "birthday" => fake()->dateTime()
             ]);
