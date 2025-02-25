@@ -148,5 +148,5 @@ Route::put('/tokens/{id}', [PersonalAccessTokenController::class, 'update']);
 Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy']);
 
 //Auth Routes
-Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
+Route::post('auth/login', [AuthController::class, 'login']);
 

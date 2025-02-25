@@ -7,7 +7,8 @@ use App\Models\Admin;
 use App\Models\Guardian;
 use App\Models\Student;
 use App\Models\Teacher;
-use Hash;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Http\Request;
 
 class AuthController extends Controller

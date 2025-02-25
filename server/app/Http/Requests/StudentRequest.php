@@ -33,7 +33,8 @@ class StudentRequest extends FormRequest
             'img' => 'nullable|string',
             'sex' => 'required|in:MALE,FEMALE',
             'bloodType' => 'required|string',
-            'birthday' => 'required|date'
+            'birthday' => 'required|date',
+            'password' => 'required|string',
         ];
     }
 }
