@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 // Teacher Routes
+
 Route::get("/teachers", [TeacherController::class, "index"]);
 Route::get("/teachers/{id}", [TeacherController::class, "show"])->where('id', '[0-9]+');
 Route::get("/teachers/search", [TeacherController::class, "search"]);

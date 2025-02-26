@@ -61,30 +61,82 @@ class PersonalAccessTokenController extends Controller
 
     public function search(Request $request)
     {
-        $name = $request->query("name");
-        $tokenable_type = $request->query("tokenable_type");
-        $query = PersonalAccessToken::query();
-
-        if ($name) {
-            $query->where("name", "like", "%" . $name . "%");
-        }
-        if ($tokenable_type) {
-            $query->where("tokenable_type", $tokenable_type);
-        }
-
-        $tokens = $query->paginate(10);
-
-        if (!$tokens->isEmpty()) {
+        try {
+            // Lấy các tham số từ request
+            $name = $request->query('name');
+            $tokenable_type = $request->query('tokenable_type');
+            $tokenable_id = $request->query('tokenable_id');
+            $token = $request->query('token');
+            $abilities = $request->query('abilities');
+            $last_used_at = $request->query('last_used_at');
+            $expires_at = $request->query('expires_at');
+            $created_at = $request->query('created_at');
+            $updated_at = $request->query('updated_at');
+    
+            // Khởi tạo truy vấn
+            $query = PersonalAccessToken::query();
+    
+            // Điều kiện tìm kiếm cho các tham số
+            if ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            }
+    
+            if ($tokenable_type) {
+                $query->where('tokenable_type', $tokenable_type);
+            }
+    
+            if ($tokenable_id) {
+                $query->orWhere('tokenable_id', '=', $tokenable_id);
+            }
+    
+            if ($token) {
+                $query->orWhere('token', 'like', '%' . $token . '%');
+            }
+    
+            if ($abilities) {
+                $query->orWhere('abilities', 'like', '%' . $abilities . '%');
+            }
+    
+            if ($last_used_at) {
+                $query->orWhere('last_used_at', 'like', '%' . $last_used_at . '%');
+            }
+    
+            if ($expires_at) {
+                $query->orWhere('expires_at', 'like', '%' . $expires_at . '%');
+            }
+    
+            if ($created_at) {
+                $query->orWhere('created_at', 'like', '%' . $created_at . '%');
+            }
+    
+            if ($updated_at) {
+                $query->orWhere('updated_at', 'like', '%' . $updated_at . '%');
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
+            $tokens = $query->paginate(10);
+    
+            // Kiểm tra kết quả và trả về phản hồi
+            if (!$tokens->isEmpty()) {
+                return response()->json([
+                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK,
+                    'message' => 'Tokens retrieved successfully.',
+                    'data' => $tokens,
+                ]);
+            } else {
+                return response()->json([
+                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND,
+                    'message' => 'No tokens found.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
-                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-                'message' => 'Tokens retrieved successfully.',
-                "data" => $tokens,
-            ]);
-        } else {
-            return response()->json([
-                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND,
-                'message' => 'No tokens found.',
-            ]);
+                'status' => \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'An error occurred while searching for tokens.',
+                'error' => $e->getMessage(),
+            ], \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

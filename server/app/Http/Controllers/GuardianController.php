@@ -103,20 +103,51 @@ class GuardianController extends Controller
     public function search(Request $request)
     {
         try {
-            $name = $request->query("name");
-            $username = $request->query("username");
-
+            // Lấy các tham số tìm kiếm từ request
+            $name = $request->query('name');
+            $username = $request->query('username');
+            $email = $request->query('email');
+            $phone = $request->query('phone');
+            $address = $request->query('address');
+            $job = $request->query('job');
+            $sex = $request->query('sex');
+    
+            // Khởi tạo truy vấn
             $query = Guardian::query();
-
+    
+            // Thêm các điều kiện tìm kiếm vào truy vấn
             if ($name) {
-                $query->where("name", "like", "%" . $name . "%");
+                $query->where('name', 'like', '%' . $name . '%');
             }
+    
             if ($username) {
-                $query->where("username", "like", "%" . $username . "%");
+                $query->Orwhere('username', 'like', '%' . $username . '%');
             }
-
+    
+            if ($email) {
+                $query->Orwhere('email', 'like', '%' . $email . '%');
+            }
+    
+            if ($phone) {
+                $query->Orwhere('phone', 'like', '%' . $phone . '%');
+            }
+    
+            if ($address) {
+                $query->Orwhere('address', 'like', '%' . $address . '%');
+            }
+    
+            if ($job) {
+                $query->Orwhere('job', 'like', '%' . $job . '%');
+            }
+    
+            if ($sex) {
+                $query->Orwhere('sex', $sex);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $guardians = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$guardians->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -130,6 +161,7 @@ class GuardianController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for guardians.',
@@ -137,4 +169,5 @@ class GuardianController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

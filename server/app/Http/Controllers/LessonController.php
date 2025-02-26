@@ -112,19 +112,51 @@ class LessonController extends Controller
     public function search(Request $request)
     {
         try {
+            // Lấy các tham số từ request
             $name = $request->query('name');
             $day = $request->query('day');
+            $startTime = $request->query('startTime');
+            $endTime = $request->query('endTime');
+            $subject_id = $request->query('subject_id');
+            $teacher_id = $request->query('teacher_id');
+            $school_class_id = $request->query('school_class_id');
+    
+            // Khởi tạo truy vấn
             $query = Lesson::query();
-
+    
+            // Điều kiện tìm kiếm cho các tham số
             if ($name) {
                 $query->where('name', 'like', '%' . $name . '%');
             }
+    
             if ($day) {
-                $query->where('day', $day);
+                $query->Orwhere('day', $day);
             }
-
+    
+            if ($startTime) {
+                $query->Orwhere('startTime', '>=', $startTime);
+            }
+    
+            if ($endTime) {
+                $query->Orwhere('endTime', '<=', $endTime);
+            }
+    
+            if ($subject_id) {
+                $query->Orwhere('subject_id', $subject_id);
+            }
+    
+            if ($teacher_id) {
+                $query->Orwhere('teacher_id', $teacher_id);
+            }
+    
+            if ($school_class_id) {
+                $query->Orwhere('school_class_id', $school_class_id);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $lessons = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$lessons->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -138,6 +170,7 @@ class LessonController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for lessons.',
@@ -145,4 +178,5 @@ class LessonController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

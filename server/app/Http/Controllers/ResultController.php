@@ -110,19 +110,46 @@ class ResultController extends Controller
     public function search(Request $request)
     {
         try {
+            // Lấy các tham số từ request
             $student_id = $request->query('student_id');
             $score = $request->query('score');
+            $exam_id = $request->query('exam_id');
+            $assignment_id = $request->query('assignment_id');
+            $created_at = $request->query('created_at');
+            $updated_at = $request->query('updated_at');
+    
+            // Khởi tạo truy vấn
             $query = Result::query();
-
+    
+            // Điều kiện tìm kiếm cho các tham số
             if ($student_id) {
-                $query->where('student_id', $student_id);
+                $query->where('student_id', '=', $student_id);
             }
+    
             if ($score) {
-                $query->where('score', $score);
+                $query->orWhere('score', '=', $score);
             }
-
+    
+            if ($exam_id) {
+                $query->orWhere('exam_id', '=', $exam_id);
+            }
+    
+            if ($assignment_id) {
+                $query->orWhere('assignment_id', '=', $assignment_id);
+            }
+    
+            if ($created_at) {
+                $query->orWhere('created_at', 'like', '%' . $created_at . '%');
+            }
+    
+            if ($updated_at) {
+                $query->orWhere('updated_at', 'like', '%' . $updated_at . '%');
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $results = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$results->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -136,6 +163,7 @@ class ResultController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for results.',
@@ -143,4 +171,5 @@ class ResultController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

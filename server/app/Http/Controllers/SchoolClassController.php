@@ -110,15 +110,46 @@ class SchoolClassController extends Controller
     public function search(Request $request)
     {
         try {
+            // Lấy các tham số từ request
             $name = $request->query('name');
+            $capacity = $request->query('capacity');
+            $supervisor_id = $request->query('supervisor_id');
+            $created_at = $request->query('created_at');
+            $updated_at = $request->query('updated_at');
+            $grade_id = $request->query('grade_id');
+    
+            // Khởi tạo truy vấn
             $query = SchoolClass::query();
-
+    
+            // Điều kiện tìm kiếm cho các tham số
             if ($name) {
                 $query->where('name', 'like', '%' . $name . '%');
             }
-
+    
+            if ($capacity) {
+                $query->orWhere('capacity', '=', $capacity);
+            }
+    
+            if ($supervisor_id) {
+                $query->orWhere('supervisor_id', '=', $supervisor_id);
+            }
+    
+            if ($created_at) {
+                $query->orWhere('created_at', 'like', '%' . $created_at . '%');
+            }
+    
+            if ($updated_at) {
+                $query->orWhere('updated_at', 'like', '%' . $updated_at . '%');
+            }
+    
+            if ($grade_id) {
+                $query->orWhere('grade_id', '=', $grade_id);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $schoolClasses = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$schoolClasses->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -132,6 +163,7 @@ class SchoolClassController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for school classes.',
@@ -139,4 +171,5 @@ class SchoolClassController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }
