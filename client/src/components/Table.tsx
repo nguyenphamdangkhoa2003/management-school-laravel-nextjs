@@ -17,7 +17,17 @@ const Table = ({
           ))}
         </tr>
       </thead>
-      <tbody>{data.map((item) => renderRow(item))}</tbody>
+      <tbody>
+        {Array.isArray(data) && data.length > 0 ? (
+          data.map((item) => renderRow(item))
+        ) : (
+          <tr>
+            <td colSpan={columns.length} className="text-center py-4">
+              Không có dữ liệu
+            </td>
+          </tr>
+        )}
+      </tbody>
     </table>
   );
 };

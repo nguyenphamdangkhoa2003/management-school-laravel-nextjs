@@ -1,6 +1,5 @@
 "use client";
 
-import { role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -103,6 +102,7 @@ const menuItems = [
 ];
 
 const Menu = () => {
+  const role = localStorage.getItem("role");
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

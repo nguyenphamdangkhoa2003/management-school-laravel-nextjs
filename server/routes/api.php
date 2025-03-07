@@ -150,4 +150,3 @@ Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy'])
 
 //Auth Routes
 Route::post('auth/login', [AuthController::class, 'login']);
-
