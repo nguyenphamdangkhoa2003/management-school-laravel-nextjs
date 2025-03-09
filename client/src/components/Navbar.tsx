@@ -9,7 +9,20 @@ const Navbar = () => {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const user=JSON.parse(localStorage.getItem("user")||"null");
   const guard=localStorage.getItem("role");
-  
+  const [role, setRole] = useState("");
+  const [avatar, setAvatar] = useState(
+    user?.img ? `${process.env.NEXT_PUBLIC_API_URL}/${user.img}` : "/avatar.png"
+  );
+  useEffect(() => {
+    if (guard === "admin") {
+      setRole("Quản trị viên");
+    } else if (guard === "teacher") {
+      setRole("Giảng viên");
+    } else if (guard === "student") {
+      setRole("Sinh viên");
+    }
+  }, [guard]);
+
   // Đóng menu khi click bên ngoài
   useEffect(() => {
     
@@ -41,22 +54,23 @@ const Navbar = () => {
           <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-500 text-white rounded-full text-xs">1</div>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">{user.username}</span>
-          <span className="text-[10px] text-gray-500 text-right">{guard}</span>
+          <span className="text-xs leading-3 font-medium">{user.name ?user.surname+" "+ user.name:user.username}</span>
+          <span className="text-[10px] text-gray-500 text-right">{role}</span>
         </div>
 
         {/* AVATAR & MENU */}
         <div className="relative" ref={menuRef}>
           <Image
-            src="/avatar.png"
+            src={avatar}
             alt=""
             width={36}
             height={36}
-            className="rounded-full cursor-pointer"
+            className="rounded-full cursor-pointer object-cover w-[45px] h-[45px]"
             onClick={() => setMenuOpen((prev) => !prev)}
+            onError={() => setAvatar("/avatar.png")}
           />
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-max bg-white shadow-lg rounded-lg  p-4 z-10">
+            <div className="absolute right-0 mt-2 w-max bg-white shadow-lg rounded-lg  p-4 z-10 border border-gray-200">
               <Acount />
             </div>
           )}
