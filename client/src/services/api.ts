@@ -30,6 +30,31 @@ export const getTeacher = async (searchQuery: string) => {
   }
 };
 
+export const addTeacher = async (teacherData: FormData) => {
+  try {
+    const response = await api.post(`/teachers`, teacherData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm giáo viên:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const updateTeacher = async (id: number, teacherData: FormData) => {
+  try {
+    const response = await api.put(`/teachers/${id}`, teacherData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật giáo viên:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
 export const deleteTeacher = async (id:number) => {
   try {
     const response = await api.delete(`/teachers/${id}`);

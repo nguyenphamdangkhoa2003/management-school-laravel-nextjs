@@ -1,12 +1,32 @@
+"use client";
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalender";
 import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
-import { role } from "@/lib/data";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
 
 const SingleTeacherPage = () => {
+  const { id } = useParams();
+  const [teacher, setTeacher] = useState(null);
+  const role = localStorage.getItem("role");
+  useEffect(() => {
+    if (id) {
+      axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
+        .then((res) => {
+          if (res.data?.data) {
+            setTeacher(res.data.data);
+          } else {
+            console.error("Không tìm thấy giáo viên.");
+          }
+        })
+        .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
+    }
+  }, [id]);
+
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
@@ -17,7 +37,7 @@ const SingleTeacherPage = () => {
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
               <Image
-                src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                src={(teacher?.img) ?`${process.env.NEXT_PUBLIC_API_URL}/${teacher?.img}`:"/avatar.png"}
                 alt=""
                 width={144}
                 height={144}
@@ -26,23 +46,22 @@ const SingleTeacherPage = () => {
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
               <div className="flex items-center gap-4">
-                <h1 className="text-xl font-semibold">Leonard Snyder</h1>
+                <h1 className="text-xl font-semibold">{teacher?.surname +" "+ teacher?.name}</h1>
                 {role === "admin" && <FormModal
                   table="teacher"
                   type="update"
                   data={{
-                    id: 1,
-                    username: "deanguerrero",
-                    email: "deanguerrero@gmail.com",
+                    username: teacher?.username || "",
+                    email: teacher?.email || "",
                     password: "password",
-                    firstName: "Dean",
-                    lastName: "Guerrero",
-                    phone: "+1 234 567 89",
-                    address: "1234 Main St, Anytown, USA",
-                    bloodType: "A+",
-                    dateOfBirth: "2000-01-01",
-                    sex: "male",
-                    img: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                    surname: teacher?.surname || "",
+                    name: teacher?.name || "",
+                    phone: teacher?.phone || "",
+                    address: teacher?.address || "",
+                    bloodType: teacher?.bloodType || "",
+                    birthday: teacher?.birthday ? new Date(teacher.birthday).toISOString().split("T")[0] : "",
+                    sex: teacher?.sex || "",
+                    img: teacher?.img ? `${process.env.NEXT_PUBLIC_API_URL}/${teacher.img}` : "",
                   }}
                 />}
               </div>

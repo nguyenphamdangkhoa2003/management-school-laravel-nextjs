@@ -11,7 +11,6 @@ import { getTeachers, getTeacher } from "@/services/api";
 
 type Teacher = {
   id: number;
-  teacherId: string;
   name: string;
   email?: string;
   photo: string;
@@ -82,7 +81,7 @@ const TeacherListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.photo}
+          src={`${process.env.NEXT_PUBLIC_API_URL}/${item.img}`}
           alt=""
           width={40}
           height={40}
@@ -104,7 +103,6 @@ const TeacherListPage = () => {
         ? item.school_classes.map((cls) => cls.name).join(", ") 
         : ""}
     </td>
-
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
@@ -123,19 +121,18 @@ const TeacherListPage = () => {
   );
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const searchValue = e.target.value;
-
-  if (searchValue.trim() === "") {
-    setAllTeachers(teacher);
-    return;
-  }
-  try {
-    const filteredTeachers = await getTeacher(searchValue);
-    setAllTeachers(filteredTeachers);
-  } catch (error) {
-    console.error("Lỗi khi tìm kiếm giáo viên:", error);
-  }
-};
+    const searchValue = e.target.value;
+    if (searchValue.trim() === "") {
+      setAllTeachers(teacher);
+      return;
+    }
+    try {
+        const filteredTeachers = await getTeacher(searchValue);
+        setAllTeachers(filteredTeachers);
+      } catch (error) {
+        console.error("Lỗi khi tìm kiếm giáo viên:", error);
+      }
+  };
 
 
   return (
