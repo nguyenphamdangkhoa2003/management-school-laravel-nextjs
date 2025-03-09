@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTeacherRequest extends FormRequest
 {
@@ -22,18 +23,23 @@ class UpdateTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'username' => [
+                'sometimes', 'string', 'max:255',
+                Rule::unique('teachers')->ignore($this->route('id')) // Cho phép giữ nguyên username cũ
+            ],
             'name' => 'sometimes|string|max:255',
-            'username' => 'sometimes|string|max:255|unique:teachers,username,' . $this->teacher,
-            'email' => 'sometimes|email|max:255|unique:teachers,email,' . $this->teacher,
-            'phone' => 'sometimes|string|max:20',
             'surname' => 'sometimes|string|max:255',
-            'address' => 'sometimes|string',
-            'img' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bloodType' => 'sometimes|string|max:10',
+            'email' => [
+                'sometimes', 'string', 'email', 'max:255',
+                Rule::unique('teachers')->ignore($this->route('teacher')) // Email không cần unique khi cập nhật
+            ],
+            'phone' => 'sometimes|string|max:15',
+            'address' => 'sometimes|string|max:255',
+            'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'bloodType' => 'sometimes|string|max:3',
+            'sex' => ['sometimes', 'string', Rule::in(["MALE", "FEMALE"])],
             'birthday' => 'sometimes|date',
-            'subject_id' => 'sometimes|exists:subjects,id',
-            'password' => 'sometimes|string|min:6',
-            'sex' => 'sometimes|in:male,female,other'
+            'password' => 'sometimes|min:8', // Không bắt buộc nhập lại mật khẩu khi cập nhật
         ];
     }
 }

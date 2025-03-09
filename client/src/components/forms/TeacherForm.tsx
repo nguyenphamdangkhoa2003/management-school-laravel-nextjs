@@ -77,37 +77,43 @@ const TeacherForm = ({
     return `${year}-${month}-${day}`;
   };
   const onSubmit = handleSubmit(async (data) => {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === "birthday" && typeof value === "string") {
-          formData.append(key, formatDate(value));
-        } else if (key === "img" && value instanceof File) {
-          formData.append("img", value);
-        } else if (typeof value === "string") {
-          formData.append(key, value);
-        }
-      });
+    const formData = new FormData();
 
-      try {
-        if(type === "create"){
-          await addTeacher(formData);
-        }else if(type === "update"){
-          await updateTeacher(teacher.id, formData);
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "birthday" && typeof value === "string") {
+        formData.append(key, formatDate(value));
+      } else if (key === "img" && value) {
+        if (value instanceof File) {
+          formData.append("img", value);
+        } else if (value.length > 0 && value[0] instanceof File) {
+          formData.append("img", value[0]);
         }
-          
+      } else if (typeof value === "string") {
+        formData.append(key, value);
+      }
+    });
+
+    if (type === "update") {
+      formData.delete("username");
+      formData.delete("email");
+    }
+
+    try {
+      let response;
+      if (type === "create") {
+        response = await addTeacher(formData);
+      } else if (type === "update") {
+        await updateTeacher(teacher.id, formData);
+        setTimeout(() => window.location.reload(), 2000);
+      }
       setShowForm(false);
       setErrorMessage(null);
-    } catch (error: any) {
-      if(type === "create"){
-          setErrorMessage("Giáo viên này đã tồn tại!");
-        }else if(type === "update"){
-          setErrorMessage("Lỗi cập nhật giáo viên ");
-        }
       
+    } catch (error: any) {
+      console.error("❌ Lỗi từ API:", error.response?.data || error.message);
+      setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
     }
   });
-
-
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -169,7 +175,7 @@ const TeacherForm = ({
                 )}
         </div>
       )}
-
+      
       {errorMessage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md">

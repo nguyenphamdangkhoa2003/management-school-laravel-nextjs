@@ -44,15 +44,20 @@ export const addTeacher = async (teacherData: FormData) => {
 
 export const updateTeacher = async (id: number, teacherData: FormData) => {
   try {
-    const response = await api.put(`/teachers/${id}`, teacherData, {
+    // Thêm _method=PUT để Laravel hiểu đây là PUT request
+    teacherData.append("_method", "PUT");
+
+    const response = await api.post(`/teachers/${id}`, teacherData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật giáo viên:", error.response?.data || error.message);
     throw error;
   }
 };
+
 
 
 export const deleteTeacher = async (id:number) => {
