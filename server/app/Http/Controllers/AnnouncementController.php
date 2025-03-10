@@ -14,7 +14,7 @@ class AnnouncementController extends Controller
     public function index()
     {
         try {
-            $announcements = Announcement::paginate(10);
+            $announcements = Announcement::with('school_classes')->paginate(10);
             return AnnouncementResource::collection($announcements);
         } catch (\Exception $e) {
             return response()->json([

@@ -17,6 +17,6 @@ class Event extends Model
 
     public function school_classes(): BelongsTo
     {
-        return $this->belongsTo(SchoolClass::class);
+        return $this->belongsTo(SchoolClass::class, 'school_class_id');
     }
 }

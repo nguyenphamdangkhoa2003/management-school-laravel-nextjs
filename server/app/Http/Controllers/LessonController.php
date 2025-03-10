@@ -15,7 +15,8 @@ class LessonController extends Controller
     public function index()
     {
         try {
-            $lessons = Lesson::paginate(10);
+            $lessons = Lesson::with('subjects','school_classes','teachers')->paginate(10);
+            
             return LessonResource::collection($lessons);
         } catch (\Exception $e) {
             return response()->json([

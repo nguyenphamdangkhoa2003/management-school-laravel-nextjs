@@ -14,6 +14,14 @@ class ResultResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "score" => $this->score,
+            "exam_id" => new ExamResource($this->whenLoaded('exams')),
+            "assignment" =>   new AssignmentResource($this->whenLoaded('assignments')),
+            "student" =>  new StudentResource($this->whenLoaded('students')),
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
+        ];
     }
 }

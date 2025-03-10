@@ -13,7 +13,7 @@ class EventController extends Controller
     public function index()
     {
         try {
-            $events = Event::paginate(10);
+            $events = Event::with('school_classes')->paginate(10);
             return EventResource::collection($events);
         } catch (\Exception $e) {
             return response()->json([

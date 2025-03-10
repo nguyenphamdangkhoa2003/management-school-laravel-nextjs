@@ -13,7 +13,7 @@ class ResultController extends Controller
     public function index()
     {
         try {
-            $results = Result::paginate(10);
+            $results = Result::with('exams','assignments','students')->paginate(10);
             return ResultResource::collection($results);
         } catch (\Exception $e) {
             return response()->json([

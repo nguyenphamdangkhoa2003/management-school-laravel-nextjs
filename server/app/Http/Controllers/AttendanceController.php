@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         try {
-            $attendances = Attendance::paginate(10);
+            $attendances = Attendance::with('students','lessons')->paginate(10);
             return AttendanceResource::collection($attendances);
         } catch (\Exception $e) {
             return response()->json([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Http\Requests\StudentRequest;
+use App\Http\Resources\StudentResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -11,20 +12,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
-        try {
-            $students = Student::all();
-            return response()->json($students);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'message' => 'An error occurred while retrieving students.',
-                'error' => $e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        // Eager load mối quan hệ 'schoolClass', 'guardians', 'grades' và phân trang dữ liệu
+        $students = Student::with('schoolClass', 'guardians', 'grades')->paginate(10);
+        
+        // Trả về resource collection đã được phân trang
+        return StudentResource::collection($students);
     }
-
+    
+    
     public function store(StudentRequest $request): JsonResponse
     {
         try {

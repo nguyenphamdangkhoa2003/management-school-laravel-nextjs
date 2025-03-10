@@ -11,6 +11,6 @@ class Announcement extends Model
     public $fillable = ["title", "description", "date", "school_class_id"];
     public function school_classes(): BelongsTo
     {
-        return $this->belongsTo(SchoolClass::class);
+        return $this->belongsTo(SchoolClass::class  , "school_class_id");
     }
 }

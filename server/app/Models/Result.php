@@ -12,16 +12,16 @@ class Result extends Model
 
     public function exams(): BelongsTo
     {
-        return $this->belongsTo(Exam::class);
+        return $this->belongsTo(Exam::class, 'exam_id');
     }
 
     public function assignments(): BelongsTo
     {
-        return $this->BelongsTo(Assignment::class);
+        return $this->BelongsTo(Assignment::class, 'assignment_id');
     }
 
     public function students(): BelongsTo
     {
-        return $this->BelongsTo(Student::class);
+        return $this->BelongsTo(Student::class, 'student_id');
     }
 }

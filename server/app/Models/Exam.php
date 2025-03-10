@@ -12,7 +12,7 @@ class Exam extends Model
 
     public function lessons(): HasMany
     {
-        return $this->hasMany(Lesson::class);
+        return $this->hasMany( Lesson::class);
     }
 
     public function results(): HasMany
