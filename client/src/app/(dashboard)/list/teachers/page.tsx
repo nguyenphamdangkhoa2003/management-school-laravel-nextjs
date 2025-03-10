@@ -3,7 +3,6 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, teachersData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -58,20 +57,23 @@ const columns = [
 
 const TeacherListPage = () => {
   const [teachers, setAllTeachers]=useState([]);
-  const [teacher, setTeacher]=useState([]);
   const [error, setError]=useState([null]);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const role = localStorage.getItem("role");
   useEffect(() => {
-      getTeachers()
-        .then((data) => {
-          setAllTeachers(data);
-          setTeacher(data);
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
-    }, []);
+    const fetchTeachers = async () => {
+      try {
+        const data = await getTeachers(currentPage, 10); // Gọi API lấy danh sách giáo viên
+        setAllTeachers(data.data);
+        setTotalPages(data.meta?.last_page || 1); // Cập nhật tổng số trang
+      } catch (err) {
+        setError(err.message);
+      }
+    };
 
+    fetchTeachers();
+  }, [currentPage]);
     
 
   const renderRow = (item: Teacher) => (
@@ -122,18 +124,20 @@ const TeacherListPage = () => {
   );
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = e.target.value;
-    if (searchValue.trim() === "") {
-      setAllTeachers(teacher);
+    const searchValue = e.target.value.trim();
+
+    if (searchValue === "") {
+      setAllTeachers(teachers);
       return;
     }
+
     try {
-        const filteredTeachers = await getTeacher(searchValue);
-        setAllTeachers(filteredTeachers);
-      } catch (error) {
-        console.error("Lỗi khi tìm kiếm giáo viên:", error);
-      }
-  };
+      const filteredTeachers = await getTeacher(searchValue);
+      setAllTeachers(filteredTeachers);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm giáo viên:", error);
+    }
+  };  
 
 
   return (
@@ -163,7 +167,7 @@ const TeacherListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={teachers} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </div>
   );
 };

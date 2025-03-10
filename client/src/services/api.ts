@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useParams } from "next/navigation";
 
 const API_BASE_URL = "http://127.0.0.1:8000/api";
 
@@ -10,15 +11,19 @@ const api = axios.create({
   },
 });
 
-export const getTeachers = async () => {
+// GIẢNG VIÊN
+export const getTeachers = async (page = 1, perPage = 10) => {
   try {
-    const response = await api.get(`/teachers`);
-    return response.data.data;
+    const response = await api.get(`/teachers`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data; // Trả về toàn bộ dữ liệu gồm danh sách + meta
   } catch (error) {
     console.error("Lỗi khi lấy danh sách giáo viên:", error.response?.data || error.message);
     throw error;
   }
 };
+
 
 export const getTeacher = async (searchQuery: string) => {
   try {
@@ -44,7 +49,6 @@ export const addTeacher = async (teacherData: FormData) => {
 
 export const updateTeacher = async (id: number, teacherData: FormData) => {
   try {
-    // Thêm _method=PUT để Laravel hiểu đây là PUT request
     teacherData.append("_method", "PUT");
 
     const response = await api.post(`/teachers/${id}`, teacherData, {
@@ -58,8 +62,6 @@ export const updateTeacher = async (id: number, teacherData: FormData) => {
   }
 };
 
-
-
 export const deleteTeacher = async (id:number) => {
   try {
     const response = await api.delete(`/teachers/${id}`);
@@ -70,6 +72,60 @@ export const deleteTeacher = async (id:number) => {
   }
 };
 
+// HỌC SINH
+export const getStudents = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/students`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách giáo viên:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getStudent =async (search :string)=>{
+  try {
+    const response=await api.get(`/students/search`,{params: {name: search, username: search, email:search, phone:search, code:search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm sinh viên", error.response?.data||error.message);
+    throw error;
+  }
+}
+
+export const deleteStudent =async (id:number)=>{
+  try {
+    const response =await api.delete(`/students/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa sinh viên", error.response?.data||error.message);
+      throw error;
+  }
+}
+
+export const addStudent = async (Data: FormData) => {
+  try {
+    const response = await api.post(`/students`, Data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm sinh viên:", error.response?.data || error.message);
+    throw error;
+  }
+};
+//MÔN HỌC
+//LỚP
+//PHỤ HUYNH
+
+
+
+
+
+
+//ĐĂNG NHẬP
 export const login =async (username:string , password:string)=>{
   try {
     const response = await api.post(`auth/login`, { username, password });
