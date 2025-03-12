@@ -27,12 +27,12 @@ class Student extends Model
 
     public function guardians(): BelongsTo
     {
-        return $this->belongsTo(Guardian::class);
+        return $this->belongsTo(Guardian::class, 'guardian_id');
     }
 
     public function grades(): BelongsTo
     {
-        return $this->belongsTo(Grade::class);
+        return $this->belongsTo(Grade::class, 'grade_id');
     }
 
     public function results(): HasMany
@@ -44,4 +44,10 @@ class Student extends Model
     {
         return $this->HasMany(Attendance::class);
     }
+
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'school_class_id');
+    }
+
 }

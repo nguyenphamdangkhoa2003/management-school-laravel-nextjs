@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
-
+import { addStudent } from "@/services/api";
+import { useState,useEffect } from "react";
+import { useParams } from "next/navigation";
+import axios from "axios";
 const schema = z.object({
   username: z
     .string()
@@ -23,6 +26,7 @@ const schema = z.object({
   birthday: z.date({ message: "Birthday is required!" }),
   sex: z.enum(["male", "female"], { message: "Sex is required!" }),
   img: z.instanceof(File, { message: "Image is required" }),
+  code: z.string().length(10, { message: "Code must be exactly 10 characters long!" }),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -37,15 +41,73 @@ const StudentForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
+  const [showForm, setShowForm] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const { id } = useParams();
+  const [student, setStudent] = useState(null);
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+
+
+  const onSubmit = handleSubmit(async(data) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "birthday" && typeof value === "string") {
+        formData.append(key, formatDate(value));
+      } else if (key === "img" && value) {
+        if (value instanceof File) {
+          formData.append("img", value);
+        } else if (value.length > 0 && value[0] instanceof File) {
+          formData.append("img", value[0]);
+        }
+      } else if (typeof value === "string") {
+        formData.append(key, value);
+      }
+    });
+    if (type === "update") {
+      formData.delete("username");
+      formData.delete("email");
+    }
+    try {
+          let response;
+          if (type === "create") {
+            response = await addStudent(formData);
+          } 
+          // else if (type === "update") {
+          //   await updateTeacher(teacher.id, formData);
+          //   setTimeout(() => window.location.reload(), 2000);
+          // }
+          setShowForm(false);
+          setErrorMessage(null);
+          
+        } catch (error: any) {
+          console.error("❌ Lỗi từ API:", error.response?.data || error.message);
+          setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
+        }
+
+
   });
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setValue("img", file, { shouldValidate: true });
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">Create a new student</h1>
@@ -59,6 +121,13 @@ const StudentForm = ({
           defaultValue={data?.username}
           register={register}
           error={errors?.username}
+        />
+        <InputField
+          label="Code"
+          name="code"
+          defaultValue={data?.code}
+          register={register}
+          error={errors.code}
         />
         <InputField
           label="Email"

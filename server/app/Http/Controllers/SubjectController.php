@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Http\Requests\SubjectRequest;
+use App\Http\Resources\SubjectResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,11 +12,11 @@ use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
         try {
-            $subjects = Subject::all();
-            return response()->json($subjects);
+            $subjects = Subject::paginate(10);
+            return SubjectResource::collection($subjects);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -105,18 +106,42 @@ class SubjectController extends Controller
         }
     }
 
-    public function search(Request $request): JsonResponse
+    public function search(Request $request)
     {
         try {
+            // Lấy các tham số từ request
             $name = $request->query("name");
+            $created_at = $request->query("created_at");
+            $updated_at = $request->query("updated_at");
+            $teacher_id = $request->query("teacher_id");
+    
+            // Khởi tạo truy vấn
             $query = Subject::query();
-
+    
+            // Nếu có tên, tìm kiếm theo tên
             if ($name) {
                 $query->where("name", "like", "%" . $name . "%");
             }
-
+    
+            // Nếu có created_at, tìm kiếm theo created_at
+            if ($created_at) {
+                $query->orWhere("created_at", "like", "%" . $created_at . "%");
+            }
+    
+            // Nếu có updated_at, tìm kiếm theo updated_at
+            if ($updated_at) {
+                $query->orWhere("updated_at", "like", "%" . $updated_at . "%");
+            }
+    
+            // Nếu có teacher_id, tìm kiếm theo teacher_id
+            if ($teacher_id) {
+                $query->orWhere("teacher_id", "=", $teacher_id);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $subjects = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$subjects->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -130,6 +155,7 @@ class SubjectController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for subjects.',
@@ -137,4 +163,5 @@ class SubjectController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

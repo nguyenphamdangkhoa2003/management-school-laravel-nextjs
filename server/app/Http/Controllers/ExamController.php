@@ -112,35 +112,64 @@ class ExamController extends Controller
     }
 
     public function search(Request $request)
-    {
-        try {
-            $title = $request->query("title");
-            $query = Exam::query();
+{
+    try {
+        // Lấy các tham số tìm kiếm từ request
+        $title = $request->query("title");
+        $startTime = $request->query("startTime");
+        $endTime = $request->query("endTime");
+        $lesson_id = $request->query("lesson_id");
+        $created_at = $request->query("created_at");
+        $updated_at = $request->query("updated_at");
 
-            if ($title) {
-                $query->where("title", "like", "%" . $title . "%");
-            }
+        // Khởi tạo truy vấn
+        $query = Exam::query();
 
-            $exams = $query->paginate(10);
-
-            if (!$exams->isEmpty()) {
-                return response()->json([
-                    'status' => Response::HTTP_OK,
-                    'message' => 'Exams retrieved successfully.',
-                    'data' => $exams,
-                ]);
-            } else {
-                return response()->json([
-                    'status' => Response::HTTP_NOT_FOUND,
-                    'message' => 'No exams found.',
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'message' => 'An error occurred while searching for exams.',
-                'error' => $e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Sử dụng orWhere để tìm kiếm với các trường khác nhau
+        if ($title) {
+            $query->orWhere("title", "like", "%" . $title . "%");
         }
+        if ($startTime) {
+            $query->orWhere("startTime", "=", $startTime);
+        }
+        if ($endTime) {
+            $query->orWhere("endTime", "=", $endTime);
+        }
+        if ($lesson_id) {
+            $query->orWhere("lesson_id", "=", $lesson_id);
+        }
+        if ($created_at) {
+            $query->orWhere("created_at", "=", $created_at);
+        }
+        if ($updated_at) {
+            $query->orWhere("updated_at", "=", $updated_at);
+        }
+
+        // Thực hiện truy vấn và phân trang kết quả
+        $events = $query->paginate(10);
+
+        // Kiểm tra kết quả và trả về phản hồi
+        if (!$events->isEmpty()) {
+            return response()->json([
+                'status' => Response::HTTP_OK,
+                'message' => 'Events retrieved successfully.',
+                'data' => $events,
+            ]);
+        } else {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'No events found.',
+            ]);
+        }
+    } catch (\Exception $e) {
+        // Xử lý lỗi nếu có
+        return response()->json([
+            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            'message' => 'An error occurred while searching for events.',
+            'error' => $e->getMessage(),
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
+
+    
 }

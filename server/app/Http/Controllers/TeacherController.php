@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-
+use App\Http\Requests\UpdateTeacherRequest;
 class TeacherController extends Controller
 {
     /**
@@ -64,7 +64,7 @@ class TeacherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateTeacherRequest $request, string $id)
     {
         $teacher = Teacher::findOrFail($id);
 
@@ -104,17 +104,79 @@ class TeacherController extends Controller
     {
         $name = $request->query("name");
         $username = $request->query("username");
+        $email = $request->query("email");
+        $phone = $request->query("phone");
+        $surname = $request->query("surname");
+        $address = $request->query("address");
+        $img = $request->query("img");
+        $bloodType = $request->query("bloodType");
+        $birthday = $request->query("birthday");
+        $subject_id = $request->query("subject_id");
+        $password = $request->query("password");
+        $sex = $request->query("sex");
+        $created_at = $request->query("created_at");
+        $updated_at = $request->query("updated_at");
+    
         $query = Teacher::query();
-
+    
         if ($name) {
             $query->where("name", "like", "%" . $name . "%");
         }
+    
         if ($username) {
-            $query->where("username", "like", "%" . $username . "%");
+            $query->orWhere("username", "like", "%" . $username . "%");
         }
-
+    
+        if ($email) {
+            $query->orWhere("email", "like", "%" . $email . "%");
+        }
+    
+        if ($phone) {
+            $query->orWhere("phone", "like", "%" . $phone . "%");
+        }
+    
+        if ($surname) {
+            $query->orWhere("surname", "like", "%" . $surname . "%");
+        }
+    
+        if ($address) {
+            $query->orWhere("address", "like", "%" . $address . "%");
+        }
+    
+        if ($img) {
+            $query->orWhere("img", "like", "%" . $img . "%");
+        }
+    
+        if ($bloodType) {
+            $query->orWhere("bloodType", "like", "%" . $bloodType . "%");
+        }
+    
+        if ($birthday) {
+            $query->orWhere("birthday", "like", "%" . $birthday . "%");
+        }
+    
+        if ($subject_id) {
+            $query->orWhere("subject_id", "like", "%" . $subject_id . "%");
+        }
+    
+        if ($password) {
+            $query->orWhere("password", "like", "%" . $password . "%");
+        }
+    
+        if ($sex) {
+            $query->orWhere("sex", "like", "%" . $sex . "%");
+        }
+    
+        if ($created_at) {
+            $query->orWhere("created_at", "like", "%" . $created_at . "%");
+        }
+    
+        if ($updated_at) {
+            $query->orWhere("updated_at", "like", "%" . $updated_at . "%");
+        }
+    
         $teachers = $query->paginate(10);
-
+    
         if (!$teachers->isEmpty()) {
             return response()->json(
                 [

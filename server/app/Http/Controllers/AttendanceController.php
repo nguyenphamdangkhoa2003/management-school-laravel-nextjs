@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         try {
-            $attendances = Attendance::paginate(10);
+            $attendances = Attendance::with('students','lessons')->paginate(10);
             return AttendanceResource::collection($attendances);
         } catch (\Exception $e) {
             return response()->json([
@@ -115,23 +115,41 @@ class AttendanceController extends Controller
     public function search(Request $request)
     {
         try {
+            // Lấy các tham số tìm kiếm từ request
             $student_id = $request->query("student_id");
             $date = $request->query("date");
             $present = $request->query("present");
+            $lesson_id = $request->query("lesson_id");
+            $created_at = $request->query("created_at");
+            $updated_at = $request->query("updated_at");
+    
+            // Khởi tạo truy vấn
             $query = Attendance::query();
-
+    
+            // Dùng orWhere để tìm kiếm với các trường khác nhau
             if ($student_id) {
-                $query->where("student_id", $student_id);
+                $query->orWhere("student_id", "=", $student_id);
             }
             if ($date) {
-                $query->whereDate("date", $date);
+                $query->orWhereDate("date", "=", $date);
             }
             if ($present !== null) {
-                $query->where("present", $present);
+                $query->orWhere("present", "=", $present);
             }
-
+            if ($lesson_id) {
+                $query->orWhere("lesson_id", "=", $lesson_id);
+            }
+            if ($created_at) {
+                $query->orWhere("created_at", "=", $created_at);
+            }
+            if ($updated_at) {
+                $query->orWhere("updated_at", "=", $updated_at);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $attendances = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$attendances->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -145,6 +163,7 @@ class AttendanceController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for attendances.',
@@ -152,4 +171,5 @@ class AttendanceController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

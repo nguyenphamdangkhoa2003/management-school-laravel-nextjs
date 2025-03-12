@@ -10,14 +10,15 @@ class Lesson extends Model
 {
     public $fillable = ["name", "day", "startTime", "endTime","subject_id", "teacher_id", "school_class_id"];
 
-    public function subjects(): HasMany
+    public function subjects(): BelongsTo
     {
-        return $this->HasMany(Subject::class);
+        return $this->belongsTo(Subject::class, 'subject_id');
     }
+    
 
-    public function teachers(): HasMany
+    public function teachers(): BelongsTo
     {
-        return $this->HasMany(Teacher::class);
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
     public function exams(): BelongsTo
@@ -37,6 +38,7 @@ class Lesson extends Model
 
     public function school_classes(): BelongsTo
     {
-        return $this->belongsTo(SchoolClass::class);
+        return $this->belongsTo(SchoolClass::class, 'school_class_id');
     }
+
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class Teacher extends Model
 {
@@ -17,7 +18,10 @@ class Teacher extends Model
     {
         return $this->hasMany(Subject::class);
     }
-
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
     public function lessons(): BelongsTo
     {
         return $this->BelongsTo(Lesson::class);

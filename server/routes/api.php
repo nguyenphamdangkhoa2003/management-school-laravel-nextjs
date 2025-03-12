@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 // Teacher Routes
+
 Route::get("/teachers", [TeacherController::class, "index"]);
 Route::get("/teachers/{id}", [TeacherController::class, "show"])->where('id', '[0-9]+');
 Route::get("/teachers/search", [TeacherController::class, "search"]);
@@ -52,10 +53,11 @@ Route::get('/guardians/search', [GuardianController::class, 'search']);
 // Subject Routes
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::post('/subjects', [SubjectController::class, 'store']);
+Route::get('/subjects/search', [SubjectController::class, 'search']);
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 Route::put('/subjects/{id}', [SubjectController::class, 'update']);
 Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
-Route::get('/subjects/search', [SubjectController::class, 'search']);
+
 
 // Lesson Routes
 Route::get("/lessons", [LessonController::class, "index"]);
@@ -147,4 +149,3 @@ Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy'])
 
 //Auth Routes
 Route::post('auth/login', [AuthController::class, 'login']);
-

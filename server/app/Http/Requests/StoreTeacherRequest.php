@@ -33,6 +33,8 @@ class StoreTeacherRequest extends FormRequest
             'bloodType' => 'nullable|string|max:3',
             'sex' => ['required', 'string', Rule::in(["MALE", "FEMALE"])],
             'birthday' => 'required|date',
+            'password' => $this->isMethod('POST') ? 'required|min:8' : 'sometimes|min:8',
+
         ];
     }
 }

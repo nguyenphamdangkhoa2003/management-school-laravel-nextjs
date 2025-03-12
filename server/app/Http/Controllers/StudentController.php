@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Http\Requests\StudentRequest;
+use App\Http\Resources\StudentResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -11,20 +12,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
-        try {
-            $students = Student::all();
-            return response()->json($students);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'message' => 'An error occurred while retrieving students.',
-                'error' => $e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        // Eager load mối quan hệ 'schoolClass', 'guardians', 'grades' và phân trang dữ liệu
+        $students = Student::with('schoolClass', 'guardians', 'grades')->paginate(10);
+        
+        // Trả về resource collection đã được phân trang
+        return StudentResource::collection($students);
     }
-
+    
+    
     public function store(StudentRequest $request): JsonResponse
     {
         try {
@@ -125,23 +122,104 @@ class StudentController extends Controller
         }
     }
 
-    public function search(Request $request): JsonResponse
+    public function search(Request $request)
     {
         try {
+            // Lấy các tham số từ request
             $name = $request->query("name");
             $username = $request->query("username");
-
+            $code = $request->query("code");
+            $surname = $request->query("surname");
+            $email = $request->query("email");
+            $phone = $request->query("phone");
+            $address = $request->query("address");
+            $img = $request->query("img");
+            $sex = $request->query("sex");
+            $bloodType = $request->query("bloodType");
+            $birthday = $request->query("birthday");
+            $password = $request->query("password");
+            $created_at = $request->query("created_at");
+            $updated_at = $request->query("updated_at");
+            $guardian_id = $request->query("guardian_id");
+            $school_class_id = $request->query("school_class_id");
+            $grade_id = $request->query("grade_id");
+    
+            // Khởi tạo truy vấn
             $query = Student::query();
-
+    
+            // Điều kiện tìm kiếm theo các tham số được truyền vào
             if ($name) {
                 $query->where("name", "like", "%" . $name . "%");
             }
+    
             if ($username) {
-                $query->where("username", "like", "%" . $username . "%");
+                $query->orWhere("username", "like", "%" . $username . "%");
             }
-
+    
+            if ($code) {
+                $query->orWhere("code", "like", "%" . $code . "%");
+            }
+    
+            if ($surname) {
+                $query->orWhere("surname", "like", "%" . $surname . "%");
+            }
+    
+            if ($email) {
+                $query->orWhere("email", "like", "%" . $email . "%");
+            }
+    
+            if ($phone) {
+                $query->orWhere("phone", "like", "%" . $phone . "%");
+            }
+    
+            if ($address) {
+                $query->orWhere("address", "like", "%" . $address . "%");
+            }
+    
+            if ($img) {
+                $query->orWhere("img", "like", "%" . $img . "%");
+            }
+    
+            if ($sex) {
+                $query->orWhere("sex", "like", "%" . $sex . "%");
+            }
+    
+            if ($bloodType) {
+                $query->orWhere("bloodType", "like", "%" . $bloodType . "%");
+            }
+    
+            if ($birthday) {
+                $query->orWhere("birthday", "like", "%" . $birthday . "%");
+            }
+    
+            if ($password) {
+                $query->orWhere("password", "like", "%" . $password . "%");
+            }
+    
+            if ($created_at) {
+                $query->orWhere("created_at", "like", "%" . $created_at . "%");
+            }
+    
+            if ($updated_at) {
+                $query->orWhere("updated_at", "like", "%" . $updated_at . "%");
+            }
+    
+            if ($guardian_id) {
+                $query->orWhere("guardian_id", "=", $guardian_id);
+            }
+    
+            if ($school_class_id) {
+                $query->orWhere("school_class_id", "=", $school_class_id);
+            }
+    
+            if ($grade_id) {
+                $query->orWhere("grade_id", "=", $grade_id);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $students = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$students->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -155,6 +233,7 @@ class StudentController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for students.',
@@ -162,4 +241,5 @@ class StudentController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }

@@ -115,15 +115,41 @@ class AssignmentController extends Controller
     public function search(Request $request)
     {
         try {
+            // Lấy các tham số tìm kiếm từ request
             $title = $request->query("title");
+            $startDate = $request->query("startDate");
+            $dueDate = $request->query("dueDate");
+            $lesson_id = $request->query("lesson_id");
+            $created_at = $request->query("created_at");
+            $updated_at = $request->query("updated_at");
+    
+            // Khởi tạo truy vấn
             $query = Assignment::query();
-
+    
+            // Dùng orWhere để tìm kiếm với các trường khác nhau
             if ($title) {
-                $query->where("title", "like", "%" . $title . "%");
+                $query->orWhere("title", "like", "%" . $title . "%");
             }
-
+            if ($startDate) {
+                $query->orWhere("startDate", "=", $startDate);
+            }
+            if ($dueDate) {
+                $query->orWhere("dueDate", "=", $dueDate);
+            }
+            if ($lesson_id) {
+                $query->orWhere("lesson_id", "=", $lesson_id);
+            }
+            if ($created_at) {
+                $query->orWhere("created_at", "=", $created_at);
+            }
+            if ($updated_at) {
+                $query->orWhere("updated_at", "=", $updated_at);
+            }
+    
+            // Thực hiện truy vấn và phân trang kết quả
             $assignments = $query->paginate(10);
-
+    
+            // Kiểm tra kết quả và trả về phản hồi
             if (!$assignments->isEmpty()) {
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -137,6 +163,7 @@ class AssignmentController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while searching for assignments.',
@@ -144,4 +171,5 @@ class AssignmentController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 }
