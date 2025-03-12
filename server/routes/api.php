@@ -47,10 +47,11 @@ Route::delete('/students/{id}', [StudentController::class, 'destroy']);
 // Guardian Routes
 Route::get('/guardians', [GuardianController::class, 'index']);
 Route::post('/guardians', [GuardianController::class, 'store']);
+Route::get('/guardians/search', [GuardianController::class, 'search']);
 Route::get('/guardians/{id}', [GuardianController::class, 'show']);
 Route::put('/guardians/{id}', [GuardianController::class, 'update']);
 Route::delete('/guardians/{id}', [GuardianController::class, 'destroy']);
-Route::get('/guardians/search', [GuardianController::class, 'search']);
+
 
 // Subject Routes
 Route::get('/subjects', [SubjectController::class, 'index']);

@@ -64,7 +64,7 @@ const TeacherListPage = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const data = await getTeachers(currentPage, 10); // Gọi API lấy danh sách giáo viên
+        const data = await getTeachers(currentPage, 10);
         setAllTeachers(data.data);
         setTotalPages(data.meta?.last_page || 1); // Cập nhật tổng số trang
       } catch (err) {
@@ -127,7 +127,8 @@ const TeacherListPage = () => {
     const searchValue = e.target.value.trim();
 
     if (searchValue === "") {
-      setAllTeachers(teachers);
+      const data = await getTeachers(currentPage, 10);
+      setAllTeachers(data.data);
       return;
     }
 

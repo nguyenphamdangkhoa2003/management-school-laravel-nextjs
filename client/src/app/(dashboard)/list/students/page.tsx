@@ -118,7 +118,7 @@ const StudentListPage = () => {
       const filteredStudent = await getStudent(searchValue);
       setAllStudens(filteredStudent);
     } catch (error) {
-      console.error("Lỗi khi tìm kiếm giáo viên:", error);
+      console.error("Lỗi khi tìm kiếm sinh viên:", error);
     }
   }
   return (

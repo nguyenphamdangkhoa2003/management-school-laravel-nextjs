@@ -75,8 +75,8 @@ const SubjectListPage = () => {
           return
         }
         try {
-          const filteredStudent = await getSubject(searchValue);
-          setAllSubjects(filteredStudent);
+          const filtered = await getSubject(searchValue);
+          setAllSubjects(filtered);
         } catch (error) {
           console.error("Lỗi khi tìm kiếm môn học:", error);
         }

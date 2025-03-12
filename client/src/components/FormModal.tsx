@@ -1,5 +1,5 @@
 "use client";
-import { deleteTeacher,deleteStudent,deleteSClass,deleteSubject } from "@/services/api";
+import { deleteTeacher,deleteStudent,deleteSClass,deleteSubject,deleteParent,deleteLesson } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
@@ -86,6 +86,12 @@ const FormModal = ({
         if(table ==="class"){
           await deleteSClass(id);
         }
+        if(table ==="parent"){
+          await deleteParent(id);
+        }
+        if(table ==="lesson"){
+          await deleteLesson(id);
+        }
         setSuccessMessage(`Xóa thành công!`);
         setShowSuccessModal(true);
         setOpen(false);
@@ -101,7 +107,13 @@ const FormModal = ({
           setErrorMessage("Không thể xóa lớp học này!");
         }
         if(table ==="subject"){
-          setErrorMessage("Không thể xóa môn học này này!");
+          setErrorMessage("Không thể xóa môn học này!");
+        }
+        if(table ==="parent"){
+          setErrorMessage("Không thể xóa phụ huynh này!");
+        }
+        if(table ==="lesson"){
+          setErrorMessage("Không thể xóa bài giảng này này!");
         }
         setShowErrorModal(true);
       }
@@ -128,7 +140,7 @@ const FormModal = ({
         className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
         onClick={() => setOpen(true)}
       >
-        <Image src={getIcon(type)} alt={`${type} icon`} width={16} height={16} />
+        <Image src={getIcon(type)} alt={`${type} icon`} width={16} height={16} /> 
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
