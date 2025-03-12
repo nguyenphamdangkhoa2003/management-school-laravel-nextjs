@@ -55,10 +55,11 @@ Route::get('/guardians/search', [GuardianController::class, 'search']);
 // Subject Routes
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::post('/subjects', [SubjectController::class, 'store']);
+Route::get('/subjects/search', [SubjectController::class, 'search']);
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 Route::put('/subjects/{id}', [SubjectController::class, 'update']);
 Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
-Route::get('/subjects/search', [SubjectController::class, 'search']);
+
 
 // Lesson Routes
 Route::get("/lessons", [LessonController::class, "index"]);
