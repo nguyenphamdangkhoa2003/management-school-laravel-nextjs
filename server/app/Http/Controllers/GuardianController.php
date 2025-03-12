@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Guardian;
 use App\Http\Requests\GuardianRequest;
+use App\Http\Resources\GuardResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GuardianController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
         try {
-            $guardians = Guardian::all();
-            return response()->json($guardians);
+            $guardians = Guardian::paginate(10);
+            return GuardResource::collection($guardians);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Http\Requests\SubjectRequest;
+use App\Http\Resources\SubjectResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,11 +12,11 @@ use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
         try {
-            $subjects = Subject::all();
-            return response()->json($subjects);
+            $subjects = Subject::paginate(10);
+            return SubjectResource::collection($subjects);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
