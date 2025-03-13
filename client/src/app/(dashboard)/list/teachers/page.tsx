@@ -56,8 +56,8 @@ const columns = [
 ];
 
 const TeacherListPage = () => {
-  const [teachers, setAllTeachers]=useState([]);
-  const [error, setError]=useState([null]);
+  const [teachers, setAllTeachers] = useState([]);
+  const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
@@ -74,10 +74,10 @@ const TeacherListPage = () => {
 
     fetchTeachers();
   }, [currentPage]);
-    
+
 
   const renderRow = (item: Teacher) => (
-    
+
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
@@ -91,21 +91,21 @@ const TeacherListPage = () => {
           className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
         />
         <div className="flex flex-col">
-          <h3 className="font-semibold">{item.surname+" "+item.name}</h3>
+          <h3 className="font-semibold">{item.surname + " " + item.name}</h3>
           <p className="text-xs text-gray-500">{item?.email}</p>
         </div>
       </td>
       <td className="hidden md:table-cell">{item.id}</td>
       <td className="hidden md:table-cell">
-      {Array.isArray(item.subjects) && item.subjects.length > 0 
-        ? item.subjects.map((subject) => subject.name).join(", ") 
-        : ""}
-    </td>
+        {Array.isArray(item.subjects) && item.subjects.length > 0
+          ? item.subjects.map((subject) => subject.name).join(", ")
+          : ""}
+      </td>
       <td className="hidden md:table-cell">
-      {Array.isArray(item.school_classes) && item.school_classes.length > 0 
-        ? item.school_classes.map((cls) => cls.name).join(", ") 
-        : ""}
-    </td>
+        {Array.isArray(item.school_classes) && item.school_classes.length > 0
+          ? item.school_classes.map((cls) => cls.name).join(", ")
+          : ""}
+      </td>
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
@@ -138,7 +138,7 @@ const TeacherListPage = () => {
     } catch (error) {
       console.error("Lỗi khi tìm kiếm giáo viên:", error);
     }
-  };  
+  };
 
 
   return (
@@ -147,7 +147,7 @@ const TeacherListPage = () => {
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch onChange={handleSearch}/>
+          <TableSearch onChange={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />
@@ -158,7 +158,7 @@ const TeacherListPage = () => {
             {role === "admin" && (
               <>
                 <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-                  <FormModal table="teacher" type="create"/>
+                  <FormModal table="teacher" type="create" />
                 </button>
               </>
             )}

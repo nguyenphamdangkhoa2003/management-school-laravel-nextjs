@@ -6,12 +6,12 @@ import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { getStudents,getStudent } from "@/services/api";
+import { getStudents, getStudent } from "@/services/api";
 type Student = {
   id: number;
   code: string;
   name: string;
-  surname:string;
+  surname: string;
   email?: string;
   photo: string;
   phone?: string;
@@ -52,24 +52,24 @@ const columns = [
 ];
 
 const StudentListPage = () => {
-  const [students, setAllStudens]=useState([]);
-  const [error, setError]=useState([null]);
+  const [students, setAllStudens] = useState([]);
+  const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
   useEffect(() => {
-      const fetchStudents = async () => {
-        try {
-          const data = await getStudents(currentPage, 10);
-          setAllStudens(data.data);
-          setTotalPages(data.meta?.last_page || 1);
-        } catch (err) {
-          setError(err.message);
-        }
-      };
-  
-      fetchStudents();
-    }, [currentPage]);
+    const fetchStudents = async () => {
+      try {
+        const data = await getStudents(currentPage, 10);
+        setAllStudens(data.data);
+        setTotalPages(data.meta?.last_page || 1);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchStudents();
+  }, [currentPage]);
   const renderRow = (item: Student) => (
     <tr
       key={item.id}
@@ -77,14 +77,14 @@ const StudentListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src=""
-          alt=""
+          src={item?.img ? `${item.img}` : '/avatar.png'}
+          alt="Sinh viên"
           width={40}
           height={40}
           className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
         />
         <div className="flex flex-col">
-          <h3 className="font-semibold">{item.surname+" "+item.name}</h3>
+          <h3 className="font-semibold">{item.surname + " " + item.name}</h3>
           <p className="text-xs text-gray-500">
             {item.school_class?.name || ""}
           </p>
@@ -102,15 +102,15 @@ const StudentListPage = () => {
             </button>
           </Link>
           {role === "admin" && (
-            <FormModal table="student" type="delete" id={item.id}/>
+            <FormModal table="student" type="delete" id={item.id} />
           )}
         </div>
       </td>
     </tr>
   );
-  const handleSearch =async(e: React.ChangeEvent<HTMLInputElement>)=>{
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();
-    if(searchValue ===""){
+    if (searchValue === "") {
       setAllStudens(students);
       return
     }
@@ -127,7 +127,7 @@ const StudentListPage = () => {
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch onChange={handleSearch}/>
+          <TableSearch onChange={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />
@@ -139,7 +139,7 @@ const StudentListPage = () => {
               // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               //   <Image src="/plus.png" alt="" width={14} height={14} />
               // </button>
-              <FormModal table="student" type="create"/>
+              <FormModal table="student" type="create" />
             )}
           </div>
         </div>
@@ -147,7 +147,7 @@ const StudentListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={students} />
       {/* PAGINATION */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
 import { addStudent } from "@/services/api";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 const schema = z.object({
@@ -62,7 +62,7 @@ const StudentForm = ({
 
 
 
-  const onSubmit = handleSubmit(async(data) => {
+  const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "birthday" && typeof value === "string") {
@@ -82,21 +82,21 @@ const StudentForm = ({
       formData.delete("email");
     }
     try {
-          let response;
-          if (type === "create") {
-            response = await addStudent(formData);
-          } 
-          // else if (type === "update") {
-          //   await updateTeacher(teacher.id, formData);
-          //   setTimeout(() => window.location.reload(), 2000);
-          // }
-          setShowForm(false);
-          setErrorMessage(null);
-          
-        } catch (error: any) {
-          console.error("❌ Lỗi từ API:", error.response?.data || error.message);
-          setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
-        }
+      let response;
+      if (type === "create") {
+        response = await addStudent(formData);
+      }
+      // else if (type === "update") {
+      //   await updateTeacher(teacher.id, formData);
+      //   setTimeout(() => window.location.reload(), 2000);
+      // }
+      setShowForm(false);
+      setErrorMessage(null);
+
+    } catch (error: any) {
+      console.error("❌ Lỗi từ API:", error.response?.data || error.message);
+      setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
+    }
 
 
   });
@@ -110,13 +110,11 @@ const StudentForm = ({
   };
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Create a new student</h1>
-      <span className="text-xs text-gray-400 font-medium">
-        Authentication Information
-      </span>
+      <h1 className="text-xl font-semibold">{type === "create" ? "Thêm sinh viên" : "Cập nhật sinh viên"}</h1>
+
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Username"
+          label="Tên tài khoản"
           name="username"
           defaultValue={data?.username}
           register={register}
@@ -137,7 +135,16 @@ const StudentForm = ({
           error={errors?.email}
         />
         <InputField
-          label="Password"
+          label="Mật khẩu"
+          name="password"
+          type="password"
+          defaultValue={data?.password}
+          register={register}
+          error={errors?.password}
+        />
+
+        <InputField
+          label="Mật khẩu"
           name="password"
           type="password"
           defaultValue={data?.password}
@@ -146,46 +153,46 @@ const StudentForm = ({
         />
       </div>
       <span className="text-xs text-gray-400 font-medium">
-        Personal Information
+        Thông tin cá nhân
       </span>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="First Name"
+          label="Họ"
           name="firstName"
           defaultValue={data?.firstName}
           register={register}
           error={errors.firstName}
         />
         <InputField
-          label="Last Name"
+          label="Tên"
           name="lastName"
           defaultValue={data?.lastName}
           register={register}
           error={errors.lastName}
         />
         <InputField
-          label="Phone"
+          label="Số điện thoại"
           name="phone"
           defaultValue={data?.phone}
           register={register}
           error={errors.phone}
         />
         <InputField
-          label="Address"
+          label="Địa chỉ"
           name="address"
           defaultValue={data?.address}
           register={register}
           error={errors.address}
         />
         <InputField
-          label="Blood Type"
+          label="Nhóm máu"
           name="bloodType"
           defaultValue={data?.bloodType}
           register={register}
           error={errors.bloodType}
         />
         <InputField
-          label="Birthday"
+          label="Ngày sinh"
           name="birthday"
           defaultValue={data?.birthday}
           register={register}
@@ -193,14 +200,14 @@ const StudentForm = ({
           type="date"
         />
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label className="text-xs text-gray-500">Giới tính</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
           >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
           </select>
           {errors.sex?.message && (
             <p className="text-xs text-red-400">
@@ -214,7 +221,7 @@ const StudentForm = ({
             htmlFor="img"
           >
             <Image src="/upload.png" alt="" width={28} height={28} />
-            <span>Upload a photo</span>
+            <span>Tải hình ảnh lên</span>
           </label>
           <input type="file" id="img" {...register("img")} className="hidden" />
           {errors.img?.message && (
