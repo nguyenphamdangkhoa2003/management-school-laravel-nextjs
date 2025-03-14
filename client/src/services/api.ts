@@ -80,7 +80,7 @@ export const getStudents = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách giáo viên:", error.response?.data || error.message);
+    console.error("Lỗi khi lấy danh sách sinh viên:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -117,12 +117,129 @@ export const addStudent = async (Data: FormData) => {
   }
 };
 //MÔN HỌC
+export const getSubjects = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/subjects`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách môn học:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const getSubject =async (search :string)=>{
+  try {
+    const response=await api.get(`/subjects/search`,{params: {name: search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm môn học", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteSubject =async (id:number)=>{
+  try {
+    const response =await api.delete(`/subjects/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa môn học", error.response?.data||error.message);
+      throw error;
+  }
+}
 //LỚP
+export const getClasses = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/school-classes`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách lớp:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getClass =async (search :string)=>{
+  try {
+    const response=await api.get(`/school-classes/search`,{params: {name: search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm lớp học", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteSClass =async (id:number)=>{
+  try {
+    const response =await api.delete(`/school-classes/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa lớp học", error.response?.data||error.message);
+      throw error;
+  }
+}
 //PHỤ HUYNH
 
+export const getParents = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/guardians`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách phụ huynh:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
+export const getParent =async (search :string)=>{
+  try {
+    const response=await api.get(`/guardians/search`,{params: {name: search,username: search,email:search,phone:search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm phụ huynh", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteParent =async (id:number)=>{
+  try {
+    const response =await api.delete(`/guardians/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa phụ huynh", error.response?.data||error.message);
+      throw error;
+  }
+}
+//BÀI GIẢNG
+export const getLessons = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/lessons`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
-
+export const getLesson =async (search :string)=>{
+  try {
+    const response=await api.get(`/lessons/search`,{params: {name: search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm bài giảng", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteLesson =async (id:number)=>{
+  try {
+    const response =await api.delete(`/lessons/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa bài giảng", error.response?.data||error.message);
+      throw error;
+  }
+}
 
 
 //ĐĂNG NHẬP

@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
-import { addTeacher,updateTeacher } from "@/services/api";
-import { useState,useEffect } from "react";
+import { addTeacher, updateTeacher } from "@/services/api";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 
@@ -25,9 +25,9 @@ const schema = z.object({
   address: z.string().min(1, { message: "Address is required!" }),
   bloodType: z.string().min(1, { message: "Blood Type is required!" }),
   birthday: z
-  .string()
-  .min(1, { message: "Birthday is required!" })
-  .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format!" }),
+    .string()
+    .min(1, { message: "Birthday is required!" })
+    .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format!" }),
   sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required!" }),
   img: z.instanceof(File, { message: "Image is required" }),
 });
@@ -68,7 +68,7 @@ const TeacherForm = ({
         .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
     }
   }, [id]);
-  
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -108,7 +108,7 @@ const TeacherForm = ({
       }
       setShowForm(false);
       setErrorMessage(null);
-      
+
     } catch (error: any) {
       console.error("❌ Lỗi từ API:", error.response?.data || error.message);
       setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
@@ -122,12 +122,12 @@ const TeacherForm = ({
       setPreviewImage(URL.createObjectURL(file));
     }
   };
-  
-   return (
+
+  return (
     <>
       {showForm ? (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-          <h1 className="text-xl font-semibold">{type ==="create" ? "Tạo giáo viên":"Cập nhật giáo viên"}</h1>
+          <h1 className="text-xl font-semibold">{type === "create" ? "Thêm giảng viên" : "Cập nhật giảng viên"}</h1>
           <div className="flex justify-between flex-wrap gap-4">
             <InputField label="Tên tài khoản" name="username" defaultValue={data?.username} register={register} error={errors?.username} />
             <InputField label="Email" name="email" defaultValue={data?.email} register={register} error={errors?.email} />
@@ -142,7 +142,7 @@ const TeacherForm = ({
             <InputField label="Địa chỉ" name="address" defaultValue={data?.address} register={register} error={errors.address} />
             <InputField label="Nhóm máu" name="bloodType" defaultValue={data?.bloodType} register={register} error={errors.bloodType} />
             <InputField label="Ngày sinh" name="birthday" defaultValue={data?.birthday} register={register} error={errors.birthday} type="date" />
-            
+
             <div className="flex flex-col gap-2 w-full md:w-1/4">
               <label className="text-xs text-gray-500">Giới tính</label>
               <select className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full" {...register("sex")} defaultValue={data?.sex ?? "MALE"}>
@@ -167,15 +167,15 @@ const TeacherForm = ({
         </form>
       ) : (
         <div>
-                {type === "create" && (
-                    <p className="text-green-600 text-lg font-semibold">✅ Giáo viên đã được thêm thành công!</p>
-                )}
-                {type === "update" && (
-                    <p className="text-green-600 text-lg font-semibold">✅ Giáo viên đã được cập nhật thành công!</p>
-                )}
+          {type === "create" && (
+            <p className="text-green-600 text-lg font-semibold">✅ Giáo viên đã được thêm thành công!</p>
+          )}
+          {type === "update" && (
+            <p className="text-green-600 text-lg font-semibold">✅ Giáo viên đã được cập nhật thành công!</p>
+          )}
         </div>
       )}
-      
+
       {errorMessage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md">
