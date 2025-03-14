@@ -108,7 +108,7 @@ class SubjectController extends Controller
         try {
             $subject = Subject::findOrFail($id);
             $subject->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'Subject deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

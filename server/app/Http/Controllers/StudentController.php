@@ -126,7 +126,7 @@ class StudentController extends Controller
             }
 
             $student->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'Student deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

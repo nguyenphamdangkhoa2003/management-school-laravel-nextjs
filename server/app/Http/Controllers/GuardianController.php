@@ -101,7 +101,7 @@ class GuardianController extends Controller
         try {
             $guardian = Guardian::findOrFail($id);
             $guardian->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'Lesson deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
