@@ -143,14 +143,6 @@ const StudentForm = ({
           error={errors?.password}
         />
 
-        <InputField
-          label="Mật khẩu"
-          name="password"
-          type="password"
-          defaultValue={data?.password}
-          register={register}
-          error={errors?.password}
-        />
       </div>
       <span className="text-xs text-gray-400 font-medium">
         Thông tin cá nhân
@@ -205,6 +197,7 @@ const StudentForm = ({
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
+            name="sex"
           >
             <option value="male">Nam</option>
             <option value="female">Nữ</option>
@@ -230,11 +223,76 @@ const StudentForm = ({
             </p>
           )}
         </div>
+        <div className='w-[25%]'>
+
+        </div>
+
+      </div>
+
+      <span className="text-xs text-gray-400 font-medium">
+        Thông tin phụ huynh
+      </span>
+      <div className="flex justify-between flex-wrap gap-4">
+        <InputField
+          label="Họ"
+          name="parentfirstName"
+          defaultValue={data?.firstName}
+          register={register}
+          error={errors.firstName}
+        />
+        <InputField
+          label="Tên"
+          name="parentlastName"
+          defaultValue={data?.lastName}
+          register={register}
+          error={errors.lastName}
+        />
+
+        <InputField
+          label="email"
+          name="parentemail"
+          defaultValue={data?.bloodType}
+          register={register}
+          error={errors.bloodType}
+        />
+
+        <InputField
+          label="Số điện thoại"
+          name="parentphone"
+          defaultValue={data?.phone}
+          register={register}
+          error={errors.phone}
+        />
+        <InputField
+          label="Địa chỉ"
+          name="parentaddress"
+          defaultValue={data?.address}
+          register={register}
+          error={errors.address}
+        />
+
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Giới tính</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("sex")}
+            defaultValue={data?.sex}
+            name="parentsex"
+          >
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+          </select>
+          {errors.sex?.message && (
+            <p className="text-xs text-red-400">
+              {errors.sex.message.toString()}
+            </p>
+          )}
+        </div>
       </div>
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
-    </form>
+    </form >
   );
 };
 
