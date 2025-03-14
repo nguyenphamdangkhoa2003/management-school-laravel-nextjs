@@ -35,6 +35,9 @@ class StudentRequest extends FormRequest
             'bloodType' => 'required|string',
             'birthday' => 'required|date',
             'password' => 'required|string',
+            'guardian_id' => 'required|exists:guardians,id',
+            'school_class_id' => 'required|exists:school_classes,id',
+            'grade_id' => 'required|exists:grades,id',
         ];
     }
 }

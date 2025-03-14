@@ -73,12 +73,21 @@ class GradeController extends Controller
     public function update(GradeRequest $request, string $id)
     {
         try {
-            $grade = Grade::findOrFail($id);
+            $grade = Grade::find($id);
+    
+            if (!$grade) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Grade not found.',
+                    'error' => "No query results for model [App\\Models\\Grade] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $validatedData = $request->validated();
             $grade->update($validatedData);
-            return response()->json($grade, 200);
+    
+            return response()->json($grade, Response::HTTP_OK);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Lỗi cơ sở dữ liệu khi cập nhật điểm
             return response()->json([
                 'status' => Response::HTTP_BAD_REQUEST,
                 'message' => 'Database error occurred while updating the grade.',

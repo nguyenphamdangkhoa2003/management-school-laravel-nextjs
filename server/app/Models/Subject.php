@@ -10,10 +10,11 @@ class Subject extends Model
 {
     public $fillable = ["name"];
 
-    public function teacher(): HasMany
+    public function teachers(): HasMany
     {
-        return $this->hasMany(Teacher::class);
+        return $this->hasMany(Teacher::class, 'subject_id');
     }
+    
 
     public function lessons(): BelongsTo
     {

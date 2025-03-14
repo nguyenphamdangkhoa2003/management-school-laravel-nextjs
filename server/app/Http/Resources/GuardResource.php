@@ -14,7 +14,7 @@ class GuardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [           
+        return [
             'username' => $this->username,
             'name' => $this->name,
             'surname' => $this->surname,

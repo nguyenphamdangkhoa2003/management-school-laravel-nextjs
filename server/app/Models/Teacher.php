@@ -12,12 +12,13 @@ class Teacher extends Model
 {
     use HasApiTokens;
 
-    public $fillable = ["username", "name", "surname", "email", "phone", "address", "img", "bloodType", "sex", "birthday", "password"];
+    public $fillable = ["username", "name", "surname", "email", "phone", "address", "img", "bloodType", "sex", "birthday", "password","subject_id"];
 
-    public function subjects(): HasMany
+    public function subject(): BelongsTo
     {
-        return $this->hasMany(Subject::class);
+        return $this->belongsTo(Subject::class, 'subject_id');
     }
+    
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);

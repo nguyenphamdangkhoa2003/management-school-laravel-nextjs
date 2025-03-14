@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ResultRequest;
 use App\Http\Resources\ResultResource;
 use App\Models\Result;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResultController extends Controller
@@ -69,14 +71,24 @@ class ResultController extends Controller
         }
     }
 
-    public function update(ResultRequest $request, string $id)
+    public function update(ResultRequest $request, string $id): JsonResponse
     {
         try {
-            $result = Result::findOrFail($id);
+            $result = Result::find($id);
+    
+            if (!$result) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Result not found.',
+                    'error' => "No query results for model [App\\Models\\Result] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $validatedData = $request->validated();
             $result->update($validatedData);
-            return response()->json($result, 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+    
+            return response()->json($result, Response::HTTP_OK);
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',
@@ -86,7 +98,7 @@ class ResultController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => 'An error occurred while updating the result',
+                'error' => 'An error occurred while updating the result.',
                 'message' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

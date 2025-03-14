@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class SubjectController extends Controller
 {
@@ -70,22 +71,33 @@ class SubjectController extends Controller
     public function update(SubjectRequest $request, string $id): JsonResponse
     {
         try {
-            $subject = Subject::findOrFail($id);
+            $subject = Subject::find($id);
+    
+            if (!$subject) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Subject not found.',
+                    'error' => "No query results for model [App\\Models\\Subject] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $validatedData = $request->validated();
             $subject->update($validatedData);
+    
             Log::info('Subject updated successfully', ['subject' => $subject]);
-            return response()->json($subject, 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+    
+            return response()->json($subject, Response::HTTP_OK);
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // HTTP status 422 cho lỗi validation
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => 'An error occurred while updating the subject',
+                'error' => 'An error occurred while updating the subject.',
                 'message' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -140,7 +152,7 @@ class SubjectController extends Controller
     
             // Thực hiện truy vấn và phân trang kết quả
             $subjects = $query->paginate(10);
-    
+            Log::info("Executing SQL: " . $query->toSql());
             // Kiểm tra kết quả và trả về phản hồi
             if (!$subjects->isEmpty()) {
                 return response()->json([

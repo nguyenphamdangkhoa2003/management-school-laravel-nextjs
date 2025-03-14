@@ -8,7 +8,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
-
+use Illuminate\Support\Facades\Hash;
 class AdminController extends Controller
 {
     public function index()

@@ -30,11 +30,11 @@ class StoreTeacherRequest extends FormRequest
             'phone' => 'required|string|max:15',
             'address' => 'required|string|max:255',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bloodType' => 'nullable|string|max:3',
+            'bloodType' => 'nullable|string|max:3', 
             'sex' => ['required', 'string', Rule::in(["MALE", "FEMALE"])],
             'birthday' => 'required|date',
             'password' => $this->isMethod('POST') ? 'required|min:8' : 'sometimes|min:8',
-
+            'subject_id' => 'required|exists:subjects,id',
         ];
     }
 }

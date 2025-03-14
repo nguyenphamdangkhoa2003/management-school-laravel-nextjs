@@ -23,15 +23,13 @@ return new class extends Migration {
             $table->string("img")->nullable();
             $table->string("bloodType");
             $table->dateTime("birthday");
-            $table->foreignIdFor(Subject::class)->nullable();
+            $table->foreignIdFor(Subject::class)->constrained();
             $table->string("password");
             $table->enum("sex", ["MALE", "FEMALE"]);
             $table->timestamps();
         });
 
-        Schema::table("subjects", function (Blueprint $table) {
-            $table->foreignIdFor(Teacher::class)->nullable();
-        });
+
     }
 
     /**
