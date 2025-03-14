@@ -144,10 +144,10 @@ const FormModal = ({
     return type === "delete" && id ? (
       <form action="" className="p-4 flex flex-col gap-4">
         <span className="text-center font-medium">
-          All data will be lost. Are you sure you want to delete this {table}?
+          Toàn bộ dữ liệu sẽ bị xóa, bạn có chắc chăn không? {table}?
         </span>
         <button onClick={handleDelete} className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
-          Delete
+          Xóa
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
