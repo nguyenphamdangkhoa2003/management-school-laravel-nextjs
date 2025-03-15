@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdminRequest;
 use App\Http\Resources\AdminResource;
 use App\Models\Admin;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,17 +31,22 @@ class AdminController extends Controller
     {
         try {
             $validatedData = $request->validated();
+
+            // Băm mật khẩu trước khi lưu
+            if (isset($validatedData['password'])) {
+                $validatedData['password'] = Hash::make($validatedData['password']);
+            }
+
             $admin = Admin::create($validatedData);
-            return response()->json($admin, 201);
+
+            return response()->json($admin, Response::HTTP_CREATED);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Thường xảy ra lỗi khi dữ liệu không hợp lệ, chẳng hạn như lỗi trùng dữ liệu
             return response()->json([
                 'status' => Response::HTTP_BAD_REQUEST,
                 'message' => 'Database error occurred while creating admin.',
                 'error' => $e->getMessage(),
             ], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {
-            // Lỗi tổng quát khi tạo admin
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while creating the admin.',
@@ -56,7 +63,7 @@ class AdminController extends Controller
                 'status' => Response::HTTP_OK,
                 'data' => $admin,
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
                 'message' => 'Admin not found.',
@@ -76,10 +83,24 @@ class AdminController extends Controller
         try {
             $admin = Admin::findOrFail($id);
             $validatedData = $request->validated();
+
+            if (!empty($validatedData['password'])) {
+                $validatedData['password'] = Hash::make($validatedData['password']);
+            } else {
+                unset($validatedData['password']);
+            }
+
             $admin->update($validatedData);
-            return response()->json($admin, 200);
+
+            return response()->json($admin, Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            // Trả về lỗi 404 nếu không tìm thấy admin
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Admin not found.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Thường xảy ra lỗi khi dữ liệu không hợp lệ, chẳng hạn như lỗi trùng dữ liệu
             return response()->json([
                 'status' => Response::HTTP_BAD_REQUEST,
                 'message' => 'Database error occurred while updating admin.',
@@ -103,6 +124,13 @@ class AdminController extends Controller
                 'status' => Response::HTTP_OK,
                 'message' => 'Admin deleted successfully.',
             ], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            // Trả về lỗi 404 nếu không tìm thấy admin
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Admin not found.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

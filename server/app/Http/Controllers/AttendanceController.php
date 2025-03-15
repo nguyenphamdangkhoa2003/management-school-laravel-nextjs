@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         try {
-            $attendances = Attendance::with('students','lessons')->paginate(10);
+            $attendances = Attendance::with('students', 'lessons')->paginate(10);
             return AttendanceResource::collection($attendances);
         } catch (\Exception $e) {
             return response()->json([
@@ -103,6 +103,12 @@ class AttendanceController extends Controller
                 'status' => Response::HTTP_OK,
                 'message' => 'Attendance deleted successfully.',
             ], Response::HTTP_OK);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Attendance not found.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -122,10 +128,10 @@ class AttendanceController extends Controller
             $lesson_id = $request->query("lesson_id");
             $created_at = $request->query("created_at");
             $updated_at = $request->query("updated_at");
-    
+
             // Khởi tạo truy vấn
             $query = Attendance::query();
-    
+
             // Dùng orWhere để tìm kiếm với các trường khác nhau
             if ($student_id) {
                 $query->orWhere("student_id", "=", $student_id);
@@ -145,10 +151,10 @@ class AttendanceController extends Controller
             if ($updated_at) {
                 $query->orWhere("updated_at", "=", $updated_at);
             }
-    
+
             // Thực hiện truy vấn và phân trang kết quả
             $attendances = $query->paginate(10);
-    
+
             // Kiểm tra kết quả và trả về phản hồi
             if (!$attendances->isEmpty()) {
                 return response()->json([
@@ -171,5 +177,5 @@ class AttendanceController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
 }

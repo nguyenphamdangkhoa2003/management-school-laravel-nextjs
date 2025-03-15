@@ -12,5 +12,5 @@ class Admin extends Model
     use HasApiTokens;
 
 
-    public $fillable = ["password"];
+    public $fillable = ["password", "username"];
 }

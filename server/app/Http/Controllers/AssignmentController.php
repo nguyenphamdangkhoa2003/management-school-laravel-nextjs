@@ -6,7 +6,6 @@ use App\Http\Requests\AssignmentRequest;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class AssignmentController extends Controller
@@ -78,6 +77,12 @@ class AssignmentController extends Controller
             $validatedData = $request->validated();
             $assignment->update($validatedData);
             return response()->json($assignment, 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Assignment not found.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Illuminate\Database\QueryException $e) {
             // Thường xảy ra lỗi khi dữ liệu không hợp lệ, chẳng hạn như lỗi trùng dữ liệu
             return response()->json([
@@ -103,6 +108,12 @@ class AssignmentController extends Controller
                 'status' => Response::HTTP_OK,
                 'message' => 'Assignment deleted successfully.',
             ], Response::HTTP_OK);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Assignment not found.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -122,10 +133,10 @@ class AssignmentController extends Controller
             $lesson_id = $request->query("lesson_id");
             $created_at = $request->query("created_at");
             $updated_at = $request->query("updated_at");
-    
+
             // Khởi tạo truy vấn
             $query = Assignment::query();
-    
+
             // Dùng orWhere để tìm kiếm với các trường khác nhau
             if ($title) {
                 $query->orWhere("title", "like", "%" . $title . "%");
@@ -145,10 +156,10 @@ class AssignmentController extends Controller
             if ($updated_at) {
                 $query->orWhere("updated_at", "=", $updated_at);
             }
-    
+
             // Thực hiện truy vấn và phân trang kết quả
             $assignments = $query->paginate(10);
-    
+
             // Kiểm tra kết quả và trả về phản hồi
             if (!$assignments->isEmpty()) {
                 return response()->json([
@@ -171,5 +182,5 @@ class AssignmentController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
 }
