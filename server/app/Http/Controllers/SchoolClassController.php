@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SchoolClassRequest;
 use App\Http\Resources\SchoolClassResource;
 use App\Models\SchoolClass;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class SchoolClassController extends Controller
@@ -69,24 +71,34 @@ class SchoolClassController extends Controller
         }
     }
 
-    public function update(SchoolClassRequest $request, string $id)
+    public function update(SchoolClassRequest $request, string $id): JsonResponse
     {
         try {
-            $schoolClass = SchoolClass::findOrFail($id);
+            $schoolClass = SchoolClass::find($id);
+    
+            if (!$schoolClass) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'School class not found.',
+                    'error' => "No query results for model [App\\Models\\SchoolClass] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $validatedData = $request->validated();
             $schoolClass->update($validatedData);
-            return response()->json($schoolClass, 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+    
+            return response()->json($schoolClass, Response::HTTP_OK);
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // HTTP status 422 cho lỗi validation
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => 'An error occurred while updating the school class',
+                'error' => 'An error occurred while updating the school class.',
                 'message' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

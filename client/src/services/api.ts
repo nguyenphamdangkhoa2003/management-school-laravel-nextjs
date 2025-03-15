@@ -179,9 +179,67 @@ export const deleteSClass =async (id:number)=>{
 }
 //PHỤ HUYNH
 
+export const getParents = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/guardians`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách phụ huynh:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
+export const getParent =async (search :string)=>{
+  try {
+    const response=await api.get(`/guardians/search`,{params: {name: search,username: search,email:search,phone:search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm phụ huynh", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteParent =async (id:number)=>{
+  try {
+    const response =await api.delete(`/guardians/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa phụ huynh", error.response?.data||error.message);
+      throw error;
+  }
+}
+//BÀI GIẢNG
+export const getLessons = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/lessons`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
-
+export const getLesson =async (search :string)=>{
+  try {
+    const response=await api.get(`/lessons/search`,{params: {name: search}});
+    return response.data.data.data;
+  } catch (error) {
+    console.error("Lỗi tìm bài giảng", error.response?.data||error.message);
+    throw error;
+  }
+}
+export const deleteLesson =async (id:number)=>{
+  try {
+    const response =await api.delete(`/lessons/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa bài giảng", error.response?.data||error.message);
+      throw error;
+  }
+}
 
 
 //ĐĂNG NHẬP

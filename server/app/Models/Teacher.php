@@ -14,10 +14,11 @@ class Teacher extends Model
 
     public $fillable = ["username", "name", "surname", "email", "phone", "address", "img", "bloodType", "sex", "birthday", "password"];
 
-    public function subjects(): HasMany
+    public function subjects()
     {
-        return $this->hasMany(Subject::class);
+        return $this->belongsToMany(Subject::class, 'subject_teacher');
     }
+    
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);

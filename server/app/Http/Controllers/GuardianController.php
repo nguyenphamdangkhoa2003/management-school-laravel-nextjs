@@ -68,9 +68,19 @@ class GuardianController extends Controller
     public function update(GuardianRequest $request, string $id): JsonResponse
     {
         try {
-            $guardian = Guardian::findOrFail($id);
+            $guardian = Guardian::find($id);
+    
+            if (!$guardian) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Guardian not found.',
+                    'error' => "No query results for model [App\\Models\\Guardian] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $guardian->update($request->validated());
-            return response()->json($guardian, 200);
+    
+            return response()->json($guardian, Response::HTTP_OK);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json([
                 'status' => Response::HTTP_BAD_REQUEST,
@@ -91,7 +101,7 @@ class GuardianController extends Controller
         try {
             $guardian = Guardian::findOrFail($id);
             $guardian->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'Lesson deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

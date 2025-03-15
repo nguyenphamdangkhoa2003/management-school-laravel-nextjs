@@ -75,10 +75,20 @@ class LessonController extends Controller
     public function update(LessonRequest $request, string $id)
     {
         try {
-            $lesson = Lesson::findOrFail($id);
+            $lesson = Lesson::find($id);
+    
+            if (!$lesson) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Lesson not found.',
+                    'error' => "No query results for model [App\\Models\\Lesson] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
             $validatedData = $request->validated();
             $lesson->update($validatedData);
-            return response()->json($lesson, 200);
+    
+            return response()->json($lesson, Response::HTTP_OK);
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

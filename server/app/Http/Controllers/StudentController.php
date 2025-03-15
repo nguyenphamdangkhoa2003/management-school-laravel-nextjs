@@ -8,6 +8,7 @@ use App\Http\Resources\StudentResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
@@ -71,36 +72,49 @@ class StudentController extends Controller
     }
 
     public function update(StudentRequest $request, string $id): JsonResponse
-    {
-        try {
-            $student = Student::findOrFail($id);
-            $validatedData = $request->validated();
+{
+    try {
+        $student = Student::find($id);
 
-            if ($request->hasFile('img')) {
-                if ($student->img && Storage::disk('public')->exists($student->img)) {
-                    Storage::disk('public')->delete($student->img);
-                }
-                $imagePath = $request->file('img')->store('images/students', 'public');
-                $validatedData['img'] = $imagePath;
+        if (!$student) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Student not found.',
+                'error' => "No query results for model [App\\Models\\Student] $id"
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('img')) {
+            // Xóa ảnh cũ nếu tồn tại
+            if ($student->img && Storage::disk('public')->exists($student->img)) {
+                Storage::disk('public')->delete($student->img);
             }
 
-            $student->update($validatedData);
-            return response()->json($student, 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'error' => 'Validation failed',
-                'message' => 'The given data was invalid.',
-                'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // HTTP status 422 cho lỗi validation
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => 'An error occurred while updating the student',
-                'message' => $e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            // Lưu ảnh mới
+            $imagePath = $request->file('img')->store('images/students', 'public');
+            $validatedData['img'] = $imagePath;
         }
+
+        $student->update($validatedData);
+
+        return response()->json($student, Response::HTTP_OK);
+    } catch (ValidationException $e) {
+        return response()->json([
+            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+            'error' => 'Validation failed',
+            'message' => 'The given data was invalid.',
+            'errors' => $e->errors(),
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            'error' => 'An error occurred while updating the student.',
+            'message' => $e->getMessage(),
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
 
     public function destroy(string $id): JsonResponse
     {
@@ -112,7 +126,7 @@ class StudentController extends Controller
             }
 
             $student->delete();
-            return response()->json(null, 204);
+            return response()->json(['message' => 'Student deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,

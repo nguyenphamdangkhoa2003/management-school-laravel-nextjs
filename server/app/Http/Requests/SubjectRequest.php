@@ -22,10 +22,7 @@ class SubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:subjects,name,' . $this->route('id'),
-            'teacher_id' => 'required|exists:teachers,id',
+            'name' => 'required|string|unique:subjects,name,' . $this->route('id')
         ];
     }
-    
-    
 }

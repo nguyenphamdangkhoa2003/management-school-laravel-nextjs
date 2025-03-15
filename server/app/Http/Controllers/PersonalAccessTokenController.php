@@ -7,7 +7,7 @@ use App\Http\Resources\PersonalAccessTokenResource;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Http\Response;
 class PersonalAccessTokenController extends Controller
 {
     public function index()
@@ -46,10 +46,34 @@ class PersonalAccessTokenController extends Controller
 
     public function update(PersonalAccessTokenRequest $request, string $id)
     {
-        $token = PersonalAccessToken::findOrFail($id);
-        $validatedData = $request->validated();
-        $token->update($validatedData);
-        return response()->json($token, 200);
+        try {
+            $token = PersonalAccessToken::find($id);
+    
+            if (!$token) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Personal Access Token not found.',
+                    'error' => "No query results for model [App\\Models\\PersonalAccessToken] $id"
+                ], Response::HTTP_NOT_FOUND);
+            }
+    
+            $validatedData = $request->validated();
+            $token->update($validatedData);
+    
+            return response()->json($token, Response::HTTP_OK);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Database error occurred while updating the token.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'An error occurred while updating the token.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function destroy($id)

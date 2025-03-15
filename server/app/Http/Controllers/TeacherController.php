@@ -10,6 +10,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateTeacherRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+
 class TeacherController extends Controller
 {
     /**
@@ -64,24 +67,49 @@ class TeacherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTeacherRequest $request, string $id)
+    public function update(UpdateTeacherRequest $request, string $id): JsonResponse
     {
-        $teacher = Teacher::findOrFail($id);
-
-        $validatedData = $request->validated();
-
-        if ($request->hasFile('img')) {
-            if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
-                Storage::disk('public')->delete($teacher->img);
+        try {
+            $teacher = Teacher::find($id);
+    
+            if (!$teacher) {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'Teacher not found.',
+                    'error' => "No query results for model [App\\Models\\Teacher] $id"
+                ], Response::HTTP_NOT_FOUND);
             }
-
-            $imagePath = $request->file('img')->store('images/teachers', 'public');
-            $validatedData['img'] = $imagePath;
+    
+            $validatedData = $request->validated();
+    
+            if ($request->hasFile('img')) {
+                // Xóa ảnh cũ nếu tồn tại
+                if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
+                    Storage::disk('public')->delete($teacher->img);
+                }
+    
+                // Lưu ảnh mới
+                $imagePath = $request->file('img')->store('images/teachers', 'public');
+                $validatedData['img'] = $imagePath;
+            }
+    
+            $teacher->update($validatedData);
+    
+            return response()->json($teacher, Response::HTTP_OK);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'error' => 'Validation failed',
+                'message' => 'The given data was invalid.',
+                'errors' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => 'An error occurred while updating the teacher.',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $teacher->update($validatedData);
-
-        return response()->json($teacher, 200);
     }
 
     /**
@@ -111,7 +139,6 @@ class TeacherController extends Controller
         $img = $request->query("img");
         $bloodType = $request->query("bloodType");
         $birthday = $request->query("birthday");
-        $subject_id = $request->query("subject_id");
         $password = $request->query("password");
         $sex = $request->query("sex");
         $created_at = $request->query("created_at");
@@ -153,10 +180,6 @@ class TeacherController extends Controller
     
         if ($birthday) {
             $query->orWhere("birthday", "like", "%" . $birthday . "%");
-        }
-    
-        if ($subject_id) {
-            $query->orWhere("subject_id", "like", "%" . $subject_id . "%");
         }
     
         if ($password) {

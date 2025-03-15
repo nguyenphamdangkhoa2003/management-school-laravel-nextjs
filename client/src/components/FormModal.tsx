@@ -1,5 +1,5 @@
 "use client";
-import { deleteTeacher,deleteStudent,deleteSClass,deleteSubject } from "@/services/api";
+import { deleteTeacher, deleteStudent, deleteSClass, deleteSubject, deleteParent, deleteLesson } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
@@ -25,12 +25,35 @@ const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+const LessonForm = dynamic(() => import("./forms/SubjectForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+const AnnouncementForm = dynamic(() => import("./forms/announcement"), {
+  loading: () => <h1>Loading...</h1>,
+});
 const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
 } = {
   teacher: (type, data) => <TeacherForm type={type} data={data} />,
   student: (type, data) => <StudentForm type={type} data={data} />,
+  class: (type, data) => <ClassForm type={type} data={data} />,
+  parent: (type, data) => <ParentForm type={type} data={data} />,
+  subject: (type, data) => <SubjectForm type={type} data={data} />,
+  lesson: (type, data) => <LessonForm type={type} data={data} />,
+  announcement: (type, data) => <LessonForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -40,18 +63,18 @@ const FormModal = ({
   id,
 }: {
   table:
-    | "teacher"
-    | "student"
-    | "parent"
-    | "subject"
-    | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
-    | "attendance"
-    | "event"
-    | "announcement";
+  | "teacher"
+  | "student"
+  | "parent"
+  | "subject"
+  | "class"
+  | "lesson"
+  | "exam"
+  | "assignment"
+  | "result"
+  | "attendance"
+  | "event"
+  | "announcement";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
@@ -61,8 +84,8 @@ const FormModal = ({
     type === "create"
       ? "bg-lamaYellow"
       : type === "update"
-      ? "bg-lamaSky"
-      : "bg-lamaPurple";
+        ? "bg-lamaSky"
+        : "bg-lamaPurple";
 
   const [open, setOpen] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -74,34 +97,46 @@ const FormModal = ({
       e.preventDefault();
       if (!id) return;
       try {
-        if(table ==="teacher"){
+        if (table === "teacher") {
           await deleteTeacher(id);
         }
-        if(table ==="student"){
+        if (table === "student") {
           await deleteStudent(id);
         }
-        if(table ==="subject"){
+        if (table === "subject") {
           await deleteSubject(id);
         }
-        if(table ==="class"){
+        if (table === "class") {
           await deleteSClass(id);
+        }
+        if (table === "parent") {
+          await deleteParent(id);
+        }
+        if (table === "lesson") {
+          await deleteLesson(id);
         }
         setSuccessMessage(`Xóa thành công!`);
         setShowSuccessModal(true);
         setOpen(false);
       } catch (error) {
         setOpen(false);
-        if(table ==="teacher"){
+        if (table === "teacher") {
           setErrorMessage("Không thể xóa giáo viên này!");
         }
-        if(table ==="student"){
+        if (table === "student") {
           setErrorMessage("Không thể xóa sinh viên này!");
         }
-        if(table ==="class"){
+        if (table === "class") {
           setErrorMessage("Không thể xóa lớp học này!");
         }
-        if(table ==="subject"){
-          setErrorMessage("Không thể xóa môn học này này!");
+        if (table === "subject") {
+          setErrorMessage("Không thể xóa môn học này!");
+        }
+        if (table === "parent") {
+          setErrorMessage("Không thể xóa phụ huynh này!");
+        }
+        if (table === "lesson") {
+          setErrorMessage("Không thể xóa bài giảng này này!");
         }
         setShowErrorModal(true);
       }
@@ -109,10 +144,10 @@ const FormModal = ({
     return type === "delete" && id ? (
       <form action="" className="p-4 flex flex-col gap-4">
         <span className="text-center font-medium">
-          All data will be lost. Are you sure you want to delete this {table}?
+          Toàn bộ dữ liệu sẽ bị xóa, bạn có chắc chăn không? {table}?
         </span>
         <button onClick={handleDelete} className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
-          Delete
+          Xóa
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
@@ -163,7 +198,7 @@ const FormModal = ({
             <h2 className="text-green-600 text-lg font-semibold my-4">Thành công</h2>
             <p>{successMessage}</p>
             <button
-              onClick={() => {setShowSuccessModal(false);window.location.reload()}}
+              onClick={() => { setShowSuccessModal(false); window.location.reload() }}
               className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md"
             >
               Đóng

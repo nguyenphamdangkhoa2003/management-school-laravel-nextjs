@@ -45,10 +45,11 @@ Route::delete('/students/{id}', [StudentController::class, 'destroy']);
 // Guardian Routes
 Route::get('/guardians', [GuardianController::class, 'index']);
 Route::post('/guardians', [GuardianController::class, 'store']);
+Route::get('/guardians/search', [GuardianController::class, 'search']);
 Route::get('/guardians/{id}', [GuardianController::class, 'show']);
 Route::put('/guardians/{id}', [GuardianController::class, 'update']);
 Route::delete('/guardians/{id}', [GuardianController::class, 'destroy']);
-Route::get('/guardians/search', [GuardianController::class, 'search']);
+
 
 // Subject Routes
 Route::get('/subjects', [SubjectController::class, 'index']);
@@ -139,13 +140,22 @@ Route::post('/admins', [AdminController::class, 'store']);
 Route::put('/admins/{id}', [AdminController::class, 'update']);
 Route::delete('/admins/{id}', [AdminController::class, 'destroy']);
 
+// SubjectTeacher Routes
+Route::get('subject-teachers', [SubjectTeacherController::class,"index"]);
+Route::get('subject-teachers/search', [SubjectTeacherController::class, 'search']);
+Route::get('teachers/{teacher}/subjects', [SubjectTeacherController::class, 'getTeacherSubjects']);
+Route::get('subjects/{subject}/teachers', [SubjectTeacherController::class, 'getSubjectTeachers']);
+Route::get("/subject-teachers/{id}", [SubjectTeacherController::class, "show"])->where('id', '[0-9]+');
+Route::post('/subject-teachers', [SubjectTeacherController::class, 'store']);
+Route::put('/subject-teachers/{id}', [SubjectTeacherController::class, 'update']);
+Route::delete('/subject-teachers/{id}', [SubjectTeacherController::class, 'destroy']);
 // Personal Access Token Routes
-Route::get("/tokens", [PersonalAccessTokenController::class, "index"]);
-Route::get("/tokens/{id}", [PersonalAccessTokenController::class, "show"])->where('id', '[0-9]+');
-Route::get("/tokens/search", [PersonalAccessTokenController::class, "search"]);
-Route::post('/tokens', [PersonalAccessTokenController::class, 'store']);
-Route::put('/tokens/{id}', [PersonalAccessTokenController::class, 'update']);
-Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy']);
+// Route::get("/tokens", [PersonalAccessTokenController::class, "index"]);
+// Route::get("/tokens/{id}", [PersonalAccessTokenController::class, "show"])->where('id', '[0-9]+');
+// Route::get("/tokens/search", [PersonalAccessTokenController::class, "search"]);
+// Route::post('/tokens', [PersonalAccessTokenController::class, 'store']);
+// Route::put('/tokens/{id}', [PersonalAccessTokenController::class, 'update']);
+// Route::delete('/tokens/{id}', [PersonalAccessTokenController::class, 'destroy']);
 
 //Auth Routes
 Route::post('auth/login', [AuthController::class, 'login']);

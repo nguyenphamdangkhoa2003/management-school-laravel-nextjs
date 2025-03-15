@@ -87,10 +87,10 @@ const ClassListPage = () => {
           return
         }
         try {
-          const filteredStudent = await getClass(searchValue);
-          setAllClass(filteredStudent);
+          const filtered = await getClass(searchValue);
+          setAllClass(filtered);
         } catch (error) {
-          console.error("Lỗi khi tìm kiếm môn học:", error);
+          console.error("Lỗi khi tìm kiếm lớp học:", error);
         }
   }
   return (

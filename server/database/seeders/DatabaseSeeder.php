@@ -20,6 +20,7 @@ use App\Models\Teacher;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Testing\Fakes\Fake;
 
@@ -55,16 +56,18 @@ class DatabaseSeeder extends Seeder
 
         // SUBJECTS
         $subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Science", "Literature", "English"];
-
+        $subjectIds = [];
         foreach ($subjects as $s) {
-            Subject::create([
+            $subject=Subject::create([
                 "name" => $s,
             ]);
+            $subjectIds[] = $subject->id;
         }
 
         //Teacher
+        $teacherIds = [];
         for ($i = 0; $i <= 16; $i++) {
-            Teacher::create([
+            $teacher = Teacher::create([
                 "username" => fake()->userName(),
                 "name" => fake()->name,
                 "surname" => fake()->name,
@@ -75,17 +78,35 @@ class DatabaseSeeder extends Seeder
                 "sex" => $i % 2 === 0 ? "MALE" : "FEMALE",
                 "img" => fake()->imageUrl(),
                 "birthday" => fake()->date(),
-                "password" => Hash::make("12345678"),
-                "subject_id" => $i % 8 + 1,
+                "password" => Hash::make("12345678")          
             ]);
+            $teacherIds[] = $teacher->id;
         }
+        //subject teacher
+           // Assign subjects to teachers via pivot table
+           foreach ($teacherIds as $teacherId) {
+            $teacherSubjects = array_rand($subjectIds, rand(1, 3)); // Randomly assign 1-3 subjects to each teacher
+
+            // Ensure $teacherSubjects is an array even if a single item is chosen
+            if (!is_array($teacherSubjects)) {
+                $teacherSubjects = [$teacherSubjects];
+            }
+
+            foreach ($teacherSubjects as $subjectId) {
+                DB::table('subject_teacher')->insert([
+                    'teacher_id' => $teacherId,
+                    'subject_id' => $subjectIds[$subjectId],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+        
 
         for ($i = 1; $i <= 6; $i++) {
             SchoolClass::where("id", $i)->update(["supervisor_id" => $i % 16 + 1]);
         }
-        for ($i = 1; $i <= 9; $i++) {
-            Subject::where("id", $i)->update(["teacher_id" => $i % 16 + 1]);
-        }
+  
         //Lesson
         for ($i = 0; $i <= 30; $i++) {
             Lesson::create([

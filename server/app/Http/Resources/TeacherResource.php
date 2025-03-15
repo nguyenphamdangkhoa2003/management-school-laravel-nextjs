@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +26,6 @@ class TeacherResource extends JsonResource
             'email' => $this->email,
             "bloodType" => $this->bloodType,
             "sex" => $this->sex,
-            "subjects" => SubjectResource::collection($this->subjects),
             "school_classes" => ClassResource::collection($this->school_classes),
         ];
     }

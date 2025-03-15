@@ -12,6 +12,7 @@ class Student extends Model
     use HasApiTokens;
 
     public $fillable = [
+        "code",
         "username",
         "name",
         "surname",
@@ -22,7 +23,11 @@ class Student extends Model
         "sex",
         "bloodType",
         "birthday",
-        "password"
+        "password",
+    "guardian_id",
+    "school_class_id",
+    "grade_id",
+
     ];
 
     public function guardians(): BelongsTo

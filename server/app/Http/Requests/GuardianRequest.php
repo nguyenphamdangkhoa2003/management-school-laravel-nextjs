@@ -29,7 +29,8 @@ class GuardianRequest extends FormRequest
             'phone' => 'nullable|string|unique:guardians,phone,' . $this->route('id'),
             'address' => 'required|string',
             'job' => 'nullable|string',
-            'sex' => 'required|in:MALE,FEMALE'
+            'sex' => 'required|in:MALE,FEMALE',
+            'password' => 'required|string|min:6'
         ];
     }
 }
