@@ -139,7 +139,6 @@ class TeacherController extends Controller
         $img = $request->query("img");
         $bloodType = $request->query("bloodType");
         $birthday = $request->query("birthday");
-        $subject_id = $request->query("subject_id");
         $password = $request->query("password");
         $sex = $request->query("sex");
         $created_at = $request->query("created_at");
@@ -181,10 +180,6 @@ class TeacherController extends Controller
     
         if ($birthday) {
             $query->orWhere("birthday", "like", "%" . $birthday . "%");
-        }
-    
-        if ($subject_id) {
-            $query->orWhere("subject_id", "like", "%" . $subject_id . "%");
         }
     
         if ($password) {

@@ -26,7 +26,6 @@ class TeacherResource extends JsonResource
             'email' => $this->email,
             "bloodType" => $this->bloodType,
             "sex" => $this->sex,
-            "subjects" => new SubjectResource(Subject::find($this->subject_id)),
             "school_classes" => ClassResource::collection($this->school_classes),
         ];
     }

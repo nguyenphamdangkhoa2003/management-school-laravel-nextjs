@@ -34,7 +34,6 @@ class StoreTeacherRequest extends FormRequest
             'sex' => ['required', 'string', Rule::in(["MALE", "FEMALE"])],
             'birthday' => 'required|date',
             'password' => $this->isMethod('POST') ? 'required|min:8' : 'sometimes|min:8',
-            'subject_id' => 'required|exists:subjects,id',
         ];
     }
 }

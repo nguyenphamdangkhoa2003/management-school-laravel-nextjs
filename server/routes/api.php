@@ -17,6 +17,7 @@ use App\Http\Controllers\PersonalAccessTokenController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SubjectTeacherController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -142,6 +143,15 @@ Route::post('/admins', [AdminController::class, 'store']);
 Route::put('/admins/{id}', [AdminController::class, 'update']);
 Route::delete('/admins/{id}', [AdminController::class, 'destroy']);
 
+// SubjectTeacher Routes
+Route::get('subject-teachers', [SubjectTeacherController::class,"index"]);
+Route::get('subject-teachers/search', [SubjectTeacherController::class, 'search']);
+Route::get('teachers/{teacher}/subjects', [SubjectTeacherController::class, 'getTeacherSubjects']);
+Route::get('subjects/{subject}/teachers', [SubjectTeacherController::class, 'getSubjectTeachers']);
+Route::get("/subject-teachers/{id}", [SubjectTeacherController::class, "show"])->where('id', '[0-9]+');
+Route::post('/subject-teachers', [SubjectTeacherController::class, 'store']);
+Route::put('/subject-teachers/{id}', [SubjectTeacherController::class, 'update']);
+Route::delete('/subject-teachers/{id}', [SubjectTeacherController::class, 'destroy']);
 // Personal Access Token Routes
 // Route::get("/tokens", [PersonalAccessTokenController::class, "index"]);
 // Route::get("/tokens/{id}", [PersonalAccessTokenController::class, "show"])->where('id', '[0-9]+');

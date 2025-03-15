@@ -10,9 +10,9 @@ class Subject extends Model
 {
     public $fillable = ["name"];
 
-    public function teachers(): HasMany
+  public function teachers()
     {
-        return $this->hasMany(Teacher::class, 'subject_id');
+        return $this->belongsToMany(Teacher::class, 'subject_teacher');
     }
     
 
