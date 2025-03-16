@@ -60,6 +60,8 @@ class DatabaseSeeder extends Seeder
         foreach ($subjects as $s) {
             $subject=Subject::create([
                 "name" => $s,
+                "tin_chi" => rand(1, 3),
+                "tin_chi_hoc_phan" => rand(1, 3),
             ]);
             $subjectIds[] = $subject->id;
         }
@@ -156,25 +158,25 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        //Exam
-        for ($i = 0; $i <= 10; $i++) {
-            Exam::create([
-                "title" => fake()->title,
-                "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
-                "endTime" => date("Y-m-d H:i:s", strtotime("+2 hour")),
-                "lesson_id" => $i % 30 + 1
-            ]);
-        }
+        // //Exam
+        // for ($i = 0; $i <= 10; $i++) {
+        //     Exam::create([
+        //         "title" => fake()->title,
+        //         "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
+        //         "endTime" => date("Y-m-d H:i:s", strtotime("+2 hour")),
+        //         "lesson_id" => $i % 30 + 1
+        //     ]);
+        // }
 
-        //ASSIGNMENT
-        for ($i = 0; $i <= 10; $i++) {
-            Assignment::create([
-                "title" => fake()->title,
-                "startDate" => date("Y-m-d H:i:s", strtotime("+1 hour")),
-                "dueDate" => date("Y-m-d H:i:s", timestamp: strtotime("+1 day")),
-                "lesson_id" => $i % 30 + 1
-            ]);
-        }
+        // //ASSIGNMENT
+        // for ($i = 0; $i <= 10; $i++) {
+        //     Assignment::create([
+        //         "title" => fake()->title,
+        //         "startDate" => date("Y-m-d H:i:s", strtotime("+1 hour")),
+        //         "dueDate" => date("Y-m-d H:i:s", timestamp: strtotime("+1 day")),
+        //         "lesson_id" => $i % 30 + 1
+        //     ]);
+        // }
 
         //Result
         for ($i = 0; $i <= 10; $i++) {

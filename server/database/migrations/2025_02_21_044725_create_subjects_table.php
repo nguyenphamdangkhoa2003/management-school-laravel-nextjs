@@ -15,6 +15,8 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string("name")->unique();
+            $table->string('tin_chi');
+            $table->string('tin_chi_hoc_phan');
             $table->timestamps();
         });
     }

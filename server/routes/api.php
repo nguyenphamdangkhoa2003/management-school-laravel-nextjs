@@ -17,6 +17,7 @@ use App\Http\Controllers\PersonalAccessTokenController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SubjectTeacherController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
