@@ -22,7 +22,9 @@ class SubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:subjects,name,' . $this->route('id')
+            'name' => 'required|string|unique:subjects,name,' . $this->route('id'),
+            'tin_chi' => 'required|integer',
+            'tin_chi_hoc_phan' => 'required|integer',
         ];
     }
 }
