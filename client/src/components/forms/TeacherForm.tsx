@@ -124,9 +124,7 @@ const TeacherForm = ({
       let response;
       if (type === "create") {
         response = await addTeacher(formData);
-        
         if (response?.id) {
-          // Nếu tạo giáo viên thành công, thêm vào bảng subjectteacher
           const teacherId = response.id;
           const selectedSubjects = data.subjects || [];
           console.log("Adding subject for teacher:", teacherId, "Subject ID:", selectedSubjects);
@@ -168,35 +166,36 @@ const TeacherForm = ({
             <InputField label="Tên tài khoản" name="username" defaultValue={data?.username} register={register} error={errors?.username} />
             <InputField label="Email" name="email" defaultValue={data?.email} register={register} error={errors?.email} />
             <InputField label="Mật khẩu" name="password" type="password" defaultValue={data?.password} register={register} error={errors?.password} />
-            <div className="flex flex-col gap-2 w-full md:w-1/4">
-              <label className="text-xs font-medium text-gray-600">Môn học</label>
-              
-              <select
-                className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
-                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                          hover:border-blue-400 transition-all"
-                {...register("subjects")}
-                multiple
-                defaultValue={data?.subjects ?? []}
-              >
-                {subjects ? (
-                  subjects.map((subject: any) => (
-                    <option key={subject.id} value={subject.id} className="p-2">
-                      {subject.name}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>Đang tải...</option>
+            {type === "create" && (
+              <div className="flex flex-col gap-2 w-full md:w-1/4">
+                <label className="text-xs font-medium text-gray-600">Môn học</label>
+                
+                <select
+                  className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                            hover:border-blue-400 transition-all"
+                  {...register("subjects")}
+                  multiple
+                  defaultValue={data?.subjects ?? []}
+                >
+                  {subjects ? (
+                    subjects.map((subject: any) => (
+                      <option key={subject.id} value={subject.id} className="p-2">
+                        {subject.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Đang tải...</option>
+                  )}
+                </select>
+
+                {errors.subjects?.message && (
+                  <p className="text-xs text-red-500 font-medium mt-1">
+                    {errors.subjects.message.toString()}
+                  </p>
                 )}
-              </select>
-
-              {errors.subjects?.message && (
-                <p className="text-xs text-red-500 font-medium mt-1">
-                  {errors.subjects.message.toString()}
-                </p>
-              )}
-            </div>
-
+              </div>
+            )}
           </div>
 
           <span className="text-xs text-gray-400 font-medium">Thông tin cá nhân</span>

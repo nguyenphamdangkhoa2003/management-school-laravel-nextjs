@@ -10,7 +10,8 @@ import React, { useState, useEffect } from "react";
 type Subject = {
   id: number;
   name: string;
-  credits: string;
+  tin_chi: number;
+  tin_chi_hoc_phan:number
 };
 
 const columns = [
