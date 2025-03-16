@@ -14,7 +14,7 @@ const schema = (type: "create" | "update") =>
       .number()
       .int()
       .min(1, { message: "ID phải là số nguyên" })
-      .optional(), // Cho phép `id` không bắt buộc khi tạo mới
+      .optional(),
     subjectname: z
       .string()
       .min(2, { message: "Tên môn học phải dài hơn 2 ký tự!" })

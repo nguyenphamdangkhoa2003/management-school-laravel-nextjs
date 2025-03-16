@@ -57,7 +57,11 @@ const SubjectTeacherListPage = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="subjectteacher" type="update" data={item} />
+              <FormModal table="subjectteacher" type="update" data={{
+                id: item.id,
+                subjectId: item.subject.id,
+                teacherId: item.teacher.id,
+              }} />
               <FormModal table="subjectteacher" type="delete" id={item.id} />
             </>
           )}

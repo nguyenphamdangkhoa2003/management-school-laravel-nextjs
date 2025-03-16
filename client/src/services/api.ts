@@ -185,6 +185,16 @@ export const addSubjectTeacher = async (Data: FormData) => {
     throw error;
   }
 }
+export const updateSubjectTeacher = async (id:number,Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/subject-teachers/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật môn học:", error.response?.data || error.message);
+    throw error;
+  }
+};
 export const deleteSubjectTeacher =async (id:number)=>{
   try {
     const response =await api.delete(`/subject-teachers/${id}`);

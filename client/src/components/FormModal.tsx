@@ -45,6 +45,10 @@ const LessonForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
+const SubjectTeacherForm = dynamic(() => import("./forms/SubjectTeacherForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
 const AnnouncementForm = dynamic(() => import("./forms/announcement"), {
   loading: () => <h1>Loading...</h1>,
 });
@@ -57,6 +61,7 @@ const forms: {
   parent: (type, data) => <ParentForm type={type} data={data} />,
   subject: (type, data) => <SubjectForm type={type} data={data} />,
   lesson: (type, data) => <LessonForm type={type} data={data} />,
+  subjectteacher: (type, data) => <SubjectTeacherForm type={type} data={data} />,
   announcement: (type, data) => <LessonForm type={type} data={data} />,
 };
 
