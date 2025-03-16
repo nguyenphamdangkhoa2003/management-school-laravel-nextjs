@@ -7,17 +7,29 @@ import InputField from "../InputField";
 import { useState,useEffect } from "react";
 import { addSubject,updateSubject } from "@/services/api";
 
-const schema = z.object({
-    id:z .coerce.number().int().min(1, { message: "nhập 1 số nguyên" }),
+const schema = (type: "create" | "update") =>
+  z.object({
+    id: z
+      .coerce
+      .number()
+      .int()
+      .min(1, { message: "ID phải là số nguyên" })
+      .optional(), // Cho phép `id` không bắt buộc khi tạo mới
     subjectname: z
-        .string()
-        .min(2, { message: "tên lớp phải dài hơn 2 ký tự!" })
-        .max(20, { message: "tên lớp không được quá 20 ký tự!" }),
-    credit: z
-        .coerce.number().int().min(1, { message: "nhập 1 số nguyên" }),
-    credittuit: z
-        .coerce.number().int().min(1, { message: "nhập 1 số nguyên" }),
-});
+      .string()
+      .min(2, { message: "Tên môn học phải dài hơn 2 ký tự!" })
+      .max(20, { message: "Tên môn học không được quá 20 ký tự!" }),
+    credit: z.coerce.number().int().min(1, { message: "Nhập 1 số nguyên" }),
+    credittuit: z.coerce.number().int().min(1, { message: "Nhập 1 số nguyên" }),
+  }).refine((data) => {
+    if (type === "update" && !data.id) {
+      return false;
+    }
+    return true;
+  }, { message: "ID là bắt buộc khi cập nhật", path: ["id"] });
+
+
+
 
 type Inputs = z.infer<typeof schema>;
 
@@ -31,10 +43,10 @@ const ClassForm = ({
     const {
         register,
         handleSubmit,
-        setValue,
         formState: { errors },
     } = useForm<Inputs>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema(type)),
+        defaultValues: type === "update" ? data : {},
     });
     const [showForm, setShowForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -49,14 +61,15 @@ const ClassForm = ({
             let test;
             if (type==="create") {
                 test=await addSubject(payload);
-                setTimeout(() => window.location.reload(), 2000);
-            }else if(type==="update"){
+                setTimeout(() => window.location.reload(), 1500);
+            }
+            else if(type==="update"){
                 const formData = new FormData();
                 formData.append("name", data.subjectname);
                 formData.append("tin_chi", data.credit.toString());
                 formData.append("tin_chi_hoc_phan", data.credittuit.toString());
                 test= await updateSubject(data?.id,formData)
-                setTimeout(() => window.location.reload(), 2000);
+                setTimeout(() => window.location.reload(), 1500);
             }
             setShowForm(false);
             setErrorMessage(null);
