@@ -62,9 +62,9 @@ const menuItems = [
       },
       {
         icon: "/exam.png",
-        label: "Kỳ thi",
-        href: "/list/exams",
-        visible: ["admin", "teacher", "student", "parent"],
+        label: "Môn giảng dạy",
+        href: "/list/subject-teacher",
+        visible: ["admin"],
       },
       {
         icon: "/assignment.png",

@@ -1,5 +1,9 @@
 "use client";
-import { deleteTeacher, deleteStudent, deleteSClass, deleteSubject, deleteParent, deleteLesson, deleteSubjectTeacher } from "@/services/api";
+import { 
+  deleteTeacher, deleteStudent, deleteSClass, 
+  deleteSubject, deleteParent, deleteLesson, 
+  deleteSubjectTeacher 
+} from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
@@ -69,7 +73,7 @@ const FormModal = ({
   | "subject"
   | "class"
   | "lesson"
-  | "exam"
+  | "subjectteacher"
   | "assignment"
   | "result"
   | "attendance"
@@ -116,6 +120,9 @@ const FormModal = ({
         if (table === "lesson") {
           await deleteLesson(id);
         }
+        if (table === "subjectteacher") {
+          await deleteSubjectTeacher(id);
+        }
         setSuccessMessage(`Xóa thành công!`);
         setShowSuccessModal(true);
         setOpen(false);
@@ -138,6 +145,9 @@ const FormModal = ({
         }
         if (table === "lesson") {
           setErrorMessage("Không thể xóa bài giảng này này!");
+        }
+        if (table === "subjectteacher") {
+          setErrorMessage("Không thể xóa môn học đang dạy này!");
         }
         setShowErrorModal(true);
       }
