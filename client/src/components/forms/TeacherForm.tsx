@@ -5,12 +5,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
-import { addTeacher, updateTeacher } from "@/services/api";
+import { addTeacher, updateTeacher,getSubjects,addSubjectTeacher } from "@/services/api";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 
 const schema = z.object({
+  subjects: z.array(z.string()).optional(),
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters long!" })
@@ -54,8 +55,9 @@ const TeacherForm = ({
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { id } = useParams();
   const [teacher, setTeacher] = useState(null);
-
+  const [subjects, setSubjects] = useState(null);
   useEffect(() => {
+  if (type === "update") {
     if (id) {
       axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
         .then((res) => {
@@ -67,7 +69,27 @@ const TeacherForm = ({
         })
         .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
     }
-  }, [id]);
+  } else {
+    const fetchAllTeachers = async () => {
+      try {
+        const firstPage = await getSubjects(1, 10);
+        const totalPages = firstPage.meta?.last_page || 1;
+
+        const allSubjectPages = await Promise.all(
+          Array.from({ length: totalPages }, (_, i) => getSubjects(i + 1, 10))
+        );
+        const allSubject = allSubjectPages.flatMap((page) => page.data);
+        setSubjects(allSubject);
+      } catch (err: any) {
+        setErrorMessage(err.message);
+      }
+    };
+
+    fetchAllTeachers();
+  }
+}, [type, id]); 
+
+  
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,6 +124,21 @@ const TeacherForm = ({
       let response;
       if (type === "create") {
         response = await addTeacher(formData);
+        
+        if (response?.id) {
+          // Nếu tạo giáo viên thành công, thêm vào bảng subjectteacher
+          const teacherId = response.id;
+          const selectedSubjects = data.subjects || [];
+          console.log("Adding subject for teacher:", teacherId, "Subject ID:", selectedSubjects);
+          for (const subjectId of selectedSubjects) {
+            const subjectTeacherData = new FormData();
+            subjectTeacherData.append("teacher_id", teacherId);
+            subjectTeacherData.append("subject_id", subjectId);
+            console.log("Adding subject-teacher:", { teacherId, subjectId });
+            
+            await addSubjectTeacher(subjectTeacherData);
+          }
+        }
       } else if (type === "update") {
         await updateTeacher(teacher.id, formData);
         setTimeout(() => window.location.reload(), 2000);
@@ -110,7 +147,6 @@ const TeacherForm = ({
       setErrorMessage(null);
 
     } catch (error: any) {
-      console.error("❌ Lỗi từ API:", error.response?.data || error.message);
       setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
     }
   });
@@ -132,6 +168,35 @@ const TeacherForm = ({
             <InputField label="Tên tài khoản" name="username" defaultValue={data?.username} register={register} error={errors?.username} />
             <InputField label="Email" name="email" defaultValue={data?.email} register={register} error={errors?.email} />
             <InputField label="Mật khẩu" name="password" type="password" defaultValue={data?.password} register={register} error={errors?.password} />
+            <div className="flex flex-col gap-2 w-full md:w-1/4">
+              <label className="text-xs font-medium text-gray-600">Môn học</label>
+              
+              <select
+                className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
+                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                          hover:border-blue-400 transition-all"
+                {...register("subjects")}
+                multiple
+                defaultValue={data?.subjects ?? []}
+              >
+                {subjects ? (
+                  subjects.map((subject: any) => (
+                    <option key={subject.id} value={subject.id} className="p-2">
+                      {subject.name}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>Đang tải...</option>
+                )}
+              </select>
+
+              {errors.subjects?.message && (
+                <p className="text-xs text-red-500 font-medium mt-1">
+                  {errors.subjects.message.toString()}
+                </p>
+              )}
+            </div>
+
           </div>
 
           <span className="text-xs text-gray-400 font-medium">Thông tin cá nhân</span>

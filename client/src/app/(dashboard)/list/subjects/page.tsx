@@ -10,17 +10,22 @@ import React, { useState, useEffect } from "react";
 type Subject = {
   id: number;
   name: string;
-  teachers: string;
+  credits: string;
 };
 
 const columns = [
   {
-    header: "Subject Name",
+    header: "Tên môn học",
     accessor: "name",
   },
   {
-    header: "Teachers",
-    accessor: "teachers",
+    header: "Tín chỉ",
+    accessor: "credits",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Tín chỉ học phân",
+    accessor: "credit tuit",
     className: "hidden md:table-cell",
   },
   {
@@ -42,7 +47,7 @@ const SubjectListPage = () => {
         const data = await getSubjects(currentPage, 10);
         setAllSubjects(data.data);
         setTotalPages(data.meta?.last_page || 1);
-      } catch (error) {
+      } catch (error:any) {
         setError(error.message);
       }
     };
@@ -54,12 +59,18 @@ const SubjectListPage = () => {
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td className="hidden md:table-cell"></td>
+      <td className="hidden md:table-cell">{item.tin_chi}</td>
+      <td className="hidden md:table-cell">{item.tin_chi_hoc_phan}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="subject" type="update" data={item} />
+              <FormModal table="subject" type="update" data={{
+                id: item.id,
+                subjectname: item.name,
+                credit: item.tin_chi,
+                credittuit: item.tin_chi_hoc_phan,
+              }} />
               <FormModal table="subject" type="delete" id={item.id} />
             </>
           )}

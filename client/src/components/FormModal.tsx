@@ -1,5 +1,5 @@
 "use client";
-import { deleteTeacher, deleteStudent, deleteSClass, deleteSubject, deleteParent, deleteLesson } from "@/services/api";
+import { deleteTeacher, deleteStudent, deleteSClass, deleteSubject, deleteParent, deleteLesson, deleteSubjectTeacher } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
@@ -99,6 +99,7 @@ const FormModal = ({
       try {
         if (table === "teacher") {
           await deleteTeacher(id);
+          await deleteSubjectTeacher(id);
         }
         if (table === "student") {
           await deleteStudent(id);

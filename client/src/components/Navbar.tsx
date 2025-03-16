@@ -20,6 +20,8 @@ const Navbar = () => {
       setRole("Giảng viên");
     } else if (guard === "student") {
       setRole("Sinh viên");
+    }else if(guard ==="parent"){
+      setRole("Phụ huynh")
     }
   }, [guard]);
 

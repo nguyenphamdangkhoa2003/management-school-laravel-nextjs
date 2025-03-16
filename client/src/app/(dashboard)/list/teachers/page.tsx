@@ -6,7 +6,7 @@ import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getTeachers, getTeacher } from "@/services/api";
+import { getTeachers, getTeacher,getSubjectTeachers } from "@/services/api";
 
 type Teacher = {
   id: number;
@@ -57,27 +57,45 @@ const columns = [
 
 const TeacherListPage = () => {
   const [teachers, setAllTeachers] = useState([]);
+  const [subjectteacher, setAllSubjectTeacher] = useState([]);
   const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        const data = await getTeachers(currentPage, 10);
-        setAllTeachers(data.data);
-        setTotalPages(data.meta?.last_page || 1); // Cập nhật tổng số trang
-      } catch (err) {
-        setError(err.message);
-      }
+  
+
+    useEffect(() => {
+      const fetchAllTeachers = async () => {
+        try {
+          const teacherData = await getTeachers(currentPage, 10);
+
+          const firstPage = await getSubjectTeachers(1, 10);
+          const totalPages = firstPage.meta?.last_page || 1;
+
+          const allSubjectPages = await Promise.all(
+            Array.from({ length: totalPages }, (_, i) => getSubjectTeachers(i + 1, 10))
+          );
+          const allSubjectTeachers = allSubjectPages.flatMap((page) => page.data);
+          setAllTeachers(teacherData.data);
+          setAllSubjectTeacher(allSubjectTeachers);
+          setTotalPages(teacherData.meta?.last_page || 1);
+        } catch (err: any) {
+          setError(err.message);
+        }
     };
 
-    fetchTeachers();
-  }, [currentPage]);
+  fetchAllTeachers();
+}, [currentPage]);
 
 
-  const renderRow = (item: Teacher) => (
 
+  const renderRow = (item: Teacher) => {
+      const subjectname = subjectteacher
+      ?.filter((subtea) => Number(item.id) === Number(subtea?.teacher?.id))
+      ?.map((subtea) => subtea?.subject?.name)
+      ?.join(", ") || "N/A";
+
+  return (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
@@ -97,9 +115,7 @@ const TeacherListPage = () => {
       </td>
       <td className="hidden md:table-cell">{item.id}</td>
       <td className="hidden md:table-cell">
-        {Array.isArray(item.subjects) && item.subjects.length > 0
-          ? item.subjects.map((subject) => subject.name).join(", ")
-          : ""}
+        {subjectname}
       </td>
       <td className="hidden md:table-cell">
         {Array.isArray(item.school_classes) && item.school_classes.length > 0
@@ -121,7 +137,7 @@ const TeacherListPage = () => {
         </div>
       </td>
     </tr>
-  );
+  );}
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();

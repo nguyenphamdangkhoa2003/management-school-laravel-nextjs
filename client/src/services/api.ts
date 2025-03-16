@@ -146,6 +146,54 @@ export const deleteSubject =async (id:number)=>{
       throw error;
   }
 }
+export const addSubject = async (Data: FormData) => {
+  try {
+    const response = await api.post(`/subjects`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm môn học:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const updateSubject = async (id:number,Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/subjects/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật môn học:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const getSubjectTeachers = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/subject-teachers`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách môn học theo giáo viên:", error.response?.data || error.message);
+    throw error;
+  }
+}
+export const addSubjectTeacher = async (Data: FormData) => {
+  try {
+    const response = await api.post(`/subject-teachers`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm môn học:", error.response?.data || error.message);
+    throw error;
+  }
+}
+export const deleteSubjectTeacher =async (id:number)=>{
+  try {
+    const response =await api.delete(`/subject-teachers/${id}`);
+    return response.data;
+  } catch (error) {
+      console.error("Lỗi xóa môn học", error.response?.data||error.message);
+      throw error;
+  }
+}
 //LỚP
 export const getClasses = async (page = 1, perPage = 10) => {
   try {
