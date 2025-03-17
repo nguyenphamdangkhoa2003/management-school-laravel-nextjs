@@ -117,7 +117,8 @@ for ($i = 1; $i <= 6; $i++) {
                 "day" => strtoupper(fake()->dayOfWeek),
                 "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
                 "endTime" => date("Y-m-d H:i:s", strtotime("+3 hour")),
-                "dateStudy" => date("Y-m-d", strtotime("+1 day")),
+                "thoi_gian_vo_hoc" => date("H:i:s", strtotime("+0 hour")),
+                "thoi_gian_ket_thuc" => date("H:i:s", strtotime("+5 hour")),
                 "subject_teacher_id" => rand(1, 4),
                 "school_class_id" => ($i % 5) + 1,
               

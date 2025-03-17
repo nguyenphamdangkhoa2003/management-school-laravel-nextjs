@@ -126,8 +126,8 @@ class LessonController extends Controller
             $day = $request->query('day');
             $startTime = $request->query('startTime');
             $endTime = $request->query('endTime');
-            $dateSturdy=$request->query('dateStudy');
-            
+            $thoi_gian_vo_hoc = $request->query('thoi_gian_vo_hoc');
+            $thoi_gian_ket_thuc= $request->query('thoi_gian_ket_thuc');
             $school_class_id = $request->query('school_class_id');
             $subject_teacher_id = $request->query('subject_teacher_id');
     
@@ -150,10 +150,12 @@ class LessonController extends Controller
             if ($endTime) {
                 $query->Orwhere('endTime', '<=', $endTime);
             }
-            if ($dateSturdy) {
-                $query->Orwhere('dateStudy', $dateSturdy);
+            if ($thoi_gian_vo_hoc) {
+                $query->Orwhere('thoi_gian_vo_hoc', $thoi_gian_vo_hoc);
             }
-            
+            if ($thoi_gian_ket_thuc) {
+                $query->Orwhere('thoi_gian_ket_thuc', $thoi_gian_ket_thuc);
+            }
             if ($subject_teacher_id) {
                 $query->Orwhere('subject_teacher_id', $subject_teacher_id);
             }
