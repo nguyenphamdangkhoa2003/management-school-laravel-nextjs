@@ -8,18 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
-    public $fillable = ["name", "day", "startTime", "endTime","subject_id", "teacher_id", "school_class_id"];
-
-    public function subjects(): BelongsTo
-    {
-        return $this->belongsTo(Subject::class, 'subject_id');
-    }
-    
-
-    public function teachers(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class, 'teacher_id');
-    }
+    public $fillable = ["link", "day", "startTime", "endTime","subject_teacher_id","school_class_id"];
 
     public function exams(): BelongsTo
     {
@@ -40,5 +29,8 @@ class Lesson extends Model
     {
         return $this->belongsTo(SchoolClass::class, 'school_class_id');
     }
-
+    public function subject_teacher(): BelongsTo
+    {
+        return $this->belongsTo(SubjectTeacher::class, 'subject_teacher_id');
+    }
 }

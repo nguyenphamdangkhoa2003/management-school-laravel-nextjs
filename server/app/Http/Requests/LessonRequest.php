@@ -22,12 +22,11 @@ class LessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:lessons,name,' . $this->route('id'),
+            'link' => 'required|string|unique:lessons,link,' . $this->route('id'),
             'day' => 'required|in:MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY',
             'startTime' => 'required|date_format:Y-m-d H:i:s',
             'endTime' => 'required|date_format:Y-m-d H:i:s|after:startTime',
-            'subject_id' => 'required|exists:subjects,id',
-            'teacher_id' => 'required|exists:teachers,id',
+            'subject_teacher_id' => 'required|exists:subject_teacher,id',
             'school_class_id' => 'required|exists:school_classes,id'
         ];
     }

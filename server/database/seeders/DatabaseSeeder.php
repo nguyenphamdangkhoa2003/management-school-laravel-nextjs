@@ -38,12 +38,13 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("12345678"),
         ]);
 
-        // GRADE
-        for ($i = 1; $i <= 6; $i++) {
-            Grade::create([
-                "level" => $i,
-            ]);
-        }
+       // GRADE
+for ($i = 1; $i <= 6; $i++) {
+    Grade::create([
+        "level" => "Năm học 202{$i}-202" . ($i + 4),
+    ]);
+}
+
 
         // SCHOOL CLASS
         for ($i = 1; $i <= 6; $i++) {
@@ -112,13 +113,13 @@ class DatabaseSeeder extends Seeder
         //Lesson
         for ($i = 0; $i <= 30; $i++) {
             Lesson::create([
-                "name" => fake()->word,
+                "link" => fake()->word,
                 "day" => strtoupper(fake()->dayOfWeek),
                 "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
                 "endTime" => date("Y-m-d H:i:s", strtotime("+3 hour")),
-                "subject_id" => ($i % 9) + 1,
+                "subject_teacher_id" => rand(1, 4),
                 "school_class_id" => ($i % 5) + 1,
-                "teacher_id" => ($i % 9) + 1,
+              
             ]);
         }
 
@@ -203,16 +204,16 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        //EVENT
-        for ($i = 1; $i <= 5; $i++) {
-            Event::create([
-                "title" => fake()->title,
-                "description" => fake()->realText,
-                "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
-                "endTime" => date("Y-m-d H:i:s", strtotime("+2 hour")),
-                "school_class_id" => ($i % 5) + 1,
-            ]);
-        }
+        // //EVENT
+        // for ($i = 1; $i <= 5; $i++) {
+        //     Event::create([
+        //         "title" => fake()->title,
+        //         "description" => fake()->realText,
+        //         "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
+        //         "endTime" => date("Y-m-d H:i:s", strtotime("+2 hour")),
+        //         "school_class_id" => ($i % 5) + 1,
+        //     ]);
+        // }
 
         //ANOUNCEMENT
         for ($i = 1; $i <= 5; $i++) {

@@ -16,12 +16,11 @@ class LessonResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "name" => $this->name,
+            "link" => $this->link,
             "day" => $this->day,
             "startTime" => $this->startTime,
             "endTime" => $this->endTime,
-            "subject" => new SubjectResource($this->whenLoaded('subjects')),
-            "teacher" => new TeacherResource($this->whenLoaded('teachers')),
+            "subject_teacher" => new SubjectTeacherResource($this->whenLoaded('subject_teacher')),
             "school_class" => new SchoolClassResource($this->whenLoaded('school_classes')),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

@@ -15,7 +15,7 @@ class LessonController extends Controller
     public function index()
     {
         try {
-            $lessons = Lesson::with('subjects','school_classes','teachers')->paginate(10);
+            $lessons = Lesson::with('school_classes','subject_teacher')->paginate(10);
             
             return LessonResource::collection($lessons);
         } catch (\Exception $e) {
@@ -53,11 +53,9 @@ class LessonController extends Controller
     public function show(string $id)
     {
         try {
-            $lesson = Lesson::findOrFail($id);
-            return response()->json([
-                'status' => Response::HTTP_OK,
-                'data' => $lesson
-            ]);
+            $lesson = Lesson::with('school_classes', 'subject_teacher')->findOrFail($id);
+            return new LessonResource($lesson);
+            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
@@ -124,20 +122,20 @@ class LessonController extends Controller
     {
         try {
             // Lấy các tham số từ request
-            $name = $request->query('name');
+            $link = $request->query('link');
             $day = $request->query('day');
             $startTime = $request->query('startTime');
             $endTime = $request->query('endTime');
-            $subject_id = $request->query('subject_id');
-            $teacher_id = $request->query('teacher_id');
+            
             $school_class_id = $request->query('school_class_id');
+            $subject_teacher_id = $request->query('subject_teacher_id');
     
             // Khởi tạo truy vấn
             $query = Lesson::query();
     
             // Điều kiện tìm kiếm cho các tham số
-            if ($name) {
-                $query->where('name', 'like', '%' . $name . '%');
+            if ($link) {
+                $query->where('link', 'like', '%' . $link . '%');
             }
     
             if ($day) {
@@ -152,12 +150,8 @@ class LessonController extends Controller
                 $query->Orwhere('endTime', '<=', $endTime);
             }
     
-            if ($subject_id) {
-                $query->Orwhere('subject_id', $subject_id);
-            }
-    
-            if ($teacher_id) {
-                $query->Orwhere('teacher_id', $teacher_id);
+            if ($subject_teacher_id) {
+                $query->Orwhere('subject_teacher_id', $subject_teacher_id);
             }
     
             if ($school_class_id) {

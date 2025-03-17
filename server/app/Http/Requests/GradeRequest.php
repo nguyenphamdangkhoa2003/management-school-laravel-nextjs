@@ -22,7 +22,7 @@ class GradeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'level' => 'required|integer|min:1|unique:grades,level,' . $this->route('id')
+            'level' => 'required|string|min:1|unique:grades,level,' . $this->route('id')
         ];
     }
 }
