@@ -5,6 +5,7 @@
 .react-calendar {
   width: 100% !important;
   border: none !important;
+  padding: 0 !important;
   font-family: "Inter", sans-serif !important;
 }
 
@@ -45,12 +46,8 @@
   border-color: #eee !important;
 }
 
-.rbc-time-header {
+.rbc-allday-cell{
   display: none !important;
-}
-
-.rbc-time-content {
-  border: none !important;
 }
 
 .rbc-time-gutter.rbc-time-column {
@@ -58,7 +55,7 @@
 }
 
 .rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
-  padding: 0px 20px !important;
+  padding: 0px!important;
 }
 
 .rbc-timeslot-group {
@@ -72,9 +69,19 @@
 .rbc-event {
   border: none !important;
   color: black !important;
-  padding: 10px !important;
-  margin: 10px !important;
-  width: 99% !important;
+  padding: 5px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.rbc-event-label{
+  display: none !important;
+}
+
+.rbc-events-container{
+  margin: 0 !important;
 }
 
 .rbc-event:nth-child(1) {

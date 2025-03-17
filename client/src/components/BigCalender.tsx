@@ -5,14 +5,26 @@ import moment from "moment";
 import { calendarEvents } from "@/lib/data";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
+import "moment/locale/vi"; 
+
+moment.locale("vi");
 
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
-  const [view, setView] = useState<View>(Views.WORK_WEEK);
+  const [view, setView] = useState<View>(Views.WEEK);
 
   const handleOnChangeView = (selectedView: View) => {
     setView(selectedView);
+  };
+
+  const CustomEvent = ({ event }: { event: any }) => {
+    return (
+      <div className="w-full h-full flex flex-col justify-center items-start p-1 text-gray-700">
+        <div className="text-xs">{moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}</div>
+        <div className="text-xs font-bold">{event.title}</div>
+      </div>
+    );
   };
 
   return (
@@ -21,12 +33,20 @@ const BigCalendar = () => {
       events={calendarEvents}
       startAccessor="start"
       endAccessor="end"
-      views={["work_week", "day"]}
+      views={[Views.WEEK, Views.DAY]}
       view={view}
-      style={{ height: "98%" }}
+      style={{ height: "70%" }}
       onView={handleOnChangeView}
-      min={new Date(2025, 1, 0, 8, 0, 0)}
-      max={new Date(2025, 1, 0, 17, 0, 0)}
+      min={new Date(2025, 0, 1, 7, 0, 0)}
+      max={new Date(2025, 0, 1, 18, 0, 0)}
+      formats={{
+        weekdayFormat: (date) => moment(date).format("dddd"), 
+        dayFormat: (date) => moment(date).format("dddd"),
+
+      }}
+      components={{
+        event: CustomEvent,
+      }}
     />
   );
 };
