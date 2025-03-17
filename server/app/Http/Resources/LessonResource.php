@@ -20,6 +20,7 @@ class LessonResource extends JsonResource
             "day" => $this->day,
             "startTime" => $this->startTime,
             "endTime" => $this->endTime,
+            "dateStudy" => $this->dateStudy,
             "subject_teacher" => new SubjectTeacherResource($this->whenLoaded('subject_teacher')),
             "school_class" => new SchoolClassResource($this->whenLoaded('school_classes')),
             "created_at" => $this->created_at,

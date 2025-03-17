@@ -15,7 +15,7 @@ class ResultController extends Controller
     public function index()
     {
         try {
-            $results = Result::with('exams','assignments','students')->paginate(10);
+            $results = Result::with('students','subjects')->paginate(10);
             return ResultResource::collection($results);
         } catch (\Exception $e) {
             return response()->json([
@@ -124,9 +124,10 @@ class ResultController extends Controller
         try {
             // Lấy các tham số từ request
             $student_id = $request->query('student_id');
-            $score = $request->query('score');
-            $exam_id = $request->query('exam_id');
-            $assignment_id = $request->query('assignment_id');
+            $process_score = $request->query('process_score');
+            $semi_score = $request->query('semi_score');
+            $final_score = $request->query('final_score');
+            $subject_id = $request->query('subject_id');
             $created_at = $request->query('created_at');
             $updated_at = $request->query('updated_at');
     
@@ -138,18 +139,20 @@ class ResultController extends Controller
                 $query->where('student_id', '=', $student_id);
             }
     
-            if ($score) {
-                $query->orWhere('score', '=', $score);
+            if ($process_score) {
+                $query->orWhere('process_score', '=', $process_score);
             }
     
-            if ($exam_id) {
-                $query->orWhere('exam_id', '=', $exam_id);
+            if ($semi_score) {
+                $query->orWhere('semi_score', '=', $semi_score);
             }
     
-            if ($assignment_id) {
-                $query->orWhere('assignment_id', '=', $assignment_id);
+            if ($final_score) {
+                $query->orWhere('final_score', '=', $final_score);
             }
-    
+            if ($subject_id) {
+                $query->orWhere('subject_id', '=', $subject_id);
+            }
             if ($created_at) {
                 $query->orWhere('created_at', 'like', '%' . $created_at . '%');
             }

@@ -117,6 +117,7 @@ for ($i = 1; $i <= 6; $i++) {
                 "day" => strtoupper(fake()->dayOfWeek),
                 "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
                 "endTime" => date("Y-m-d H:i:s", strtotime("+3 hour")),
+                "dateStudy" => date("Y-m-d", strtotime("+1 day")),
                 "subject_teacher_id" => rand(1, 4),
                 "school_class_id" => ($i % 5) + 1,
               
@@ -180,19 +181,19 @@ for ($i = 1; $i <= 6; $i++) {
         // }
 
         //Result
-        for ($i = 0; $i <= 10; $i++) {
-            $data = [
-                'score' => 90,
-                'student_id' => rand(1, 50),
-            ];
+      // In the DatabaseSeeder.php file, update the Result creation part:
 
-            if ($i <= 5) {
-                $data['exam_id'] = $i;
-            } else {
-                $data['assignment_id'] = $i - 5;
-            }
-            Result::create($data);
-        }
+//Result
+for ($i = 1; $i <= 50; $i++) {
+    Result::create([
+        'process_score' => rand(50, 100) / 10,
+        'semi_score' => rand(50, 100) / 10,
+        'final_scrore' => rand(50, 100) / 10,
+        'subject_id' => rand(1, count($subjectIds)),
+        'student_id' => rand(1, 50),
+    ]);
+}
+
 
         //ATTENDANCE
         for ($i = 1; $i <= 10; $i++) {

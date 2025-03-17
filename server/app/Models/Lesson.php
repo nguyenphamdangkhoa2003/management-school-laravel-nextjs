@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
-    public $fillable = ["link", "day", "startTime", "endTime","subject_teacher_id","school_class_id"];
+    public $fillable = ["link", "day", "startTime", "endTime","dateStudy","subject_teacher_id","school_class_id"];
 
     public function exams(): BelongsTo
     {

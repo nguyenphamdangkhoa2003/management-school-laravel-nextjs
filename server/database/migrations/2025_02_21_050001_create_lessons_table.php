@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->enum("day", ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]);
             $table->dateTime("startTime");
             $table->dateTime("endTime");
+            $table->date(   "dateStudy");
             $table->foreignId('subject_teacher_id')->constrained('subject_teacher')->onDelete('cascade');
             $table->timestamps();
         });

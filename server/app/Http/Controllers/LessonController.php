@@ -126,6 +126,7 @@ class LessonController extends Controller
             $day = $request->query('day');
             $startTime = $request->query('startTime');
             $endTime = $request->query('endTime');
+            $dateSturdy=$request->query('dateStudy');
             
             $school_class_id = $request->query('school_class_id');
             $subject_teacher_id = $request->query('subject_teacher_id');
@@ -149,7 +150,10 @@ class LessonController extends Controller
             if ($endTime) {
                 $query->Orwhere('endTime', '<=', $endTime);
             }
-    
+            if ($dateSturdy) {
+                $query->Orwhere('dateStudy', $dateSturdy);
+            }
+            
             if ($subject_teacher_id) {
                 $query->Orwhere('subject_teacher_id', $subject_teacher_id);
             }

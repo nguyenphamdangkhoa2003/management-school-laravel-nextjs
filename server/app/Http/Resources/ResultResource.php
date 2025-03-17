@@ -16,9 +16,10 @@ class ResultResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "score" => $this->score,
-            "exam_id" => new ExamResource($this->whenLoaded('exams')),
-            "assignment" =>   new AssignmentResource($this->whenLoaded('assignments')),
+            "process_score" => $this->process_score,
+            "semi_score" => $this->semi_score,
+            "final_scrore" => $this->final_scrore,
+            "subject" => new SubjectResource($this->whenLoaded('subjects')),
             "student" =>  new StudentResource($this->whenLoaded('students')),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

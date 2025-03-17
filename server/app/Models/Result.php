@@ -8,17 +8,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Result extends Model
 {
-    public $fillable = ["score", "exam_id", "assignment_id", "student_id"];
+    public $fillable = [  'process_score',
+    'semi_score',
+    'final_scrore',
+    'subject_id',
+     "student_id"];
 
-    public function exams(): BelongsTo
-    {
-        return $this->belongsTo(Exam::class, 'exam_id');
-    }
-
-    public function assignments(): BelongsTo
-    {
-        return $this->BelongsTo(Assignment::class, 'assignment_id');
-    }
+     public function subjects(): BelongsTo
+     {
+         return $this->belongsTo(Subject::class, 'subject_id');
+     }
 
     public function students(): BelongsTo
     {

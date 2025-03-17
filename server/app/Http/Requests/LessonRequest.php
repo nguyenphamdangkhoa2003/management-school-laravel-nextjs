@@ -26,6 +26,7 @@ class LessonRequest extends FormRequest
             'day' => 'required|in:MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY',
             'startTime' => 'required|date_format:Y-m-d H:i:s',
             'endTime' => 'required|date_format:Y-m-d H:i:s|after:startTime',
+            'dateStudy' => 'required|date_format:Y-m-d',
             'subject_teacher_id' => 'required|exists:subject_teacher,id',
             'school_class_id' => 'required|exists:school_classes,id'
         ];
