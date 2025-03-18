@@ -2,52 +2,116 @@
 
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
-import { calendarEvents } from "@/lib/data";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
-import "moment/locale/vi"; 
+import "moment/locale/vi";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 moment.locale("vi");
 
+const VIEW_OPTIONS = [
+  { id: Views.DAY, label: "Ngày" },
+  { id: Views.WEEK, label: "Tuần" },
+];
+
 const localizer = momentLocalizer(moment);
 
-const BigCalendar = () => {
-  const [view, setView] = useState<View>(Views.WEEK);
+interface BigCalendarProps {
+  events: { start: Date; end: Date; title: string }[];
+}
 
-  const handleOnChangeView = (selectedView: View) => {
-    setView(selectedView);
+const BigCalendar = ({ events }: BigCalendarProps) => {
+  const [view, setView] = useState<View>(Views.WEEK);
+  const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
+
+  const handleViewChange = (newView: View, selectedDate?: Date) => {
+    if (newView === Views.DAY) {
+      setCurrentDate(selectedDate ?? moment().toDate());
+    } else if (newView === Views.WEEK) {
+      setCurrentDate(moment().startOf("week").toDate());
+    }
+    setView(newView);
   };
 
   const CustomEvent = ({ event }: { event: any }) => {
     return (
-      <div className="w-full h-full flex flex-col justify-center items-start p-1 text-gray-700">
-        <div className="text-xs">{moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}</div>
+      <div className="flex w-full h-full flex-col justify-center items-center p-1 text-gray-700">
+        <div className="text-xs">
+          {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
+        </div>
         <div className="text-xs font-bold">{event.title}</div>
       </div>
     );
   };
 
-  return (
-    <Calendar
-      localizer={localizer}
-      events={calendarEvents}
-      startAccessor="start"
-      endAccessor="end"
-      views={[Views.WEEK, Views.DAY]}
-      view={view}
-      style={{ height: "70%" }}
-      onView={handleOnChangeView}
-      min={new Date(2025, 0, 1, 7, 0, 0)}
-      max={new Date(2025, 0, 1, 18, 0, 0)}
-      formats={{
-        weekdayFormat: (date) => moment(date).format("dddd"), 
-        dayFormat: (date) => moment(date).format("dddd"),
+  const handleNavigate = (direction: "prev" | "next") => {
+    setCurrentDate((prevDate) =>
+      direction === "prev"
+        ? moment(prevDate).subtract(1, view === Views.WEEK ? "weeks" : "days").toDate()
+        : moment(prevDate).add(1, view === Views.WEEK ? "weeks" : "days").toDate()
+    );
+  };
 
-      }}
-      components={{
-        event: CustomEvent,
-      }}
-    />
+  return (
+    <div className="p-4 relative">
+      <div className="flex justify-between items-center mb-2 relative">
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+          <button
+            onClick={() => handleNavigate("prev")}
+            className="p-2 rounded-md bg-gray-200 hover:bg-gray-300"
+          >
+            <ChevronLeft size={15} />
+          </button>
+          <span className="font-semibold text-sm">
+            {view === Views.WEEK
+              ? `${moment(currentDate).startOf("week").format("DD/MM")} - ${moment(currentDate).endOf("week").format("DD/MM")}`
+              : moment(currentDate).format("DD/MM/YYYY")}
+          </span>
+          <button
+            onClick={() => handleNavigate("next")}
+            className="p-2 rounded-md bg-gray-200 hover:bg-gray-300"
+          >
+            <ChevronRight size={15} />
+          </button>
+        </div>
+
+        <div className="ml-auto flex gap-2">
+          {VIEW_OPTIONS.map(({ id, label }) => (
+            <span
+              key={id}
+              onClick={() => handleViewChange(id)}
+              className={`cursor-pointer px-3 py-1 rounded-md ${
+                id === view ? "text-white bg-cyan-900" : "text-cyan-900 bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        views={[Views.WEEK, Views.DAY]}
+        view={view}
+        date={currentDate}
+        style={{ height: 800 }}
+        min={new Date(2025, 0, 1, 7, 0, 0)}
+        max={new Date(2025, 0, 1, 18, 0, 0)}
+        toolbar={false}
+        formats={{
+          weekdayFormat: (date) => moment(date).format("dddd"),
+          dayFormat: (date) => moment(date).format("dddd"),
+        }}
+        components={{
+          event: CustomEvent,
+        }}
+        onDrillDown={(date) => handleViewChange(Views.DAY, date)}
+      />
+    </div>
   );
 };
 

@@ -1056,3 +1056,80 @@ export const calendarEvents = [
     end: new Date(2025, 2, 21, 14, 45),
   },
 ];
+
+export const teachercalendarEvents = [
+  {
+    title: "Math",
+    allDay: false,
+    start: new Date(2025, 2, 17, 8, 0),
+    end: new Date(2025, 2, 17, 8, 45),
+  },
+
+  {
+    title: "Biology",
+    allDay: false,
+    start: new Date(2025, 2, 17, 10, 0),
+    end: new Date(2025, 2, 17, 10, 45),
+  },
+  {
+    title: "Physics",
+    allDay: false,
+    start: new Date(2025, 2, 17, 11, 0),
+    end: new Date(2025, 2, 17, 11, 45),
+  },
+ 
+  {
+    title: "English",
+    allDay: false,
+    start: new Date(2025, 2, 18, 9, 0),
+    end: new Date(2025, 2, 18, 9, 45),
+  },
+  {
+    title: "Biology",
+    allDay: false,
+    start: new Date(2025, 2, 18, 10, 0),
+    end: new Date(2025, 2, 18, 10, 45),
+  },
+ 
+
+  {
+    title: "History",
+    allDay: false,
+    start: new Date(2025, 2, 18, 14, 0),
+    end: new Date(2025, 2, 18, 14, 45),
+  },
+  {
+    title: "Math",
+    allDay: false,
+    start: new Date(2025, 2, 19, 8, 0),
+    end: new Date(2025, 2, 19, 8, 45),
+  },
+
+
+  {
+    title: "Chemistry",
+    allDay: false,
+    start: new Date(2025, 2, 19, 13, 0),
+    end: new Date(2025, 2, 19, 17, 45),
+  },
+
+  {
+    title: "History",
+    allDay: false,
+    start: new Date(2025, 2, 20, 14, 20),
+    end: new Date(2025, 2, 20, 14, 45),
+  },
+  {
+    title: "Math",
+    allDay: false,
+    start: new Date(2025, 2, 21, 8, 0),
+    end: new Date(2025, 2, 21, 8, 45),
+  },
+ 
+  {
+    title: "History",
+    allDay: false,
+    start: new Date(2025, 2, 21, 14, 0),
+    end: new Date(2025, 2, 21, 14, 45),
+  },
+];
