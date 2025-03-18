@@ -53,12 +53,12 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
   };
 
   return (
-    <div className="p-4 relative">
-      <div className="flex justify-between items-center mb-2 relative">
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+    <div className="p-4 relative overflow-x-scroll">
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-1 justify-between md:absolute md:left-1/2 md:-translate-x-1/2  ">
           <button
             onClick={() => handleNavigate("prev")}
-            className="p-2 rounded-md bg-gray-200 hover:bg-gray-300"
+            className="p-2 rounded-l-md bg-gray-200 hover:bg-gray-300"
           >
             <ChevronLeft size={15} />
           </button>
@@ -69,13 +69,13 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
           </span>
           <button
             onClick={() => handleNavigate("next")}
-            className="p-2 rounded-md bg-gray-200 hover:bg-gray-300"
+            className="p-2 rounded-r-md bg-gray-200 hover:bg-gray-300"
           >
             <ChevronRight size={15} />
           </button>
         </div>
 
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-1">
           {VIEW_OPTIONS.map(({ id, label }) => (
             <span
               key={id}
@@ -98,7 +98,7 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
         views={[Views.WEEK, Views.DAY]}
         view={view}
         date={currentDate}
-        style={{ height: 800 }}
+        style={{ minHeight: 800, minWidth: 800}}
         min={new Date(2025, 0, 1, 7, 0, 0)}
         max={new Date(2025, 0, 1, 18, 0, 0)}
         toolbar={false}
