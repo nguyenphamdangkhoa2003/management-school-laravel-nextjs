@@ -61,8 +61,8 @@ for ($i = 1; $i <= 6; $i++) {
         foreach ($subjects as $s) {
             $subject=Subject::create([
                 "name" => $s,
-                "tin_chi" => rand(1, 3),
-                "tin_chi_hoc_phan" => rand(1, 3),
+                "credit" => rand(1, 3),
+                "course_credit" => rand(1, 3),
             ]);
             $subjectIds[] = $subject->id;
         }
@@ -117,8 +117,8 @@ for ($i = 1; $i <= 6; $i++) {
                 "day" => strtoupper(fake()->dayOfWeek),
                 "startTime" => date("Y-m-d H:i:s", strtotime("+1 hour")),
                 "endTime" => date("Y-m-d H:i:s", strtotime("+3 hour")),
-                "thoi_gian_vo_hoc" => date("H:i:s", strtotime("+0 hour")),
-                "thoi_gian_ket_thuc" => date("H:i:s", strtotime("+5 hour")),
+                "class_time" => date("H:i:s", strtotime("+0 hour")),
+                "ending_class_time" => date("H:i:s", strtotime("+5 hour")),
                 "subject_teacher_id" => rand(1, 4),
                 "school_class_id" => ($i % 5) + 1,
               

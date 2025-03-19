@@ -20,8 +20,8 @@ return new class extends Migration {
             $table->enum("day", ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]);
             $table->dateTime("startTime");
             $table->dateTime("endTime");
-            $table->time("thoi_gian_vo_hoc");
-            $table->time("thoi_gian_ket_thuc");
+            $table->time("class_time");
+            $table->time("ending_class_time");
             $table->foreignId('subject_teacher_id')->constrained('subject_teacher')->onDelete('cascade');
             $table->timestamps();
         });

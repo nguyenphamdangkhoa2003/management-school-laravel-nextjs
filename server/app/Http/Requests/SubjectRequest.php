@@ -23,8 +23,8 @@ class SubjectRequest extends FormRequest
     {
         return [
             'name' => 'required|string|unique:subjects,name,' . $this->route('id'),
-            'tin_chi' => 'required|integer',
-            'tin_chi_hoc_phan' => 'required|integer',
+            'credit' => 'required|integer',
+            'course_credit' => 'required|integer',
         ];
     }
 }

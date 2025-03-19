@@ -123,9 +123,10 @@ class SubjectController extends Controller
         try {
             // Lấy các tham số từ request
             $name = $request->query("name");
+            $credit = $request->query("credit");
+            $course_credit = $request->query("course_credit");
             $created_at = $request->query("created_at");
             $updated_at = $request->query("updated_at");
-            $teacher_id = $request->query("teacher_id");
     
             // Khởi tạo truy vấn
             $query = Subject::query();
@@ -146,10 +147,12 @@ class SubjectController extends Controller
             }
     
             // Nếu có teacher_id, tìm kiếm theo teacher_id
-            if ($teacher_id) {
-                $query->orWhere("teacher_id", "=", $teacher_id);
+            if ($credit) {
+                $query->orWhere("credit", "=", $credit);
             }
-    
+            if ($course_credit) {
+                $query->orWhere("course_credit", "=", $course_credit);
+            }
             // Thực hiện truy vấn và phân trang kết quả
             $subjects = $query->paginate(10);
             Log::info("Executing SQL: " . $query->toSql());
