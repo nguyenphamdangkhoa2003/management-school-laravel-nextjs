@@ -41,7 +41,7 @@ const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
-const LessonForm = dynamic(() => import("./forms/SubjectForm"), {
+const LessonForm = dynamic(() => import("./forms/LessonForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
