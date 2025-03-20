@@ -10,8 +10,8 @@ import React, { useState, useEffect } from "react";
 type Subject = {
   id: number;
   name: string;
-  tin_chi: number;
-  tin_chi_hoc_phan:number
+  credit: number;
+  course_credit:number
 };
 
 const columns = [
@@ -60,8 +60,8 @@ const SubjectListPage = () => {
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td className="hidden md:table-cell">{item.tin_chi}</td>
-      <td className="hidden md:table-cell">{item.tin_chi_hoc_phan}</td>
+      <td className="hidden md:table-cell">{item.credit}</td>
+      <td className="hidden md:table-cell">{item.course_credit}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
@@ -69,8 +69,8 @@ const SubjectListPage = () => {
               <FormModal table="subject" type="update" data={{
                 id: item.id,
                 subjectname: item.name,
-                credit: item.tin_chi,
-                credittuit: item.tin_chi_hoc_phan,
+                credit: item.credit,
+                credittuit: item.course_credit,
               }} />
               <FormModal table="subject" type="delete" id={item.id} />
             </>

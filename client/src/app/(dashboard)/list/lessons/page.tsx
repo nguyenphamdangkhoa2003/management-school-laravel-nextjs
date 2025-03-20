@@ -47,7 +47,7 @@ const LessonListPage = () => {
           const data = await getLessons(currentPage, 10);
           setAllLesson(data.data);
           setTotalPages(data.meta?.last_page || 1);
-        } catch (err) {
+        } catch (err:any) {
            setError(err.message);
          }
       };
