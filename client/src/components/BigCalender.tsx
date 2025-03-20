@@ -16,13 +16,43 @@ const VIEW_OPTIONS = [
 
 const localizer = momentLocalizer(moment);
 
-interface BigCalendarProps {
-  events: { start: Date; end: Date; title: string }[];
-}
-
-const BigCalendar = ({ events }: BigCalendarProps) => {
+// Nhận props `events` từ bên ngoài
+const BigCalendar = ({ events }: { events: any[] }) => {
   const [view, setView] = useState<View>(Views.WEEK);
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
+
+  // Xử lý sự kiện lặp lại hàng tuần
+  const generateRecurringEvents = () => {
+    let allEvents: any[] = [];
+
+    events.forEach((event) => {
+      if (event.repeat === "weekly") {
+        let startDate = moment(event.start);
+        let endDate = moment(event.end);
+        let repeatUntil = moment(event.repeatUntil);
+
+        while (startDate.isBefore(repeatUntil)) {
+          if (startDate.isoWeekday() === event.dayOfWeek) {
+            allEvents.push({
+              title: event.title,
+              start: startDate.toDate(),
+              end: endDate.toDate(),
+              teacher: event.teacher,
+              link: event.link,
+            });
+          }
+          startDate.add(1, "day");
+          endDate.add(1, "day");
+        }
+      } else {
+        allEvents.push(event);
+      }
+    });
+
+    return allEvents;
+  };
+
+  const allEvents = generateRecurringEvents();
 
   const handleViewChange = (newView: View, selectedDate?: Date) => {
     if (newView === Views.DAY) {
@@ -33,16 +63,26 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
     setView(newView);
   };
 
-  const CustomEvent = ({ event }: { event: any }) => {
-    return (
-      <div className="flex w-full h-full flex-col justify-center items-center p-1 text-gray-700">
-        <div className="text-xs">
-          {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
-        </div>
-        <div className="text-xs font-bold">{event.title}</div>
+  const CustomEvent = ({ event }: { event: any }) => (
+    <div className="flex flex-col justify-center items-center p-1 text-gray-700">
+      <div className="text-xs">
+        {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
       </div>
-    );
-  };
+      <div className="text-xs font-bold">{event.title}</div>
+      <div className="text-xs italic">{event.teacher}</div>
+      {event.link && (
+        <a
+          href={event.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 text-xs underline"
+        >
+          Xem bài giảng
+        </a>
+      )}
+    </div>
+  );
+
 
   const handleNavigate = (direction: "prev" | "next") => {
     setCurrentDate((prevDate) =>
@@ -55,7 +95,7 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
   return (
     <div className="p-4 relative overflow-x-scroll">
       <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-1 justify-between md:absolute md:left-1/2 md:-translate-x-1/2  ">
+        <div className="flex items-center gap-1 justify-between md:absolute md:left-1/2 md:-translate-x-1/2">
           <button
             onClick={() => handleNavigate("prev")}
             className="p-2 rounded-l-md bg-gray-200 hover:bg-gray-300"
@@ -64,7 +104,7 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
           </button>
           <span className="font-semibold text-sm">
             {view === Views.WEEK
-              ? `${moment(currentDate).startOf("week").format("DD/MM")} - ${moment(currentDate).endOf("week").format("DD/MM")}`
+              ? `${moment(currentDate).startOf("week").format("DD/MM/YYYY")} - ${moment(currentDate).endOf("week").format("DD/MM/YYYY")}`
               : moment(currentDate).format("DD/MM/YYYY")}
           </span>
           <button
@@ -91,7 +131,7 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
 
       <Calendar
         localizer={localizer}
-        events={events}
+        events={allEvents}
         startAccessor="start"
         endAccessor="end"
         views={[Views.WEEK, Views.DAY]}

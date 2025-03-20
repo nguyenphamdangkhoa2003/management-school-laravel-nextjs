@@ -916,146 +916,75 @@ export const announcementsData = [
 ];
 
 
-// YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
 export const calendarEvents = [
   {
     title: "Math",
+    teacher: "Tuấn",
+    link: "https://math-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 17, 8, 0),
-    end: new Date(2025, 2, 17, 8, 45),
+    start: new Date(2025, 1, 28, 7, 0), // 28/2/2025, 7:00 AM
+    end: new Date(2025, 1, 28, 9, 30), // 28/2/2025, 9:30 AM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 15), // 15/4/2025
+    dayOfWeek: 1, // Thứ 2 (Monday)
   },
   {
     title: "English",
+    teacher: "Lan",
+    link: "https://english-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 17, 9, 0),
-    end: new Date(2025, 2, 17, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 2, 17, 10, 0),
-    end: new Date(2025, 2, 17, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 2, 17, 11, 0),
-    end: new Date(2025, 2, 17, 11, 45),
-  },
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2025, 2, 17, 13, 0),
-    end: new Date(2025, 2, 17, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 2, 17, 14, 0),
-    end: new Date(2025, 2, 17, 18, 0),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 2, 18, 9, 0),
-    end: new Date(2025, 2, 18, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 2, 18, 10, 0),
-    end: new Date(2025, 2, 18, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 2, 18, 11, 0),
-    end: new Date(2025, 2, 18, 11, 45),
-  },
-
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 2, 18, 14, 0),
-    end: new Date(2025, 2, 18, 14, 45),
+    start: new Date(2025, 1, 29, 8, 0), // 1/3/2025, 8:00 AM
+    end: new Date(2025, 1, 29, 10, 0), // 1/3/2025, 10:00 AM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 10), // 10/4/2025
+    dayOfWeek: 2, // Thứ 3 (Tuesday)
   },
   {
     title: "Math",
+    teacher: "Tuấn",
+    link: "https://biology-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 19, 8, 0),
-    end: new Date(2025, 2, 19, 8, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 2, 19, 10, 0),
-    end: new Date(2025, 2, 19, 10, 45),
-  },
-
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2025, 2, 19, 13, 0),
-    end: new Date(2025, 2, 19, 17, 45),
-  },
-
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 2, 20, 9, 0),
-    end: new Date(2025, 2, 20, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 2, 20, 10, 0),
-    end: new Date(2025, 2, 20, 10, 45),
+    start: new Date(2025, 1, 27, 9, 0), // 27/2/2025, 9:00 AM
+    end: new Date(2025, 1, 27, 11, 0), // 27/2/2025, 11:00 AM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 20), // 20/4/2025
+    dayOfWeek: 4, // Thứ 5 (Thursday)
   },
   {
     title: "Physics",
+    teacher: "Minh",
+    link: "https://physics-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 20, 11, 0),
-    end: new Date(2025, 2, 20, 11, 45),
-  },
-
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 2, 20, 14, 20),
-    end: new Date(2025, 2, 20, 14, 45),
-  },
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2025, 2, 21, 8, 0),
-    end: new Date(2025, 2, 21, 8, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 2, 21, 9, 0),
-    end: new Date(2025, 2, 21, 9, 45),
-  },
-
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 2, 21, 11, 0),
-    end: new Date(2025, 2, 21, 11, 45),
+    start: new Date(2025, 1, 29, 13, 30), // 1/3/2025, 13:30 PM
+    end: new Date(2025, 1, 29, 15, 30), // 1/3/2025, 15:30 PM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 8), // 8/4/2025
+    dayOfWeek: 6, // Thứ 7 (Saturday)
   },
   {
     title: "Chemistry",
+    teacher: "An",
+    link: "https://chemistry-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 21, 13, 0),
-    end: new Date(2025, 2, 21, 13, 45),
+    start: new Date(2025, 1, 26, 10, 0), // 26/2/2025, 10:00 AM
+    end: new Date(2025, 1, 26, 12, 0), // 26/2/2025, 12:00 PM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 12), // 12/4/2025
+    dayOfWeek: 3, // Thứ 4 (Wednesday)
   },
   {
     title: "History",
+    teacher: "Phương",
+    link: "https://history-lecture.com",
     allDay: false,
-    start: new Date(2025, 2, 21, 14, 0),
-    end: new Date(2025, 2, 21, 14, 45),
+    start: new Date(2025, 1, 28, 14, 0), // 28/2/2025, 14:00 PM
+    end: new Date(2025, 1, 28, 16, 0), // 28/2/2025, 16:00 PM
+    repeat: "weekly",
+    repeatUntil: new Date(2025, 3, 22), // 22/4/2025
+    dayOfWeek: 5, // Thứ 6 (Friday)
   },
 ];
+
 
 export const teachercalendarEvents = [
   {

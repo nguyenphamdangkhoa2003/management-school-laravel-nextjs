@@ -7,7 +7,6 @@ import { getLessons,getLesson } from "@/services/api";
 import Image from "next/image";
 import { useState,useEffect } from "react";
 
-
 type Lesson = {
   id: number;
   subject: string;
@@ -21,8 +20,8 @@ const columns = [
     accessor: "name",
   },
   {
-    header: "Class",
-    accessor: "class",
+    header: "Day",
+    accessor: "day",
   },
   {
     header: "Teacher",
@@ -58,9 +57,9 @@ const LessonListPage = () => {
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
-      <td className="flex items-center gap-4 p-4">{}</td>
-      <td>{}</td>
-      <td className="hidden md:table-cell">{}</td>
+      <td className="flex items-center gap-4 p-4">{item.subject_teacher.subject.name}</td>
+      <td>{item.day}</td>
+      <td className="hidden md:table-cell">{item.subject_teacher.teacher.name}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
