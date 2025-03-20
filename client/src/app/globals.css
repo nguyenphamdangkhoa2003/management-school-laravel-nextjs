@@ -66,6 +66,15 @@
   font-size: 14px !important;
 }
 
+.rbc-header{
+  background-color: #164e63;
+  color: white;
+}
+
+.rbc-header.rbc-today{
+  background-color: #007ba8 !important;
+}
+
 .rbc-event {
   border: none !important;
   color: black !important;
@@ -74,6 +83,7 @@
   width: 100% !important;
   display: flex !important;
   flex-direction: row !important;
+  overflow: visible !important;
 }
 
 .rbc-event-label{

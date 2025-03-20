@@ -80,9 +80,8 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
             <span
               key={id}
               onClick={() => handleViewChange(id)}
-              className={`cursor-pointer px-3 py-1 rounded-md ${
-                id === view ? "text-white bg-cyan-900" : "text-cyan-900 bg-gray-200 hover:bg-gray-300"
-              }`}
+              className={`cursor-pointer px-3 py-1 rounded-md ${id === view ? "text-white bg-cyan-900" : "text-cyan-900 bg-gray-200 hover:bg-gray-300"
+                }`}
             >
               {label}
             </span>
@@ -98,7 +97,7 @@ const BigCalendar = ({ events }: BigCalendarProps) => {
         views={[Views.WEEK, Views.DAY]}
         view={view}
         date={currentDate}
-        style={{ minHeight: 800, minWidth: 800}}
+        style={{ height: 600, minWidth: 800 }}
         min={new Date(2025, 0, 1, 7, 0, 0)}
         max={new Date(2025, 0, 1, 18, 0, 0)}
         toolbar={false}
