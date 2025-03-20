@@ -15,7 +15,7 @@ class LessonController extends Controller
     public function index()
     {
         try {
-            $lessons = Lesson::with('school_classes','subject_teacher')->paginate(10);
+            $lessons = Lesson::with('school_classes','subject_teacher',"subject_teacher.teacher","subject_teacher.subject")->paginate(10);
             
             return LessonResource::collection($lessons);
         } catch (\Exception $e) {
