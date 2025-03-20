@@ -189,5 +189,22 @@ class LessonController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+       public function getTeacherSubjects($teacherId)
+    {
+        try {
+            $lessons = Lesson::with('school_classes', 'subject_teacher', 'subject_teacher.teacher', 'subject_teacher.subject')
+            ->whereHas('subject_teacher', function($query) use ($teacherId) {
+                $query->where('teacher_id', $teacherId);
+            })
+            ->paginate(10);
+
+                return LessonResource::collection($lessons);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'An error occurred while retrieving teacher subjects',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

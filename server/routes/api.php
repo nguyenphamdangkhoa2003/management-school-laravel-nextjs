@@ -68,6 +68,7 @@ Route::get("/lessons/search", [LessonController::class, "search"]);
 Route::post('/lessons', [LessonController::class, 'store']);
 Route::put('/lessons/{id}', [LessonController::class, 'update']);
 Route::delete('/lessons/{id}', [LessonController::class, 'destroy']);
+Route::get('lessons/{teacher}/teachers', [LessonController::class, 'getTeacherSubjects']);
 
 // School Class Routes
 Route::get("/school-classes", [SchoolClassController::class, "index"]);
