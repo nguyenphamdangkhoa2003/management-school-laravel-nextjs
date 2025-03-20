@@ -922,10 +922,11 @@ export const calendarEvents = [
     teacher: "Tuấn",
     link: "https://math-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 28, 7, 0), // 28/2/2025, 7:00 AM
-    end: new Date(2025, 1, 28, 9, 30), // 28/2/2025, 9:30 AM
+    startDate: new Date(2025, 2, 3), // 03/03/2025
+    endDate: new Date(2025, 4, 5), // 05/05/2025
+    startTime: "08:00", // 08:00 AM
+    endTime: "10:00", // 10:00 AM
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 15), // 15/4/2025
     dayOfWeek: 1, // Thứ 2 (Monday)
   },
   {
@@ -933,21 +934,23 @@ export const calendarEvents = [
     teacher: "Lan",
     link: "https://english-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 29, 8, 0), // 1/3/2025, 8:00 AM
-    end: new Date(2025, 1, 29, 10, 0), // 1/3/2025, 10:00 AM
+    startDate: new Date(2025, 2, 4), // 04/03/2025
+    endDate: new Date(2025, 4, 6), // 06/05/2025
+    startTime: "09:30", // 09:30 AM
+    endTime: "11:30", // 11:30 AM
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 10), // 10/4/2025
     dayOfWeek: 2, // Thứ 3 (Tuesday)
   },
   {
-    title: "Math",
+    title: "Biology",
     teacher: "Tuấn",
     link: "https://biology-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 27, 9, 0), // 27/2/2025, 9:00 AM
-    end: new Date(2025, 1, 27, 11, 0), // 27/2/2025, 11:00 AM
+    startDate: new Date(2025, 2, 6), // 06/03/2025
+    endDate: new Date(2025, 4, 8), // 08/05/2025
+    startTime: "14:00", // 02:00 PM
+    endTime: "16:00", // 04:00 PM
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 20), // 20/4/2025
     dayOfWeek: 4, // Thứ 5 (Thursday)
   },
   {
@@ -955,10 +958,11 @@ export const calendarEvents = [
     teacher: "Minh",
     link: "https://physics-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 29, 13, 30), // 1/3/2025, 13:30 PM
-    end: new Date(2025, 1, 29, 15, 30), // 1/3/2025, 15:30 PM
+    startDate: new Date(2025, 2, 8), // 08/03/2025
+    endDate: new Date(2025, 4, 10), // 10/05/2025
+    startTime: "13:00", // 01:00 PM
+    endTime: "15:00", // 03:00 PM
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 8), // 8/4/2025
     dayOfWeek: 6, // Thứ 7 (Saturday)
   },
   {
@@ -966,10 +970,11 @@ export const calendarEvents = [
     teacher: "An",
     link: "https://chemistry-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 26, 10, 0), // 26/2/2025, 10:00 AM
-    end: new Date(2025, 1, 26, 12, 0), // 26/2/2025, 12:00 PM
+    startDate: new Date(2025, 2, 5), // 05/03/2025
+    endDate: new Date(2025, 4, 12), // 12/05/2025
+    startTime: "10:30", // 10:30 AM
+    endTime: "12:30", // 12:30 PM
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 12), // 12/4/2025
     dayOfWeek: 3, // Thứ 4 (Wednesday)
   },
   {
@@ -977,13 +982,15 @@ export const calendarEvents = [
     teacher: "Phương",
     link: "https://history-lecture.com",
     allDay: false,
-    start: new Date(2025, 1, 28, 14, 0), // 28/2/2025, 14:00 PM
-    end: new Date(2025, 1, 28, 16, 0), // 28/2/2025, 16:00 PM
+    startDate: new Date(2025, 2, 7),
+    endDate: new Date(2025, 4, 15),
+    startTime: "15:00", 
+    endTime: "17:00",
     repeat: "weekly",
-    repeatUntil: new Date(2025, 3, 22), // 22/4/2025
     dayOfWeek: 5, // Thứ 6 (Friday)
   },
 ];
+
 
 
 export const teachercalendarEvents = [

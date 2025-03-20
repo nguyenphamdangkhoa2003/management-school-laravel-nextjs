@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useParams } from "next/navigation";
-
+import moment from "moment";
 const API_BASE_URL = "http://127.0.0.1:8000/api";
 
 const api = axios.create({
@@ -277,6 +277,42 @@ export const getLessons = async (page = 1, perPage = 10) => {
   } catch (error) {
     console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
     throw error;
+  }
+};
+
+const dayMapping: Record<string, number> = {
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+  SUNDAY: 7,
+};
+
+export const getLessonsByTeacherid = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/lessons/${id}/teachers`);
+    const rawData = response.data.data;
+
+    const filteredData = rawData.map((item: any) => {
+  return {
+    title: item.subject_teacher.subject.name,
+    teacher: item.subject_teacher.teacher.name,
+    link: item.link,
+    allDay: false,
+    startDate: moment(item.startTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"), 
+    endDate: moment(item.endTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"), 
+    startTime: moment(item.class_time, "HH:mm:ss").format("HH:mm:ss"),
+    endTime: moment(item.ending_class_time, "HH:mm:ss").format("HH:mm:ss"), 
+    dayOfWeek: dayMapping[item.day],
+  };
+});
+    console.log(filteredData);
+    return filteredData;
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+    return [];
   }
 };
 

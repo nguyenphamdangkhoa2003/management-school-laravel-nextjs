@@ -16,10 +16,21 @@ const VIEW_OPTIONS = [
 
 const localizer = momentLocalizer(moment);
 
-// Nhận props `events` từ bên ngoài
 const BigCalendar = ({ events }: { events: any[] }) => {
   const [view, setView] = useState<View>(Views.WEEK);
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
+
+  // Chuyển đổi ngày và giờ thành một đối tượng Date
+  const parseDateTime = (date: string | Date, time: string) => {
+  // Chuyển `date` thành đối tượng Date nếu nó là chuỗi
+  const parsedDate = moment(date, "YYYY-MM-DD").toDate();
+
+  // Kiểm tra nếu `time` hợp lệ
+  const [hours, minutes] = time?.split(":").map(Number) || [0, 0];
+
+  // Trả về đối tượng Date với ngày từ `parsedDate`, giờ từ `time`
+  return new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), hours, minutes);
+};
 
   // Xử lý sự kiện lặp lại hàng tuần
   const generateRecurringEvents = () => {
@@ -27,25 +38,28 @@ const BigCalendar = ({ events }: { events: any[] }) => {
 
     events.forEach((event) => {
       if (event.repeat === "weekly") {
-        let startDate = moment(event.start);
-        let endDate = moment(event.end);
-        let repeatUntil = moment(event.repeatUntil);
+        let startDate = moment(event.startDate);
+        let endDate = moment(event.endDate);
+        let repeatUntil = moment(event.endDate);
 
         while (startDate.isBefore(repeatUntil)) {
           if (startDate.isoWeekday() === event.dayOfWeek) {
             allEvents.push({
               title: event.title,
-              start: startDate.toDate(),
-              end: endDate.toDate(),
+              start: parseDateTime(startDate.toDate(), event.startTime),
+              end: parseDateTime(startDate.toDate(), event.endTime),
               teacher: event.teacher,
               link: event.link,
             });
           }
           startDate.add(1, "day");
-          endDate.add(1, "day");
         }
       } else {
-        allEvents.push(event);
+        allEvents.push({
+          ...event,
+          start: parseDateTime(event.startDate, event.startTime),
+          end: parseDateTime(event.startDate, event.endTime),
+        });
       }
     });
 
@@ -82,7 +96,6 @@ const BigCalendar = ({ events }: { events: any[] }) => {
       )}
     </div>
   );
-
 
   const handleNavigate = (direction: "prev" | "next") => {
     setCurrentDate((prevDate) =>
