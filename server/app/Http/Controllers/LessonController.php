@@ -194,7 +194,11 @@ class LessonController extends Controller
         try {
             $lessons = Lesson::with('school_classes', 'subject_teacher', 'subject_teacher.teacher', 'subject_teacher.subject')
             ->whereHas('subject_teacher', function($query) use ($teacherId) {
-                $query->where('teacher_id', $teacherId);
+                // Tìm kiếm theo teacher_id hoặc name của teacher
+                $query->where('teacher_id', $teacherId)
+                      ->orWhereHas('teacher', function($query) use ($teacherId) {
+                          $query->where('name', 'like', '%' . $teacherId . '%'); // Tìm kiếm theo tên của teacher
+                      });
             })
             ->paginate(10);
 
@@ -207,4 +211,5 @@ class LessonController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
 }
