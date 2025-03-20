@@ -21,8 +21,10 @@ class GuardianRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'username' => 'required|string|unique:guardians,username,' .$this->route('id'),
+        $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH');
+
+        $ruleCreate = [
+            'username' => 'required|string|unique:guardians,username,' . $this->route('id'),
             'name' => 'required|string',
             'surname' => 'required|string',
             'email' => 'nullable|email|unique:guardians,email,' . $this->route('id'),
@@ -32,5 +34,21 @@ class GuardianRequest extends FormRequest
             'sex' => 'required|in:MALE,FEMALE',
             'password' => 'required|string|min:6'
         ];
+
+        $ruleUpdate = [
+            'username' => 'sometimes|string|unique:guardians,username,' . $this->route('id'),
+            'name' => 'sometimes|string',
+            'surname' => 'sometimes|string',
+            'email' => 'nullable|email|unique:guardians,email,' . $this->route('id'),
+            'phone' => 'nullable|string|unique:guardians,phone,' . $this->route('id'),
+            'address' => 'sometimes|string',
+            'job' => 'nullable|string',
+            'sex' => 'sometimes|in:MALE,FEMALE',
+            'password' => 'sometimes|string|min:6'
+        ];
+
+        if ($isUpdate)
+            return $ruleUpdate;
+        return $ruleCreate;
     }
 }
