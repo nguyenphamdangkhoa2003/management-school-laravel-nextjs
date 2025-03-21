@@ -35,7 +35,7 @@ class StudentController extends Controller
 
             $student = Student::create($validatedData);
             return response()->json($student, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',

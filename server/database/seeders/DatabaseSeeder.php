@@ -13,6 +13,7 @@ use App\Models\Grade;
 use App\Models\Guardian;
 use App\Models\Lesson;
 use App\Models\Result;
+use App\Models\Room;
 use App\Models\SchoolClass;
 use App\Models\Student;
 use App\Models\Subject;
@@ -110,8 +111,23 @@ for ($i = 1; $i <= 6; $i++) {
             SchoolClass::where("id", $i)->update(["supervisor_id" => $i % 16 + 1]);
         }
   
+        for ($i = 1; $i <= 30; $i++) {
+            Room::create([
+                'code_room' => 'C80' . $i,
+                'floor' => rand(1, 5),
+                'name' => 'Phòng ' . $i,
+                'capacity' => rand(10, 100),
+                'type' => ['lecture', 'lab', 'office', 'meeting'][array_rand(['lecture', 'lab', 'office', 'meeting'])],
+                'is_available' => (bool)rand(0, 1),
+            ]);
+        }
         //Lesson
-        for ($i = 0; $i <= 30; $i++) {
+          // Lấy danh sách ID của tất cả các phòng có sẵn
+          $roomIds = Room::pluck('id')->toArray();
+        
+          // Shuffle (xáo trộn) danh sách để tránh trùng lặp khi lấy ngẫu nhiên
+          shuffle($roomIds);
+        for ($i = 0; $i <=29; $i++) {
             Lesson::create([
                 "link" => fake()->word,
                 "day" => strtoupper(fake()->dayOfWeek),
@@ -120,7 +136,7 @@ for ($i = 1; $i <= 6; $i++) {
                 "class_time" => date("H:i:s", strtotime("+0 hour")),
                 "ending_class_time" => date("H:i:s", strtotime("+5 hour")),
                 "subject_teacher_id" => rand(1, 4),
-                "school_class_id" => ($i % 5) + 1,
+                "room_id" => $roomIds[$i],
               
             ]);
         }
@@ -226,5 +242,6 @@ for ($i = 1; $i <= 50; $i++) {
                 "school_class_id" => ($i % 5) + 1,
             ]);
         }
+     
     }
 }

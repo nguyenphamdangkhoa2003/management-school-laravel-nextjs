@@ -22,14 +22,15 @@ class LessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'link' => 'required|string|unique:lessons,link,' . $this->route('id'),
+            'link' => 'nullable',
             'day' => 'required|in:MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY',
             'startTime' => 'required|date_format:Y-m-d H:i:s',
             'endTime' => 'required|date_format:Y-m-d H:i:s|after:startTime',
             'class_time' => 'required|date_format:H:i:s',
             'ending_class_time' => 'required|date_format:H:i:s|after:class_time',
             'subject_teacher_id' => 'required|exists:subject_teacher,id',
-            'school_class_id' => 'required|exists:school_classes,id'
+            'room_id' => 'required|exists:rooms,id',
+            'file' => 'nullable|mimes:pdf,docx,ppt,pptx|max:10240', // Giới hạn 10MB
         ];
     }
 }

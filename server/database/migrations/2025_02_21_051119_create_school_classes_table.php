@@ -23,9 +23,7 @@ return new class extends Migration {
         Schema::table("students", function (Blueprint $table) {
             $table->foreignIdFor(SchoolClass::class);
         });
-        Schema::table("lessons", function (Blueprint $table) {
-            $table->foreignIdFor(SchoolClass::class)->constrained();
-        });
+  
     }
 
     /**

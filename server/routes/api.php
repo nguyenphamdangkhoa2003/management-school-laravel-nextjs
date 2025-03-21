@@ -18,6 +18,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\SubjectTeacherController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -112,11 +113,14 @@ Route::delete('/results/{id}', [ResultController::class, 'destroy']);
 
 // Attendance Routes
 Route::get("/attendances", [AttendanceController::class, "index"]);
-Route::get("/attendances/{id}", [AttendanceController::class, "show"])->where('id', '[0-9]+');
 Route::get("/attendances/search", [AttendanceController::class, "search"]);
+Route::get('/attendances/{lessonId}/lessons', [AttendanceController::class, 'getLessonAttendances']);
+Route::get('/attendances/{studentId}/students', [AttendanceController::class, 'getStudentAttendances']);
 Route::post('/attendances', [AttendanceController::class, 'store']);
+Route::get("/attendances/{id}", [AttendanceController::class, "show"])->where('id', '[0-9]+');
 Route::put('/attendances/{id}', [AttendanceController::class, 'update']);
 Route::delete('/attendances/{id}', [AttendanceController::class, 'destroy']);
+
 
 // Event Routes
 Route::get("/events", [EventController::class, "index"]);
@@ -151,6 +155,12 @@ Route::get("/subject-teachers/{id}", [SubjectTeacherController::class, "show"])-
 Route::post('/subject-teachers', [SubjectTeacherController::class, 'store']);
 Route::put('/subject-teachers/{id}', [SubjectTeacherController::class, 'update']);
 Route::delete('/subject-teachers/{id}', [SubjectTeacherController::class, 'destroy']);
+
+//Room
+Route::apiResource('rooms', RoomController::class);
+Route::get('rooms/search/query', [RoomController::class, 'search']);
+
+
 // Personal Access Token Routes
 // Route::get("/tokens", [PersonalAccessTokenController::class, "index"]);
 // Route::get("/tokens/{id}", [PersonalAccessTokenController::class, "show"])->where('id', '[0-9]+');

@@ -8,11 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
-    public $fillable = ["link", "day", "startTime", "endTime","class_time","ending_class_time","subject_teacher_id","school_class_id"];
+    public $fillable = ["link", "day", "startTime", "endTime","class_time","ending_class_time","subject_teacher_id","room_id"];
 
     public function exams(): BelongsTo
     {
         return $this->belongsTo(Exam::class);
+    }
+    public function rooms(): BelongsTo
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
 
     public function assisgnments(): BelongsTo

@@ -177,5 +177,43 @@ class AttendanceController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+public function getLessonAttendances($lessonId)
+{
+    try {
+        $attendances = Attendance::with('students', 'lessons')
+         ->whereHas('lessons', function($query) use ($lessonId) {
+                // Tìm kiếm theo teacher_id hoặc name của teacher
+                $query->where('id', $lessonId);       })    
+            ->paginate(10);
+            
+        return AttendanceResource::collection($attendances);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            'message' => 'An error occurred while retrieving lesson attendances',
+            'error' => $e->getMessage(),
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
+
+public function getStudentAttendances($studentId)
+{
+    try {
+        $attendances = Attendance::with('students', 'lessons')
+        ->whereHas('students', function($query) use ($studentId) {
+               // Tìm kiếm theo teacher_id hoặc name của teacher
+               $query->where('id', $studentId);       
+            })    
+           ->paginate(10);
+            
+        return AttendanceResource::collection($attendances);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            'message' => 'An error occurred while retrieving student attendances',
+            'error' => $e->getMessage(),
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
 
 }

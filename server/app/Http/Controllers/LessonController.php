@@ -7,6 +7,7 @@ use App\Http\Resources\LessonResource;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +16,7 @@ class LessonController extends Controller
     public function index()
     {
         try {
-            $lessons = Lesson::with('school_classes','subject_teacher',"subject_teacher.teacher","subject_teacher.subject")->paginate(10);
+            $lessons = Lesson::with('subject_teacher',"subject_teacher.teacher","subject_teacher.subject","rooms")->paginate(10);
             
             return LessonResource::collection($lessons);
         } catch (\Exception $e) {
@@ -31,6 +32,12 @@ class LessonController extends Controller
     {
         try {
             $validatedData = $request->validated();
+             // Xử lý upload file nếu có
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store('materials', 'public'); // Lưu vào storage/app/public/materials
+            $validatedData['link'] = "/storage/" . $path;
+        }
             $lesson = Lesson::create($validatedData);
             return response()->json($lesson, 201);
         } catch (ValidationException $e) {
@@ -84,6 +91,22 @@ class LessonController extends Controller
             }
     
             $validatedData = $request->validated();
+                   // Xử lý upload file nếu có
+        if ($request->hasFile('file')) {
+            // Xóa file cũ nếu tồn tại
+            if ($lesson->link && str_starts_with($lesson->link, '/storage/')) {
+                $oldPath = str_replace('/storage/', '', $lesson->link);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            
+            // Upload file mới
+            $file = $request->file('file');
+            $path = $file->store('materials', 'public');
+            $validatedData['link'] = "/storage/" . $path;
+        }
+            
             $lesson->update($validatedData);
     
             return response()->json($lesson, Response::HTTP_OK);
@@ -128,7 +151,7 @@ class LessonController extends Controller
             $endTime = $request->query('endTime');
             $class_time = $request->query('class_time');
             $ending_class_time= $request->query('ending_class_time');
-            $school_class_id = $request->query('school_class_id');
+            $room_id = $request->query('room_id');
             $subject_teacher_id = $request->query('subject_teacher_id');
     
             // Khởi tạo truy vấn
@@ -160,8 +183,8 @@ class LessonController extends Controller
                 $query->Orwhere('subject_teacher_id', $subject_teacher_id);
             }
     
-            if ($school_class_id) {
-                $query->Orwhere('school_class_id', $school_class_id);
+            if ($room_id) {
+                $query->Orwhere('room_id', $room_id);
             }
     
             // Thực hiện truy vấn và phân trang kết quả
