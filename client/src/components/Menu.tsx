@@ -16,14 +16,22 @@ const menuItems = [
         icon: "/teacher.png",
         label: "Lịch dạy",
         href: "/teacher",
-        visible: ["admin", "teacher"],
+        visible: ["teacher"],
       },
       {
         icon: "/teacher.png",
         label: "Lịch học",
         href: "/student",
-        visible: ["admin", "student"],
+        visible: ["student"],
       },
+
+      {
+        icon: "/class.png",
+        label: "Lớp học",
+        href: "/list/classes",
+        visible: ["teacher"],
+      },
+
       {
         icon: "/teacher.png",
         label: "Giáo viên",
@@ -52,7 +60,7 @@ const menuItems = [
         icon: "/class.png",
         label: "Lớp học",
         href: "/list/classes",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/lesson.png",
@@ -103,6 +111,7 @@ const menuItems = [
 
 const Menu = () => {
   const role = localStorage.getItem("role");
+  const user = console.log(localStorage.getItem("user"));
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

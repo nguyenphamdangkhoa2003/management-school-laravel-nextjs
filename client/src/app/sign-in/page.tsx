@@ -8,11 +8,11 @@ const SigninPage = () => {
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError]=useState("");
+    const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+        e.preventDefault();
         setError("");
         if (!username.trim() || !password.trim()) {
             setError("Vui lòng nhập đầy đủ thông tin đăng nhập!");
@@ -20,17 +20,17 @@ const SigninPage = () => {
             return;
         }
         try {
-            const data=await login(username,password);
+            const data = await login(username, password);
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.guard);
             localStorage.setItem("user", JSON.stringify(data.user));
-            if (data.guard=="admin") {
+            if (data.guard == "admin") {
                 router.push("/admin");
-            }else if(data.guard=="student"){
+            } else if (data.guard == "student") {
                 router.push("/student");
-            }else if(data.guard=="teacher"){
+            } else if (data.guard == "teacher") {
                 router.push("/teacher");
-            }else if(data.guard=="parent"){
+            } else if (data.guard == "parent") {
                 router.push("/parent");
             }
         } catch (error) {
@@ -56,16 +56,16 @@ const SigninPage = () => {
                 <div className="bg-white p-8 rounded-lg shadow-md">
                     <h2 className="text-2xl font-bold text-[#2E3192] mb-5">ĐĂNG NHẬP</h2>
                     {error && (
-                            <p className="text-red-600 bg-red-100 border border-red-400 text-center mb-4 px-3 py-2 rounded-md">
-                                {error}
-                            </p>
-                        )}
+                        <p className="text-red-600 bg-red-100 border border-red-400 text-center mb-4 px-3 py-2 rounded-md">
+                            {error}
+                        </p>
+                    )}
                     <form className="space-y-4" onSubmit={handleLogin}>
                         <div className="relative">
                             <User className="absolute left-4 top-3 text-gray-500" />
                             <input
                                 type="text"
-                                onChange={(e)=>setUsername(e.target.value)}
+                                onChange={(e) => setUsername(e.target.value)}
                                 placeholder="Tên đăng nhập"
                                 className="h-12 text-lg px-12 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 mb-4"
                             />
@@ -75,7 +75,7 @@ const SigninPage = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
 
-                                onChange={(e)=>setPassword(e.target.value)}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Mật khẩu"
                                 className="h-12 text-lg px-12 pr-12 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-blue-500 mb-5"
                             />
