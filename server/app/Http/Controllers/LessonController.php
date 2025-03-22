@@ -215,7 +215,7 @@ class LessonController extends Controller
        public function getTeacherSubjects($teacherId)
     {
         try {
-            $lessons = Lesson::with('school_classes', 'subject_teacher', 'subject_teacher.teacher', 'subject_teacher.subject')
+            $lessons = Lesson::with('school_classes', 'subject_teacher', 'subject_teacher.teacher', 'subject_teacher.subject','rooms')
             ->whereHas('subject_teacher', function($query) use ($teacherId) {
                 // Tìm kiếm theo teacher_id hoặc name của teacher
                 $query->where('teacher_id', $teacherId)
