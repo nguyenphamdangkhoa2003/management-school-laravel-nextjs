@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         try {
-            $attendances = Attendance::with('students', 'lessons')->paginate(10);
+            $attendances = Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')->paginate(10);
             return AttendanceResource::collection($attendances);
         } catch (\Exception $e) {
             return response()->json([
@@ -51,7 +51,15 @@ class AttendanceController extends Controller
     public function show(string $id)
     {
         try {
-            $attendance = Attendance::findOrFail($id);
+            $attendance = Attendance::with([
+                'students',
+                'lessons',
+                'lessons.subject_teacher',
+                'lessons.rooms',
+                'lessons.subject_teacher.teacher',
+                'lessons.subject_teacher.subject'
+            ])->findOrFail($id);
+        
             return response()->json([
                 'status' => Response::HTTP_OK,
                 'data' => $attendance,
@@ -151,9 +159,18 @@ class AttendanceController extends Controller
             if ($updated_at) {
                 $query->orWhere("updated_at", "=", $updated_at);
             }
+  // Khởi tạo query với eager loading các mối quan hệ
+  $query = Attendance::with([
+    'students',
+    'lessons',
+    'lessons.subject_teacher',
+    'lessons.rooms',
+    'lessons.subject_teacher.teacher',
+    'lessons.subject_teacher.subject'
+]);
 
-            // Thực hiện truy vấn và phân trang kết quả
-            $attendances = $query->paginate(10);
+// Thực hiện truy vấn và phân trang kết quả
+$attendances = $query->paginate(10);
 
             // Kiểm tra kết quả và trả về phản hồi
             if (!$attendances->isEmpty()) {
@@ -180,7 +197,7 @@ class AttendanceController extends Controller
 public function getLessonAttendances($lessonId)
 {
     try {
-        $attendances = Attendance::with('students', 'lessons')
+        $attendances = Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')
          ->whereHas('lessons', function($query) use ($lessonId) {
                 // Tìm kiếm theo teacher_id hoặc name của teacher
                 $query->where('id', $lessonId);       })    
@@ -199,7 +216,7 @@ public function getLessonAttendances($lessonId)
 public function getStudentAttendances($studentId)
 {
     try {
-        $attendances = Attendance::with('students', 'lessons')
+        $attendances =  Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')
         ->whereHas('students', function($query) use ($studentId) {
                // Tìm kiếm theo teacher_id hoặc name của teacher
                $query->where('id', $studentId);       
