@@ -305,6 +305,8 @@ export const getLessonsByTeacherid = async (id: number) => {
     endDate: moment(item.endTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"), 
     startTime: moment(item.class_time, "HH:mm:ss").format("HH:mm:ss"),
     endTime: moment(item.ending_class_time, "HH:mm:ss").format("HH:mm:ss"), 
+    room:item.room.code_room,
+    repeat: "weekly",
     dayOfWeek: dayMapping[item.day],
   };
 });
@@ -325,6 +327,35 @@ export const getLesson =async (search :string)=>{
     throw error;
   }
 }
+
+export const addLesson = async (Data: FormData) => {
+  try {
+    console.log("Dữ liệu gửi lên API:", Data);
+    const response = await api.post(`/lessons`, Data, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm bài giảng:", error.response?.data || error.message);
+    throw error;
+  }
+}
+export const updateLesson = async (id:number,Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/lessons/${id}`, Data, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật bài giảng:", error.response?.data || error.message);
+    throw error;
+  }
+};
 export const deleteLesson =async (id:number)=>{
   try {
     const response =await api.delete(`/lessons/${id}`);
@@ -335,7 +366,18 @@ export const deleteLesson =async (id:number)=>{
   }
 }
 
-
+//PHÒNG HỌC
+export const getRooms = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/rooms`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách phòng học:", error.response?.data || error.message);
+    throw error;
+  }
+};
 //ĐĂNG NHẬP
 export const login =async (username:string , password:string)=>{
   try {

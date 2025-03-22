@@ -1,7 +1,6 @@
 "use client"
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalender";
-import { teachercalendarEvents } from "@/lib/data";
 import { getLessonsByTeacherid } from "@/services/api";
 import { useState,useEffect } from "react";
 const TeacherPage = () => {
@@ -12,12 +11,11 @@ const TeacherPage = () => {
     const fetchLessons = async () => {
       try {
         const data = await getLessonsByTeacherid(teacherId);
-        setAllLessonById(data); // ⚡ Cập nhật state với dữ liệu API
+        setAllLessonById(data);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lịch học:", error);
       }
     };
-
     fetchLessons();
   }, []);
   console.log(lessons)

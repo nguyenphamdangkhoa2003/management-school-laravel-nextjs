@@ -49,6 +49,7 @@ const BigCalendar = ({ events }: { events: any[] }) => {
               start: parseDateTime(startDate.toDate(), event.startTime),
               end: parseDateTime(startDate.toDate(), event.endTime),
               teacher: event.teacher,
+              room: event.room,
               link: event.link,
             });
           }
@@ -84,9 +85,10 @@ const BigCalendar = ({ events }: { events: any[] }) => {
       </div>
       <div className="text-xs font-bold">{event.title}</div>
       <div className="text-xs italic">{event.teacher}</div>
+      <div className="text-xs italic">{event.room}</div>
       {event.link && (
         <a
-          href={event.link}
+          href={event?.link ? `${process.env.NEXT_PUBLIC_API_URL_FILE}${event.link}` : "#"}
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 text-xs underline"

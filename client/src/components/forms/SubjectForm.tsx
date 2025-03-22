@@ -51,12 +51,13 @@ const ClassForm = ({
     const [showForm, setShowForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const onSubmit = handleSubmit(async(data) => {
+    const onSubmit = handleSubmit(async(data:any) => {
         const payload = {
             name: data.subjectname,
-            tin_chi: data.credit, 
-            tin_chi_hoc_phan: data.credittuit, 
+            credit: data.credit, 
+            course_credit: data.credittuit, 
         };
+        console.log(payload)
         try {
             let test;
             if (type==="create") {
@@ -66,8 +67,8 @@ const ClassForm = ({
             else if(type==="update"){
                 const formData = new FormData();
                 formData.append("name", data.subjectname);
-                formData.append("tin_chi", data.credit.toString());
-                formData.append("tin_chi_hoc_phan", data.credittuit.toString());
+                formData.append("credit", data.credit.toString());
+                formData.append("course_credit", data.credittuit.toString());
                 test= await updateSubject(data?.id,formData)
                 setTimeout(() => window.location.reload(), 1500);
             }

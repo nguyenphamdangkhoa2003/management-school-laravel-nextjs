@@ -4,6 +4,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { getLessons,getLesson } from "@/services/api";
+import moment from "moment";
 import Image from "next/image";
 import { useState,useEffect } from "react";
 
@@ -16,17 +17,33 @@ type Lesson = {
 
 const columns = [
   {
-    header: "Subject Name",
+    header: "Môn học",
     accessor: "name",
   },
   {
-    header: "Day",
+    header: "Thứ",
     accessor: "day",
+  },
+  {
+    header: "Ngày bắt đầu",
+    accessor: "startday",
+  },
+  {
+    header: "Ngày kết thúc",
+    accessor: "endday",
+  },
+  {
+    header: "giờ học",
+    accessor: "hourstudy",
   },
   {
     header: "Teacher",
     accessor: "teacher",
     className: "hidden md:table-cell",
+  },
+  {
+    header: "Phòng học",
+    accessor: "room",
   },
   {
     header: "Actions",
@@ -59,12 +76,28 @@ const LessonListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">{item.subject_teacher.subject.name}</td>
       <td>{item.day}</td>
+      <td>{moment(item.startTime).format("DD/MM/YYYY")}</td>
+      <td>{moment(item.endTime).format("DD/MM/YYYY")}</td>
+      <td>
+        {moment(item.class_time, "HH:mm:ss").format("HH:mm") + " - " + moment(item.ending_class_time, "HH:mm:ss").format("HH:mm")}
+      </td>
+      <td>{item.room.code_room}</td>
+
       <td className="hidden md:table-cell">{item.subject_teacher.teacher.name}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="lesson" type="update" data={item} />
+              <FormModal table="lesson" type="update" data={{
+                id: item.id,
+                teacherSubjectId: item.subject_teacher.id,
+                weekday: item.day,
+                startdate: item?.startTime ? new Date(item.startTime).toLocaleDateString("en-CA") : "",
+                enddate: item?.endTime ? new Date(item.endTime).toLocaleDateString("en-CA") : "",
+                starttime: item.class_time,
+                endtime: item.ending_class_time,
+                roomId:item.room.id
+              }} />
               <FormModal table="lesson" type="delete" id={item.id} />
             </>
           )}
