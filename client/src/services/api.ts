@@ -318,6 +318,37 @@ export const getLessonsByTeacherid = async (id: number) => {
   }
 };
 
+//SINH VIÊN
+export const getLessonByStudentid = async  (id: number) => {
+  try{
+    const response = await axios.get(
+      `${API_BASE_URL}/attendances/${id}/students`
+    );
+    const rawData = response.data.data;
+  
+    const filteredData = rawData.map((item: any) => {
+  return {
+    title: item.lesson.subject_teacher.subject.name,
+    teacher: item.lesson.subject_teacher.teacher.name,
+    link: item.lesson.link,
+    allDay: false,
+    startDate: moment(item.lesson.startTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"), 
+    endDate: moment(item.lesson.endTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"), 
+    startTime: moment(item.lesson.class_time, "HH:mm:ss").format("HH:mm:ss"),
+    endTime: moment(item.lesson.ending_class_time, "HH:mm:ss").format("HH:mm:ss"), 
+    room:item.lesson.room.code_room,
+    repeat: "weekly",
+    dayOfWeek: dayMapping[item.lesson.day],
+  };
+  });
+  console.log(filteredData);
+    return filteredData;
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+    return [];    
+  }
+};
+
 export const getLesson =async (search :string)=>{
   try {
     const response=await api.get(`/lessons/search`,{params: {name: search}});
@@ -342,6 +373,7 @@ export const addLesson = async (Data: FormData) => {
     throw error;
   }
 }
+
 export const updateLesson = async (id:number,Data: any) => {
   try {
     Data.append("_method", "PUT");
@@ -365,6 +397,10 @@ export const deleteLesson =async (id:number)=>{
       throw error;
   }
 }
+
+
+
+
 
 //PHÒNG HỌC
 export const getRooms = async (page = 1, perPage = 10) => {
