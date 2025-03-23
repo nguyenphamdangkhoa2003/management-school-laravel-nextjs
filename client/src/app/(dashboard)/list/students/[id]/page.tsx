@@ -1,10 +1,40 @@
+"use client"
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalender";
 import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { getLessonByStudentid } from "@/services/api";
 
 const SingleStudentPage = () => {
+  const { id } = useParams();
+  const [teacher, setTeacher] = useState(null);
+  const [lessons,setAllLessonById ]=useState([]);
+  const role = localStorage.getItem("role");
+   useEffect(() => {
+    if (!id) return;
+
+    const fetchData = async () => {
+      try {
+        const teacherRes = await axios.get(`http://127.0.0.1:8000/api/students/${id}`);
+        if (teacherRes.data?.data) {
+          setTeacher(teacherRes.data.data);
+        } else {
+          console.error("Không tìm thấy sinh viên.");
+        }
+
+        const lessonData = await getLessonByStudentid(id);
+        setAllLessonById(lessonData);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
@@ -110,7 +140,7 @@ const SingleStudentPage = () => {
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
           <h1>Student&apos;s Schedule</h1>
-          <BigCalendar />
+          <BigCalendar events={lessons}/>
         </div>
       </div>
       {/* RIGHT */}

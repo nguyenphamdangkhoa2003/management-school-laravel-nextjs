@@ -31,9 +31,14 @@ export default function DashboardLayout({
       return;
     }
 
-    if (!accessControl[storedRole]?.includes(pathname)) {
+    const isAllowed = accessControl[storedRole]?.some(route =>
+      pathname.startsWith(route) || new RegExp(`^${route.replace("[id]", "[^/]+")}$`).test(pathname)
+    );
+
+    if (!isAllowed) {
       router.push("/");
     }
+
   }, [router, pathname]);
 
   if (!role) {

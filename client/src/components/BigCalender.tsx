@@ -20,19 +20,14 @@ const BigCalendar = ({ events }: { events: any[] }) => {
   const [view, setView] = useState<View>(Views.WEEK);
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
 
-  // Chuyển đổi ngày và giờ thành một đối tượng Date
   const parseDateTime = (date: string | Date, time: string) => {
-  // Chuyển `date` thành đối tượng Date nếu nó là chuỗi
   const parsedDate = moment(date, "YYYY-MM-DD").toDate();
 
-  // Kiểm tra nếu `time` hợp lệ
   const [hours, minutes] = time?.split(":").map(Number) || [0, 0];
 
-  // Trả về đối tượng Date với ngày từ `parsedDate`, giờ từ `time`
   return new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), hours, minutes);
 };
 
-  // Xử lý sự kiện lặp lại hàng tuần
   const generateRecurringEvents = () => {
     let allEvents: any[] = [];
 

@@ -8,23 +8,35 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
+import { getLessonsByTeacherid } from "@/services/api";
 
 const SingleTeacherPage = () => {
   const { id } = useParams();
   const [teacher, setTeacher] = useState(null);
+  const [lessons,setAllLessonById ]=useState([]);
   const role = localStorage.getItem("role");
-  useEffect(() => {
-    if (id) {
-      axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
-        .then((res) => {
-          if (res.data?.data) {
-            setTeacher(res.data.data);
-          } else {
-            console.error("Không tìm thấy giáo viên.");
-          }
-        })
-        .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
-    }
+   useEffect(() => {
+    if (!id) return;
+
+    const fetchData = async () => {
+      try {
+        // Lấy thông tin giáo viên
+        const teacherRes = await axios.get(`http://127.0.0.1:8000/api/teachers/${id}`);
+        if (teacherRes.data?.data) {
+          setTeacher(teacherRes.data.data);
+        } else {
+          console.error("Không tìm thấy giáo viên.");
+        }
+
+        // Lấy danh sách bài giảng
+        const lessonData = await getLessonsByTeacherid(id);
+        setAllLessonById(lessonData);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   return (
@@ -151,7 +163,7 @@ const SingleTeacherPage = () => {
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
           <h1>Teacher&apos;s Schedule</h1>
-          <BigCalendar />
+          <BigCalendar events={lessons}/>
         </div>
       </div>
       {/* RIGHT */}
