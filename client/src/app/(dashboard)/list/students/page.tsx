@@ -77,7 +77,7 @@ const StudentListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item?.img ? `${item.img}` : '/avatar.png'}
+          src={item?.img ? `${process.env.NEXT_PUBLIC_API_URL}/${item.img}` : "/avatar.png"}
           alt="Sinh viên"
           width={40}
           height={40}

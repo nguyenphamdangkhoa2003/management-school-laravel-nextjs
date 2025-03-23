@@ -267,6 +267,15 @@ export const deleteParent =async (id:number)=>{
       throw error;
   }
 }
+export const addParent = async (Data: FormData) => {
+  try {
+    const response = await api.post(`/guardians`, Data);
+    return response.data;
+  } catch (error:any) {
+    console.error("Lỗi khi thêm phụ huynh:", error.response?.data || error.message);
+    throw error;
+  }
+};
 //BÀI GIẢNG
 export const getLessons = async (page = 1, perPage = 10) => {
   try {
@@ -398,10 +407,18 @@ export const deleteLesson =async (id:number)=>{
   }
 }
 
-
-
-
-
+//NIÊN KHÓA
+export const getGrades = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/grades`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
+    throw error;
+  }
+};
 //PHÒNG HỌC
 export const getRooms = async (page = 1, perPage = 10) => {
   try {

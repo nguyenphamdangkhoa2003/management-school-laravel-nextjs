@@ -5,10 +5,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
-import { addStudent } from "@/services/api";
+import { addStudent, addParent, getClasses, getGrades } from "@/services/api";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import axios from "axios";
+import moment from "moment";
 const schema = z.object({
   username: z
     .string()
@@ -27,9 +26,22 @@ const schema = z.object({
     (val) => (typeof val === "string" ? new Date(val) : val),
     z.date({ message: "Birthday is required!" })
   ),
-  sex: z.enum(["male", "female"], { message: "Sex is required!" }),
+  sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required!" }),
   img: z.instanceof(File, { message: "Image is required" }),
   code: z.string().length(10, { message: "Code must be exactly 10 characters long!" }),
+  classID: z.string().nonempty("vui lòng chọn lớp"),
+  gradeID: z.string().nonempty("vui lòng chọn niên khóa"),
+  parentUsername: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long!" })
+    .max(20, { message: "Username must be at most 20 characters long!" }),
+  parentFirstName: z.string().min(1, { message: "Parent's first name is required!" }),
+  parentLastName: z.string().min(1, { message: "Parent's last name is required!" }),
+  parentEmail: z.string().email({ message: "Invalid parent email!" }),
+  parentPhone: z.string().min(1, { message: "Parent's phone is required!" }),
+  parentAddress: z.string().min(1, { message: "Parent's address is required!" }),
+  parentsex: z.enum(["MALE", "FEMALE"], { message: "Sex is required!" }),
+    
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -52,58 +64,86 @@ const StudentForm = ({
   const [showForm, setShowForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { id } = useParams();
-  const [student, setStudent] = useState(null);
+  const [classes, setAllClasses] = useState<any[]>([]);
+  const [grades, setAllGrades] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const [classesData, gradesData] = await Promise.all([
+          fetchAllPages(getClasses),
+          fetchAllPages(getGrades),
+        ]);
+        setAllClasses(classesData);
+        setAllGrades(gradesData);
+      } catch (err: any) {
+        setErrorMessage(err.message);
+      }
+    };
+    fetchAllData();
+  }, [type, data, setValue]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  const fetchAllPages = async (fetchFunction: any) => {
+    const firstPage = await fetchFunction(1, 10);
+    const totalPages = firstPage.meta?.last_page || 1;
+    const allPages = await Promise.all(
+      Array.from({ length: totalPages }, (_, i) => fetchFunction(i + 1, 10))
+    );
+    return allPages.flatMap((page) => page.data);
   };
+  
+  const onSubmit = handleSubmit(async(formData) => {
+    console.log("hehe")
+    const formDataStudent = new FormData();
+    const formDataParent = new FormData();
 
+    formDataParent.append("username", formData.parentUsername);
+    formDataParent.append("name", formData.parentLastName);
+    formDataParent.append("surname", formData.parentFirstName);
+    formDataParent.append("password", formData.password);
+    formDataParent.append("email", formData.parentEmail);
+    formDataParent.append("phone", formData.parentPhone);
+    formDataParent.append("address", formData.parentAddress);
+    formDataParent.append("sex", formData.parentsex);
 
-
-  const onSubmit = handleSubmit(async (data) => {
-    const formData = new FormData();
-
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "birthday" && typeof value === "string") {
-        formData.append(key, formatDate(value));
-      } else if (key === "img" && value) {
-        if (value instanceof File) {
-          formData.append("img", value);
-        } else if (value.length > 0 && value[0] instanceof File) {
-          formData.append("img", value[0]);
-        }
-      } else if (typeof value === "string") {
-        formData.append(key, value);
-      }
-    });
-    if (type === "update") {
-      formData.delete("username");
-      formData.delete("email");
+    formDataStudent.append("username", formData.username);
+    formDataStudent.append("code", formData.code);
+    formDataStudent.append("name", formData.lastName);
+    formDataStudent.append("birthday", moment(formData.birthday).format("YYYY-MM-DD HH:mm:ss"));
+    formDataStudent.append("surname", formData.firstName);
+    formDataStudent.append("password", formData.password);
+    formDataStudent.append("email", formData.email);
+    formDataStudent.append("phone", formData.phone);
+    formDataStudent.append("bloodType", formData.bloodType);
+    formDataStudent.append("address", formData.address);
+    formDataStudent.append("grade_id", formData.gradeID);
+    formDataStudent.append("school_class_id", formData.classID);
+    formDataStudent.append("sex", formData.sex);
+      if (formData.img instanceof File) {
+        formDataStudent.append("img", formData.img);
+    } else if (Array.isArray(formData.img) && formData.img.length > 0 && formData.img[0] instanceof File) {
+        formDataStudent.append("img", formData.img[0]); // Chỉ lấy ảnh đầu tiên nếu là danh sách
     }
+    
     try {
-      let response;
-      if (type === "create") {
-        response = await addStudent(formData);
-      }
-      // else if (type === "update") {
-      //   await updateTeacher(teacher.id, formData);
-      //   setTimeout(() => window.location.reload(), 2000);
-      // }
+      let parentResponse, studentResponse;
+    
+        parentResponse = await addParent(formDataParent);
+        if (parentResponse?.id) {
+          const parentID = parentResponse.id;
+          formDataStudent.append("guardian_id", parentID);
+          studentResponse = await addStudent(formDataStudent);
+          if (studentResponse?.id) {
+            setStudents((prev) => [...prev, studentResponse]); // Thêm sinh viên vào danh sách
+          }
+        }
+      
       setShowForm(false);
       setErrorMessage(null);
-
     } catch (error: any) {
-      console.error("❌ Lỗi từ API:", error.response?.data || error.message);
-      setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
+      setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
+      console.error("Lỗi:", error);
     }
-
-
   });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +154,8 @@ const StudentForm = ({
     }
   };
   return (
+    <>
+    {showForm ? (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">{type === "create" ? "Thêm sinh viên" : "Cập nhật sinh viên"}</h1>
 
@@ -147,7 +189,41 @@ const StudentForm = ({
           register={register}
           error={errors?.password}
         />
-
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+            <label className="text-xs text-gray-500">Lớp</label>
+              <select
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+                {...register("classID")}
+                >
+                <option value="">Chọn lớp học</option>
+                  {classes?.map((classin) => (
+                    <option key={classin.id} value={classin.id}>
+                      {classin.name}
+                    </option>
+                  ))}
+                  </select>
+                {errors.classID && (
+              <p className="text-xs text-red-400">{errors.classID.message}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 w-full md:w-1/4">
+            <label className="text-xs text-gray-500">Niên khóa</label>
+              <select
+                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+                {...register("gradeID")}
+                
+                >
+                <option value="">Chọn niên khóa</option>
+                  {grades?.map((grade) => (
+                    <option key={grade.id} value={grade.id}>
+                      {grade.level}
+                    </option>
+                  ))}
+                  </select>
+                {errors.gradeID && (
+              <p className="text-xs text-red-400">{errors.gradeID.message}</p>
+            )}
+          </div>
       </div>
       <span className="text-xs text-gray-400 font-medium">
         Thông tin cá nhân
@@ -204,8 +280,8 @@ const StudentForm = ({
             defaultValue={data?.sex}
             name="sex"
           >
-            <option value="male">Nam</option>
-            <option value="female">Nữ</option>
+            <option value="MALE">Nam</option>
+            <option value="FEMALE">Nữ</option>
           </select>
           {errors.sex?.message && (
             <p className="text-xs text-red-400">
@@ -233,57 +309,64 @@ const StudentForm = ({
       </span>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Họ"
-          name="parentfirstName"
-          defaultValue={data?.firstName}
+          label="Tên tài khoản phụ huynh"
+          name="parentUsername"
+          defaultValue={data?.parentUsername}
           register={register}
-          error={errors.firstName}
+          error={errors.parentUsername}
+        />
+        <InputField
+          label="Họ"
+          name="parentFirstName"
+          defaultValue={data?.parentFirstName}
+          register={register}
+          error={errors.parentFirstName}
         />
         <InputField
           label="Tên"
-          name="parentlastName"
-          defaultValue={data?.lastName}
+          name="parentLastName"
+          defaultValue={data?.parentLastName}
           register={register}
-          error={errors.lastName}
+          error={errors.parentLastName}
         />
 
         <InputField
           label="email"
-          name="parentemail"
-          defaultValue={data?.bloodType}
+          name="parentEmail"
+          defaultValue={data?.parentEmail}
           register={register}
-          error={errors.bloodType}
+          error={errors.parentEmail}
         />
 
         <InputField
           label="Số điện thoại"
-          name="parentphone"
-          defaultValue={data?.phone}
+          name="parentPhone"
+          defaultValue={data?.parentPhone}
           register={register}
-          error={errors.phone}
+          error={errors.parentPhone}
         />
         <InputField
           label="Địa chỉ"
-          name="parentaddress"
-          defaultValue={data?.address}
+          name="parentAddress"
+          defaultValue={data?.parentAddress}
           register={register}
-          error={errors.address}
+          error={errors.parentAddress}
         />
 
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Giới tính</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("sex")}
-            defaultValue={data?.sex}
+            {...register("parentsex")}
+            defaultValue={data?.parentsex}
             name="parentsex"
           >
-            <option value="male">Nam</option>
-            <option value="female">Nữ</option>
+            <option value="MALE">Nam</option>
+            <option value="FEMALE">Nữ</option>
           </select>
-          {errors.sex?.message && (
+          {errors.parentsex?.message && (
             <p className="text-xs text-red-400">
-              {errors.sex.message.toString()}
+              {errors.parentsex.message.toString()}
             </p>
           )}
         </div>
@@ -292,6 +375,26 @@ const StudentForm = ({
         {type === "create" ? "Create" : "Update"}
       </button>
     </form >
+    ) : (
+        <div>
+          {type === "create" && (
+            <p className="text-green-600 text-lg font-semibold">✅ Sinh viên đã được thêm thành công!</p>
+          )}
+          {type === "update" && (
+            <p className="text-green-600 text-lg font-semibold">✅ Sinh viên đã được cập nhật thành công!</p>
+          )}
+        </div>
+      )}
+      {errorMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-lg font-semibold text-red-500 mb-1">Lỗi</h2>
+            <p>{errorMessage}</p>
+            <button onClick={() => setErrorMessage(null)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">Đóng</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
