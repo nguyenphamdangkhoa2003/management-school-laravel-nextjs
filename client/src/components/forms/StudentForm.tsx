@@ -23,7 +23,10 @@ const schema = z.object({
   phone: z.string().min(1, { message: "Phone is required!" }),
   address: z.string().min(1, { message: "Address is required!" }),
   bloodType: z.string().min(1, { message: "Blood Type is required!" }),
-  birthday: z.date({ message: "Birthday is required!" }),
+  birthday: z.preprocess(
+    (val) => (typeof val === "string" ? new Date(val) : val),
+    z.date({ message: "Birthday is required!" })
+  ),
   sex: z.enum(["male", "female"], { message: "Sex is required!" }),
   img: z.instanceof(File, { message: "Image is required" }),
   code: z.string().length(10, { message: "Code must be exactly 10 characters long!" }),
@@ -64,6 +67,8 @@ const StudentForm = ({
 
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
+
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     Object.entries(data).forEach(([key, value]) => {
       if (key === "birthday" && typeof value === "string") {
         formData.append(key, formatDate(value));
@@ -209,19 +214,13 @@ const StudentForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
-          <label
-            className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-            htmlFor="img"
-          >
+          <label className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer" htmlFor="img">
             <Image src="/upload.png" alt="" width={28} height={28} />
-            <span>Tải hình ảnh lên</span>
+            <span>Hình ảnh</span>
           </label>
-          <input type="file" id="img" {...register("img")} className="hidden" />
-          {errors.img?.message && (
-            <p className="text-xs text-red-400">
-              {errors.img.message.toString()}
-            </p>
-          )}
+          <input type="file" id="img" className="hidden" onChange={handleFileChange} />
+          {previewImage && <Image src={previewImage} alt="Preview" width={100} height={100} />}
+          {errors.img?.message && <p className="text-xs text-red-400">{errors.img.message.toString()}</p>}
         </div>
         <div className='w-[25%]'>
 
