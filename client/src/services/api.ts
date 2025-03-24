@@ -370,7 +370,6 @@ export const getLesson =async (search :string)=>{
 
 export const addLesson = async (Data: FormData) => {
   try {
-    console.log("Dữ liệu gửi lên API:", Data);
     const response = await api.post(`/lessons`, Data, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -428,6 +427,26 @@ export const getRooms = async (page = 1, perPage = 10) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách phòng học:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const addClass = async (Data: FormData) => {
+  try {
+    const response = await api.post(`/school-classes`, Data);
+    return response.data;
+  } catch (error:any) {
+    console.error("Lỗi khi thêm Lớp học:", error.response?.data || error.message);
+    throw error;
+  }
+}
+export const updateClass = async (id:number,Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/school-classes/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật lớp học:", error.response?.data || error.message);
     throw error;
   }
 };
