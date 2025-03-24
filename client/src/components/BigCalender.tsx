@@ -21,12 +21,12 @@ const BigCalendar = ({ events }: { events: any[] }) => {
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
 
   const parseDateTime = (date: string | Date, time: string) => {
-  const parsedDate = moment(date, "YYYY-MM-DD").toDate();
+    const parsedDate = moment(date, "YYYY-MM-DD").toDate();
 
-  const [hours, minutes] = time?.split(":").map(Number) || [0, 0];
+    const [hours, minutes] = time?.split(":").map(Number) || [0, 0];
 
-  return new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), hours, minutes);
-};
+    return new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), hours, minutes);
+  };
 
   const generateRecurringEvents = () => {
     let allEvents: any[] = [];
@@ -46,6 +46,7 @@ const BigCalendar = ({ events }: { events: any[] }) => {
               teacher: event.teacher,
               room: event.room,
               link: event.link,
+              id: event.id,
             });
           }
           startDate.add(1, "day");
@@ -89,6 +90,16 @@ const BigCalendar = ({ events }: { events: any[] }) => {
           className="text-blue-600 text-xs underline"
         >
           Xem bài giảng
+        </a>
+      )}
+
+      {event.link && (
+        <a
+          href={`/teacher/students/${event.id}`}
+          rel="noopener noreferrer"
+          className="text-blue-600 text-xs underline"
+        >
+          Danh sách lớp
         </a>
       )}
     </div>

@@ -1,12 +1,14 @@
 "use client"
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalender";
+import { teachercalendarEvents } from "@/lib/data";
 import { getLessonsByTeacherid } from "@/services/api";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 const TeacherPage = () => {
-  const [lessons,setAllLessonById ]=useState([]);
-  const user=JSON.parse(localStorage.getItem("user")||"null");
+  const [lessons, setAllLessonById] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user") || "null");
   const teacherId = user?.id;
+  console.log(`>>>>>>>> ${teacherId}`)
   useEffect(() => {
     const fetchLessons = async () => {
       try {
@@ -24,7 +26,7 @@ const TeacherPage = () => {
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
         <div className="h-full bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Schedule</h1>
+          <h1 className="text-xl font-semibold">Lịch giảng dạy</h1>
           <BigCalendar events={lessons} />
         </div>
       </div>
