@@ -26,29 +26,22 @@ const menuItems = [
       },
 
       {
-        icon: "/class.png",
-        label: "Lớp học",
-        href: "/list/classes",
-        visible: ["teacher"],
-      },
-
-      {
         icon: "/teacher.png",
         label: "Giáo viên",
         href: "/list/teachers",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/student.png",
         label: "Học sinh",
         href: "/list/students",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/parent.png",
         label: "Phụ huynh",
         href: "/list/parents",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/subject.png",
@@ -66,7 +59,7 @@ const menuItems = [
         icon: "/lesson.png",
         label: "Bài giảng",
         href: "/list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/exam.png",
@@ -74,28 +67,11 @@ const menuItems = [
         href: "/list/subject-teacher",
         visible: ["admin"],
       },
-      {
-        icon: "/assignment.png",
-        label: "Bài tập",
-        href: "/list/assignments",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+
       {
         icon: "/result.png",
         label: "Kết quả",
         href: "/list/results",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
-        icon: "/attendance.png",
-        label: "Điểm danh",
-        href: "/list/attendance",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
-        icon: "/message.png",
-        label: "Tin nhắn",
-        href: "/list/messages",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {

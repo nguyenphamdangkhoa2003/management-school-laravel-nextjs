@@ -119,7 +119,8 @@ const StudentListPage = () => {
         }
         try {
             const filteredStudent = await getStudent(searchValue);
-            setAllStudens(filteredStudent);
+            loading: () => <h1>Loading...</h1>,
+                setAllStudens(filteredStudent);
         } catch (error) {
             console.error("Lỗi khi tìm kiếm sinh viên:", error);
         }
