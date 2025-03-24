@@ -134,7 +134,7 @@ const StudentForm = ({
           formDataStudent.append("guardian_id", parentID);
           studentResponse = await addStudent(formDataStudent);
           if (studentResponse?.id) {
-            setStudents((prev) => [...prev, studentResponse]); // Thêm sinh viên vào danh sách
+            setStudents((prev) => [...prev, studentResponse]);
           }
         }
       
@@ -142,7 +142,6 @@ const StudentForm = ({
       setErrorMessage(null);
     } catch (error: any) {
       setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
-      console.error("Lỗi:", error);
     }
   });
 

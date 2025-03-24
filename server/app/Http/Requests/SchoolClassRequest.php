@@ -24,7 +24,7 @@ class SchoolClassRequest extends FormRequest
         return [
             'name' => 'required|string|unique:school_classes,name,' . $this->route('id'),
             'capacity' => 'required|integer|min:1',
-            'supervisor_id' => 'required|exists:teachers,id',
+            'supervisor_id' => 'nullable|exists:teachers,id',
             'grade_id' => 'required|exists:grades,id'
         ];
     }

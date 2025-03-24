@@ -71,7 +71,12 @@ const ClassListPage = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="class" type="update" data={item} />
+              <FormModal table="class" type="update" data={{
+                id: item.id,
+                classname: item.name,
+                capacity: item.capacity,
+                gradeID: item.grade_id,
+              }} />
               <FormModal table="class" type="delete" id={item.id} />
             </>
           )}
