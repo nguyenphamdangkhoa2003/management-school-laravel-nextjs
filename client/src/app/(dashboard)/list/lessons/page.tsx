@@ -3,10 +3,10 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { getLessons,getLesson } from "@/services/api";
+import { getLessons, getLesson } from "@/services/api";
 import moment from "moment";
 import Image from "next/image";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 type Lesson = {
   id: number;
@@ -46,29 +46,29 @@ const columns = [
     accessor: "room",
   },
   {
-    header: "Actions",
+    header: "Tùy chọn",
     accessor: "action",
   },
 ];
 
 const LessonListPage = () => {
-  const [lessons,setAllLesson ]=useState([]);
-  const [error, setError]=useState([null]);
+  const [lessons, setAllLesson] = useState([]);
+  const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
   useEffect(() => {
-      const fetchLessons = async () => {
-        try {
-          const data = await getLessons(currentPage, 10);
-          setAllLesson(data.data);
-          setTotalPages(data.meta?.last_page || 1);
-        } catch (err:any) {
-           setError(err.message);
-         }
-      };
-      fetchLessons();
-    }, [currentPage]);
+    const fetchLessons = async () => {
+      try {
+        const data = await getLessons(currentPage, 10);
+        setAllLesson(data.data);
+        setTotalPages(data.meta?.last_page || 1);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+    fetchLessons();
+  }, [currentPage]);
   const renderRow = (item: Lesson) => (
     <tr
       key={item.id}
@@ -96,7 +96,7 @@ const LessonListPage = () => {
                 enddate: item?.endTime ? new Date(item.endTime).toLocaleDateString("en-CA") : "",
                 starttime: item.class_time,
                 endtime: item.ending_class_time,
-                roomId:item.room.id
+                roomId: item.room.id
               }} />
               <FormModal table="lesson" type="delete" id={item.id} />
             </>
@@ -105,27 +105,27 @@ const LessonListPage = () => {
       </td>
     </tr>
   );
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>)=>{
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();
-        if(searchValue ===""){
-          const data=await getLessons(currentPage,10);
-          setAllLesson(data.data);
-          return
-        }
-        try {
-          const filtered = await getLesson(searchValue);
-          setAllLesson(filtered);
-        } catch (error) {
-          console.error("Lỗi khi tìm kiếm lớp học:", error);
-        }
+    if (searchValue === "") {
+      const data = await getLessons(currentPage, 10);
+      setAllLesson(data.data);
+      return
+    }
+    try {
+      const filtered = await getLesson(searchValue);
+      setAllLesson(filtered);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm lớp học:", error);
+    }
   }
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Lessons</h1>
+        <h1 className="hidden md:block text-lg font-semibold">Danh sách bài giảng</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch onChange={handleSearch}/>
+          <TableSearch onChange={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />

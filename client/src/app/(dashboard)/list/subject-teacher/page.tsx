@@ -23,29 +23,29 @@ const columns = [
     accessor: "class",
   },
   {
-    header: "Actions",
+    header: "Tùy chọn",
     accessor: "action",
   },
 ];
 
 const SubjectTeacherListPage = () => {
-  const [subjectteachers,setAllSubjectTeacher ] = useState([]);
-    const role = localStorage.getItem("role")
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [error, setError] = useState([null]);
-    useEffect(() => {
-      const fetchSubjectTeacher = async () => {
-        try {
-          const data = await getSubjectTeachers(currentPage, 10);
-          setAllSubjectTeacher(data.data);
-          setTotalPages(data.meta?.last_page || 1);
-        } catch (error:any) {
-          setError(error.message);
-        }
-      };
-      fetchSubjectTeacher();
-    }, [currentPage]);
+  const [subjectteachers, setAllSubjectTeacher] = useState([]);
+  const role = localStorage.getItem("role")
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState([null]);
+  useEffect(() => {
+    const fetchSubjectTeacher = async () => {
+      try {
+        const data = await getSubjectTeachers(currentPage, 10);
+        setAllSubjectTeacher(data.data);
+        setTotalPages(data.meta?.last_page || 1);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+    fetchSubjectTeacher();
+  }, [currentPage]);
   const renderRow = (item: SubjectTeacher) => (
     <tr
       key={item.id}
@@ -74,7 +74,7 @@ const SubjectTeacherListPage = () => {
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Exams</h1>
+        <h1 className="hidden md:block text-lg font-semibold">Dánh sách giảng viên - môn học</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           {/* <TableSearch /> */}
           <div className="flex items-center gap-4 self-end">

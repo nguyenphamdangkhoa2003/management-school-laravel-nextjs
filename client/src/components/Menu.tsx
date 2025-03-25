@@ -57,6 +57,13 @@ const menuItems = [
       },
 
       {
+        icon: "/class.png",
+        label: "Phòng học",
+        href: "/list/rooms",
+        visible: ["admin"],
+      },
+
+      {
         icon: "/list.png",
         label: "Danh sách đăng ký môn",
         href: "/list/student-lessons",

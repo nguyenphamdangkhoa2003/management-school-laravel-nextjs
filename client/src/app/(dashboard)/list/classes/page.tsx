@@ -5,7 +5,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { getClasses,getClass } from "@/services/api";
+import { getClasses, getClass } from "@/services/api";
 type Class = {
   id: number;
   name: string;
@@ -16,33 +16,33 @@ type Class = {
 
 const columns = [
   {
-    header: "Class Name",
+    header: "Tên lớp",
     accessor: "name",
   },
   {
-    header: "Capacity",
+    header: "Sĩ số",
     accessor: "capacity",
     className: "hidden md:table-cell",
   },
   {
-    header: "Grade",
+    header: "Niên khóa",
     accessor: "grade",
     className: "hidden md:table-cell",
   },
   {
-    header: "Supervisor",
+    header: "Người giám sát",
     accessor: "supervisor",
     className: "hidden md:table-cell",
   },
   {
-    header: "Actions",
+    header: "Tùy chọn",
     accessor: "action",
   },
 ];
 
 const ClassListPage = () => {
-  const [classes, setAllClass]=useState([]);
-  const [error, setError]=useState([null]);
+  const [classes, setAllClass] = useState([]);
+  const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
@@ -51,10 +51,11 @@ const ClassListPage = () => {
       try {
         const data = await getClasses(currentPage, 10);
         setAllClass(data.data);
+        console.log(data.data);
         setTotalPages(data.meta?.last_page || 1);
       } catch (err) {
-         setError(err.message);
-       }
+        setError(err.message);
+      }
     };
     fetchClasses();
   }, [currentPage]);
@@ -84,27 +85,27 @@ const ClassListPage = () => {
       </td>
     </tr>
   );
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>)=>{
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();
-        if(searchValue ===""){
-          const data=await getClasses(currentPage,10);
-          setAllClass(data.data);
-          return
-        }
-        try {
-          const filtered = await getClass(searchValue);
-          setAllClass(filtered);
-        } catch (error) {
-          console.error("Lỗi khi tìm kiếm lớp học:", error);
-        }
+    if (searchValue === "") {
+      const data = await getClasses(currentPage, 10);
+      setAllClass(data.data);
+      return
+    }
+    try {
+      const filtered = await getClass(searchValue);
+      setAllClass(filtered);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm lớp học:", error);
+    }
   }
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Classes</h1>
+        <h1 className="hidden md:block text-lg font-semibold">Danh sách lớp</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch onChange={handleSearch}/>
+          <TableSearch onChange={handleSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />

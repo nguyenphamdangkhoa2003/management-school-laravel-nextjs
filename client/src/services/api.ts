@@ -476,7 +476,17 @@ export const getAllAttendance = async (page = 1, perPage = 10) => {
 
 }
 
+//phòng học
+export const getAllrooms = async (page = 1, perPage = 10) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/rooms`, { params: { page, per_page: perPage } });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách lớp", error.response?.data || error.message);
+    throw error;
+  }
 
+}
 
 //ĐĂNG NHẬP
 export const login = async (username: string, password: string) => {
