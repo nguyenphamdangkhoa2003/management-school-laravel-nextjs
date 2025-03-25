@@ -449,12 +449,12 @@ export const addClass = async (Data: FormData) => {
   try {
     const response = await api.post(`/school-classes`, Data);
     return response.data;
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Lỗi khi thêm Lớp học:", error.response?.data || error.message);
     throw error;
   }
 }
-export const updateClass = async (id:number,Data: any) => {
+export const updateClass = async (id: number, Data: any) => {
   try {
     Data.append("_method", "PUT");
     const response = await api.post(`/school-classes/${id}`, Data);
@@ -464,6 +464,20 @@ export const updateClass = async (id:number,Data: any) => {
     throw error;
   }
 };
+//Đăng ký môn
+export const getAllAttendance = async (page = 1, perPage = 10) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/attendances`, { params: { page, per_page: perPage } });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách đăng ký môn", error.response?.data || error.message);
+    throw error;
+  }
+
+}
+
+
+
 //ĐĂNG NHẬP
 export const login = async (username: string, password: string) => {
   try {

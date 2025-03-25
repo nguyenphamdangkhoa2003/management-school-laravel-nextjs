@@ -55,6 +55,14 @@ const menuItems = [
         href: "/list/classes",
         visible: ["admin"],
       },
+
+      {
+        icon: "/list.png",
+        label: "Danh sách đăng ký môn",
+        href: "/list/student-lessons",
+        visible: ["admin"],
+      },
+
       {
         icon: "/lesson.png",
         label: "Bài giảng",
