@@ -71,8 +71,8 @@ const StudentLessons = () => {
             <td>{item.lesson.subject_teacher.subject.name}</td>
             <td>{item.lesson.subject_teacher.teacher.name}</td>
             <td>{item.lesson.day}</td>
-            <td className="hidden md:table-cell">{formatDate(item.lesson.startTime)}</td>
-            <td className="hidden md:table-cell">{formatDate(item.lesson.endTime)}</td>
+            <td className="hidden lg:table-cell">{formatDate(item.lesson.startTime)}</td>
+            <td className="hidden lg:table-cell">{formatDate(item.lesson.endTime)}</td>
             <td>
                 <div className="flex items-center gap-2">
                     <Link href={`/list/students/${item.id}`}>
@@ -80,7 +80,7 @@ const StudentLessons = () => {
                             <Image src="/view.png" alt="View" width={16} height={16} />
                         </button>
                     </Link>
-                    {role === "admin" && <FormModal table="student" type="delete" id={item.id} />}
+                    {role === "admin" && <FormModal table="studentlesson" type="delete" id={item.id} />}
                 </div>
             </td>
         </tr>
@@ -100,7 +100,7 @@ const StudentLessons = () => {
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
                             <Image src="/sort.png" alt="Sort" width={14} height={14} />
                         </button>
-                        {role === "admin" && <FormModal table="student" type="create" />}
+                        {role === "admin" && <FormModal table="studentlesson" type="create" />}
                     </div>
                 </div>
             </div>

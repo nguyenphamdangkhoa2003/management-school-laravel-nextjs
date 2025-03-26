@@ -89,6 +89,14 @@ const menuItems = [
         href: "/list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },
+
+      {
+        icon: "/exam.png",
+        label: "Niên khóa",
+        href: "/list/grade",
+        visible: ["admin"],
+      },
+
       {
         icon: "/announcement.png",
         label: "Thông báo",

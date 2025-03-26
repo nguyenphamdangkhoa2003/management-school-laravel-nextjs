@@ -1,8 +1,8 @@
 "use client";
-import { 
-  deleteTeacher, deleteStudent, deleteSClass, 
-  deleteSubject, deleteParent, deleteLesson, 
-  deleteSubjectTeacher 
+import {
+  deleteTeacher, deleteStudent, deleteSClass,
+  deleteSubject, deleteParent, deleteLesson,
+  deleteSubjectTeacher
 } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -49,9 +49,20 @@ const SubjectTeacherForm = dynamic(() => import("./forms/SubjectTeacherForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
-const AnnouncementForm = dynamic(() => import("./forms/announcement"), {
+const GradeForm = dynamic(() => import("./forms/GradeForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+
+const StudentLessonForm = dynamic(() => import("./forms/SubjectTeacherForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+const RoomForm = dynamic(() => import("./forms/RoomForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+
+
 const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
 } = {
@@ -62,7 +73,10 @@ const forms: {
   subject: (type, data) => <SubjectForm type={type} data={data} />,
   lesson: (type, data) => <LessonForm type={type} data={data} />,
   subjectteacher: (type, data) => <SubjectTeacherForm type={type} data={data} />,
+  grade: (type, data) => <GradeForm type={type} data={data} />,
   announcement: (type, data) => <LessonForm type={type} data={data} />,
+  studentlesson: (type, data) => <StudentLessonForm type={type} data={data} />,
+  room: (type, data) => <RoomForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -79,11 +93,13 @@ const FormModal = ({
   | "class"
   | "lesson"
   | "subjectteacher"
+  | "studentlesson"
   | "assignment"
   | "result"
   | "attendance"
   | "event"
-  | "announcement";
+  | "announcement"
+  | "room";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
