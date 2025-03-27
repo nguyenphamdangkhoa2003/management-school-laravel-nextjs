@@ -20,7 +20,7 @@ const schema = (type: "create" | "update") =>
     capacity: z
       .coerce.number().int().min(10, { message: "Số chỗ ngồi phải lơn hơn 10" })
       .max(99, { message: "Số chỗ ngồi không được lớn hơn 99" }),
-    type: z.enum(["LT", "TH"], { message: "vui lòng chọn loại phòng" }),
+    type: z.enum(["lecture", "lab", "office", "meeting"], { message: "vui lòng chọn loại phòng" }),
     available: z.enum(["1", "0"], { message: "vui lòng chọn tình trạng hoạt động" }),
   }).refine((data) => {
     if (type === "update" && !data.id) {
@@ -138,8 +138,10 @@ const ClassForm = ({
                 defaultValue={data?.type}
                 name="type"
               >
-                <option value="LT">Lý thuyết</option>
-                <option value="TH">Thực hành</option>
+                <option value="lecture">Lý thuyết</option>
+                <option value="lab">Thực hành</option>
+                <option value="office">Văn phòng</option>
+                <option value="meeting">phòng họp</option>
               </select>
               {errors.type?.message && (
                 <p className="text-xs text-red-400">

@@ -60,7 +60,7 @@ const StudentLessons = () => {
             <td>{item.name}</td>
             <td>{item.floor}</td>
             <td>{item.capacity}</td>
-            <td>{item.type === "LT" ? "Lý thuyết" : "Thực hành"}</td>
+            <td>{item.type === "lecture" ? "Lý thuyết" : item.type === "lab" ? "Thực hành" : item.type === "office" ? "Văn phòng" : "Phòng họp"}</td>
             <td>{item.is_available ? "Hoạt động" : "Ngưng hoạt động"}</td>
             <td className="flex items-center gap-2">
                 {role === "admin" && (
