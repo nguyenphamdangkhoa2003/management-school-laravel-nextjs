@@ -73,7 +73,7 @@ export const deleteTeacher = async (id: number) => {
   }
 };
 
-// HỌC SINH
+// SINH VIÊN
 export const getStudents = async (page = 1, perPage = 10) => {
   try {
     const response = await api.get(`/students`, {
@@ -347,6 +347,38 @@ export const getLessonsByTeacherid = async (id: number) => {
   } catch (error) {
     console.error("Lỗi khi gọi API:", error);
     return [];
+  }
+};
+
+export const getLessonsForStudentLesson = async (page = 1, perPage = 10) => {
+  try {
+    const response = await api.get(`/lessons`, { params: { page, per_page: perPage } });
+    const rawData = response.data.data;
+    const meta = response.data.meta;
+
+    const currentDate = new Date();
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+
+    const filteredData = rawData
+      .filter((item: any) => {
+        const startDate = new Date(item.startTime);
+        return startDate.getFullYear() >= year && startDate.getMonth() >= month;
+      })
+      .map((item: any) => ({
+        value: item.id,
+        subject: item.subject_teacher.subject.name,
+        teacher: item.subject_teacher.teacher.name,
+        day: item.day,
+        Time: `${moment(item.class_time, "HH:mm:ss").format("HH:mm")} - ${moment(item.ending_class_time, "HH:mm:ss").format("HH:mm")}`,
+      }));
+
+    console.log("Filtered Data:", filteredData);
+
+    return { data: filteredData, meta };
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+    return { data: [], meta: {} };
   }
 };
 

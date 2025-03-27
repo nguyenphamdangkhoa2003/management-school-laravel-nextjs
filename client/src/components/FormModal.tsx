@@ -54,7 +54,7 @@ const GradeForm = dynamic(() => import("./forms/GradeForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
-const StudentLessonForm = dynamic(() => import("./forms/SubjectTeacherForm"), {
+const StudentLessonForm = dynamic(() => import("./forms/StudentLessonForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 

@@ -1,18 +1,20 @@
 "use client";
 
-import { getTeachers, getSubjects, addSubjectTeacher, updateSubjectTeacher } from "@/services/api";
+import { getLessons, getLessonsForStudentLesson, getStudents } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
+import SearchableSelect from "../SearchableSelect";
+import { Day } from "react-big-calendar";
 
 
 const schema = (type: "create" | "update") =>
     z.object({
         id: z.coerce.number().int().min(1, { message: "ID phải là số nguyên" }).optional(),
-        subjectId: z.string().min(1, { message: "Vui lòng chọn môn học" }),
-        teacherId: z.string().min(1, { message: "Vui lòng chọn giảng viên" }),
+        student_code: z.string().min(1, { message: "Vui lòng chọn môn học" }),
+        lesson_id: z.string().min(1, { message: "Vui lòng chọn giảng viên" }),
     }).refine((data) => {
         if (type === "update" && !data.id) {
             return false;
@@ -44,64 +46,71 @@ const SubjectTeacherForm = ({
 
     const [showForm, setShowForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [teachers, setTeachers] = useState<any[]>([]);
-    const [subjects, setSubjects] = useState<any[]>([]);
-
+    const [student, setStudent] = useState<any[]>([]);
+    const [lesson, setLesson] = useState<any[]>([]);
     useEffect(() => {
-        const fetchSubjects = async () => {
+        const fetchStudent = async () => {
             try {
-                const firstPage = await getSubjects(1, 10);
+                const firstPage = await getStudents(1, 10);
                 const totalPages = firstPage.meta?.last_page || 1;
 
-                const allSubjectPages = await Promise.all(
-                    Array.from({ length: totalPages }, (_, i) => getSubjects(i + 1, 10))
+                const allStudentPages = await Promise.all(
+                    Array.from({ length: totalPages }, (_, i) => getStudents(i + 1, 10))
                 );
-                const allSubjects = allSubjectPages.flatMap((page) => page.data);
-                setSubjects(allSubjects);
+                const allStudent = allStudentPages.flatMap((page) => page.data);
+                const studenOptions = allStudent.map((item: any) => {
+                    return {
+                        value: item.code,
 
-                if (type === "update" && data?.subjectId) {
-                    setValue("subjectId", String(data.subjectId));
+                        label: `${item.surname} ${item.name} `,
+                    }
+                })
+                setStudent(studenOptions);
+
+                if (type === "update" && data?.code) {
+                    setValue("student_code", String(data.subjectId));
                 }
             } catch (err: any) {
                 setErrorMessage(err.message);
             }
         };
 
-        const fetchTeachers = async () => {
+        const fetchLesson = async () => {
             try {
-                const firstPage = await getTeachers(1, 10);
+                const firstPage = await getLessonsForStudentLesson(1, 10);
                 const totalPages = firstPage.meta?.last_page || 1;
 
-                const allTeacherPages = await Promise.all(
-                    Array.from({ length: totalPages }, (_, i) => getTeachers(i + 1, 10))
+                const allLessonPages = await Promise.all(
+                    Array.from({ length: totalPages }, (_, i) => getLessonsForStudentLesson(i + 1, 10))
                 );
-                const allTeachers = allTeacherPages.flatMap((page) => page.data);
-                setTeachers(allTeachers);
+                const allLesson = allLessonPages.flatMap((page) => page.data);
 
-                if (type === "update" && data?.teacherId) {
-                    setValue("teacherId", String(data.teacherId));
+                console.log(">><<>>", allLesson);
+                setLesson(allLesson);
+
+                if (type === "update" && data?.code) {
+                    setValue("student_code", String(data.subjectId));
                 }
             } catch (err: any) {
                 setErrorMessage(err.message);
             }
         };
 
-        fetchSubjects();
-        fetchTeachers();
+
+        fetchStudent();
+        fetchLesson();
     }, [type, data, setValue]);
 
     const onSubmit = handleSubmit(async (formData) => {
         const subjectTeacherData = new FormData();
-        subjectTeacherData.append("teacher_id", formData.teacherId);
-        subjectTeacherData.append("subject_id", formData.subjectId);
-
+        subjectTeacherData.append("student_code", formData.teacherId);
         try {
             if (type === "create") {
-                await addSubjectTeacher(subjectTeacherData);
+
                 setTimeout(() => window.location.reload(), 1500);
             } else if (type === "update") {
                 subjectTeacherData.append("id", formData?.id);
-                await updateSubjectTeacher(formData?.id, subjectTeacherData);
+
                 setTimeout(() => window.location.reload(), 1500);
             }
             setShowForm(false);
@@ -140,23 +149,9 @@ const SubjectTeacherForm = ({
                         }
                         {/* Select chọn môn học */}
                         <div>
-                            <label className="block font-medium">Chọn môn học</label>
-                            <select
-                                {...register("subjectId")}
-                                className="w-full p-2 border rounded-md"
-                                defaultValue={data?.subjectId || ""}
-                            >
-                                <option value="">-- Chọn môn học --</option>
-                                {subjects?.map((subject) => (
-                                    <option
-                                        key={subject.id}
-                                        value={subject.id}
-                                        selected={subject.id === data?.subjectId}
-                                    >
-                                        {subject.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <label className="block font-medium">Chọn sinh viên</label>
+                            <SearchableSelect options={student} placeholder="chọn 1 sinh viên..." getOptionLabel={(e) => `${e.value} - ${e.label}`} />
+
                             {errors.subjectId && (
                                 <p className="text-red-500 text-sm">{errors.subjectId.message}</p>
                             )}
@@ -164,25 +159,11 @@ const SubjectTeacherForm = ({
 
                         {/* Select chọn giảng viên */}
                         <div>
-                            <label className="block font-medium">Chọn giảng viên</label>
-                            <select
-                                {...register("teacherId")}
-                                className="w-full p-2 border rounded-md"
-                                defaultValue={data?.teacherId || ""}
-                            >
-                                <option value="">-- Chọn giảng viên --</option>
-                                {teachers?.map((teacher) => (
-                                    <option
-                                        key={teacher.id}
-                                        value={teacher.id}
-                                        selected={teacher.id === data?.teacherId}
-                                    >
-                                        {teacher.surname + " " + teacher.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.teacherId && (
-                                <p className="text-red-500 text-sm">{errors.teacherId.message}</p>
+                            <label className="block font-medium">Chọn lesson</label>
+                            <SearchableSelect options={lesson} placeholder="chọn 1 lesson" getOptionLabel={(e) => `${e.subject} - ${e.teacher} - ${e.day} - ${e.Time}`} />
+
+                            {errors.subjectId && (
+                                <p className="text-red-500 text-sm">{errors.subjectId.message}</p>
                             )}
                         </div>
                     </div>
