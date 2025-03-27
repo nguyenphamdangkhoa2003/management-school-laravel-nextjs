@@ -33,7 +33,7 @@ const menuItems = [
       },
       {
         icon: "/student.png",
-        label: "Học sinh",
+        label: "Sinh viên",
         href: "/list/students",
         visible: ["admin"],
       },

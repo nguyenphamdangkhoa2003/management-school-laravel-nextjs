@@ -2,7 +2,8 @@
 import {
   deleteTeacher, deleteStudent, deleteSClass,
   deleteSubject, deleteParent, deleteLesson,
-  deleteSubjectTeacher
+  deleteSubjectTeacher,
+  deleteroom
 } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -144,6 +145,12 @@ const FormModal = ({
         if (table === "subjectteacher") {
           await deleteSubjectTeacher(id);
         }
+
+        if (table === "room") {
+          await deleteroom(id);
+        }
+
+
         setSuccessMessage(`Xóa thành công!`);
         setShowSuccessModal(true);
         setOpen(false);
