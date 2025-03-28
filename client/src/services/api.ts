@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import moment from "moment";
 import exp from "constants";
 const API_BASE_URL = "http://127.0.0.1:8000/api";
-
+const API_URL = "http://127.0.0.1:8000/api/grades";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -20,18 +20,30 @@ export const getTeachers = async (page = 1, perPage = 10) => {
     });
     return response.data; // Trả về toàn bộ dữ liệu gồm danh sách + meta
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-
 export const getTeacher = async (searchQuery: string) => {
   try {
-    const response = await api.get(`/teachers/search`, { params: { name: searchQuery, username: searchQuery, email: searchQuery, phone: searchQuery } });
+    const response = await api.get(`/teachers/search`, {
+      params: {
+        name: searchQuery,
+        username: searchQuery,
+        email: searchQuery,
+        phone: searchQuery,
+      },
+    });
     return response.data.data.data;
   } catch (error) {
-    console.error("Lỗi khi tìm kiếm giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi tìm kiếm giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -43,7 +55,10 @@ export const addTeacher = async (teacherData: FormData) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -58,7 +73,10 @@ export const updateTeacher = async (id: number, teacherData: FormData) => {
 
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -68,7 +86,10 @@ export const deleteTeacher = async (id: number) => {
     const response = await api.delete(`/teachers/${id}`);
     return response.data.data;
   } catch (error) {
-    console.error("Lỗi khi xóa giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi xóa giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -81,20 +102,31 @@ export const getStudents = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách sinh viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách sinh viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 export const getStudent = async (search: string) => {
   try {
-    const response = await api.get(`/students/search`, { params: { name: search, username: search, email: search, phone: search, code: search } });
+    const response = await api.get(`/students/search`, {
+      params: {
+        name: search,
+        username: search,
+        email: search,
+        phone: search,
+        code: search,
+      },
+    });
     return response.data.data.data;
   } catch (error) {
     console.error("Lỗi tìm sinh viên", error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 export const deleteStudent = async (id: number) => {
   try {
@@ -104,7 +136,7 @@ export const deleteStudent = async (id: number) => {
     console.error("Lỗi xóa sinh viên", error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 export const addStudent = async (Data: FormData) => {
   try {
@@ -113,7 +145,10 @@ export const addStudent = async (Data: FormData) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm sinh viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm sinh viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -125,19 +160,24 @@ export const getSubjects = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách môn học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách môn học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 export const getSubject = async (search: string) => {
   try {
-    const response = await api.get(`/subjects/search`, { params: { name: search } });
+    const response = await api.get(`/subjects/search`, {
+      params: { name: search },
+    });
     return response.data.data.data;
   } catch (error) {
     console.error("Lỗi tìm môn học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 export const deleteSubject = async (id: number) => {
   try {
     const response = await api.delete(`/subjects/${id}`);
@@ -146,13 +186,16 @@ export const deleteSubject = async (id: number) => {
     console.error("Lỗi xóa môn học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 export const addSubject = async (Data: FormData) => {
   try {
     const response = await api.post(`/subjects`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm môn học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm môn học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -162,7 +205,10 @@ export const updateSubject = async (id: number, Data: any) => {
     const response = await api.post(`/subjects/${id}`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật môn học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật môn học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -173,26 +219,35 @@ export const getSubjectTeachers = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách môn học theo giáo viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách môn học theo giáo viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
-}
+};
 export const addSubjectTeacher = async (Data: FormData) => {
   try {
     const response = await api.post(`/subject-teachers`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm môn học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm môn học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
-}
+};
 export const updateSubjectTeacher = async (id: number, Data: any) => {
   try {
     Data.append("_method", "PUT");
     const response = await api.post(`/subject-teachers/${id}`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật môn học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật môn học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -204,7 +259,7 @@ export const deleteSubjectTeacher = async (id: number) => {
     console.error("Lỗi xóa môn học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 //LỚP
 export const getClasses = async (page = 1, perPage = 10) => {
   try {
@@ -213,37 +268,48 @@ export const getClasses = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách lớp:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách lớp:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 export const getClass = async (search: string) => {
   try {
-    const response = await api.get(`/school-classes/search`, { params: { name: search } });
+    const response = await api.get(`/school-classes/search`, {
+      params: { name: search },
+    });
     return response.data.data.data;
   } catch (error) {
     console.error("Lỗi tìm lớp học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 export const addClass = async (Data: FormData) => {
   try {
     const response = await api.post(`/school-classes`, Data);
     return response.data;
   } catch (error: any) {
-    console.error("Lỗi khi thêm Lớp học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm Lớp học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
-}
+};
 export const updateClass = async (id: number, Data: any) => {
   try {
     Data.append("_method", "PUT");
     const response = await api.post(`/school-classes/${id}`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật lớp học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật lớp học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -256,7 +322,7 @@ export const deleteSClass = async (id: number) => {
     console.error("Lỗi xóa lớp học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 //PHỤ HUYNH
 
 export const getParents = async (page = 1, perPage = 10) => {
@@ -266,20 +332,25 @@ export const getParents = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách phụ huynh:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách phụ huynh:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 export const getParent = async (search: string) => {
   try {
-    const response = await api.get(`/guardians/search`, { params: { name: search, username: search, email: search, phone: search } });
+    const response = await api.get(`/guardians/search`, {
+      params: { name: search, username: search, email: search, phone: search },
+    });
     return response.data.data.data;
   } catch (error) {
     console.error("Lỗi tìm phụ huynh", error.response?.data || error.message);
     throw error;
   }
-}
+};
 export const deleteParent = async (id: number) => {
   try {
     const response = await api.delete(`/guardians/${id}`);
@@ -288,13 +359,16 @@ export const deleteParent = async (id: number) => {
     console.error("Lỗi xóa phụ huynh", error.response?.data || error.message);
     throw error;
   }
-}
+};
 export const addParent = async (Data: FormData) => {
   try {
     const response = await api.post(`/guardians`, Data);
     return response.data;
   } catch (error: any) {
-    console.error("Lỗi khi thêm phụ huynh:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm phụ huynh:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -306,7 +380,10 @@ export const getLessons = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách bài giảng:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -332,8 +409,12 @@ export const getLessonsByTeacherid = async (id: number) => {
         teacher: item.subject_teacher.teacher.name,
         link: item.link,
         allDay: false,
-        startDate: moment(item.startTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"),
-        endDate: moment(item.endTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"),
+        startDate: moment(item.startTime, "YYYY-MM-DD HH:mm:ss").format(
+          "YYYY-MM-DD"
+        ),
+        endDate: moment(item.endTime, "YYYY-MM-DD HH:mm:ss").format(
+          "YYYY-MM-DD"
+        ),
         startTime: moment(item.class_time, "HH:mm:ss").format("HH:mm:ss"),
         endTime: moment(item.ending_class_time, "HH:mm:ss").format("HH:mm:ss"),
         room: item.room.code_room,
@@ -352,7 +433,9 @@ export const getLessonsByTeacherid = async (id: number) => {
 
 export const getLessonsForStudentLesson = async (page = 1, perPage = 10) => {
   try {
-    const response = await api.get(`/lessons`, { params: { page, per_page: perPage } });
+    const response = await api.get(`/lessons`, {
+      params: { page, per_page: perPage },
+    });
     const rawData = response.data.data;
     const meta = response.data.meta;
 
@@ -370,7 +453,9 @@ export const getLessonsForStudentLesson = async (page = 1, perPage = 10) => {
         subject: item.subject_teacher.subject.name,
         teacher: item.subject_teacher.teacher.name,
         day: item.day,
-        Time: `${moment(item.class_time, "HH:mm:ss").format("HH:mm")} - ${moment(item.ending_class_time, "HH:mm:ss").format("HH:mm")}`,
+        Time: `${moment(item.class_time, "HH:mm:ss").format(
+          "HH:mm"
+        )} - ${moment(item.ending_class_time, "HH:mm:ss").format("HH:mm")}`,
       }));
 
     console.log("Filtered Data:", filteredData);
@@ -396,10 +481,18 @@ export const getLessonByStudentid = async (id: number) => {
         teacher: item.lesson.subject_teacher.teacher.name,
         link: item.lesson.link,
         allDay: false,
-        startDate: moment(item.lesson.startTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"),
-        endDate: moment(item.lesson.endTime, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD"),
-        startTime: moment(item.lesson.class_time, "HH:mm:ss").format("HH:mm:ss"),
-        endTime: moment(item.lesson.ending_class_time, "HH:mm:ss").format("HH:mm:ss"),
+        startDate: moment(item.lesson.startTime, "YYYY-MM-DD HH:mm:ss").format(
+          "YYYY-MM-DD"
+        ),
+        endDate: moment(item.lesson.endTime, "YYYY-MM-DD HH:mm:ss").format(
+          "YYYY-MM-DD"
+        ),
+        startTime: moment(item.lesson.class_time, "HH:mm:ss").format(
+          "HH:mm:ss"
+        ),
+        endTime: moment(item.lesson.ending_class_time, "HH:mm:ss").format(
+          "HH:mm:ss"
+        ),
         room: item.lesson.room.code_room,
         repeat: "weekly",
         dayOfWeek: dayMapping[item.lesson.day],
@@ -413,27 +506,36 @@ export const getLessonByStudentid = async (id: number) => {
   }
 };
 
-export const getAllStudentByLessonId = async (id: number, page = 1, perPage = 10) => {
+export const getAllStudentByLessonId = async (
+  id: number,
+  page = 1,
+  perPage = 10
+) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/attendances/${id}/lessons`, {
-      params: { page, per_page: perPage }
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/attendances/${id}/lessons`,
+      {
+        params: { page, per_page: perPage },
+      }
+    );
     return response.data.data;
   } catch (error) {
     console.error("Lỗi khi gọi API:", error);
     return [];
   }
-}
+};
 
 export const getLesson = async (search: string) => {
   try {
-    const response = await api.get(`/lessons/search`, { params: { name: search } });
+    const response = await api.get(`/lessons/search`, {
+      params: { name: search },
+    });
     return response.data.data.data;
   } catch (error) {
     console.error("Lỗi tìm bài giảng", error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 export const addLesson = async (Data: FormData) => {
   try {
@@ -444,10 +546,13 @@ export const addLesson = async (Data: FormData) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm bài giảng:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm bài giảng:",
+      error.response?.data || error.message
+    );
     throw error;
   }
-}
+};
 
 export const updateLesson = async (id: number, Data: any) => {
   try {
@@ -459,7 +564,10 @@ export const updateLesson = async (id: number, Data: any) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật bài giảng:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật bài giảng:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -471,7 +579,7 @@ export const deleteLesson = async (id: number) => {
     console.error("Lỗi xóa bài giảng", error.response?.data || error.message);
     throw error;
   }
-}
+};
 
 //NIÊN KHÓA
 export const getGrades = async (page = 1, perPage = 10) => {
@@ -481,31 +589,61 @@ export const getGrades = async (page = 1, perPage = 10) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách bài giảng:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách bài giảng:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
+
+export const fetchGrades = async () => {
+  const response = await axios.get(API_URL);
+  return response.data;
+};
+
+export const createGrade = async (gradeData: any) => {
+  const response = await axios.post(API_URL, gradeData);
+  return response.data;
+};
+
+export const modifyGrade = async (id: number, gradeData: any) => {
+  const response = await axios.put(`${API_URL}/${id}`, gradeData);
+  return response.data;
+};
+
+export const removeGrade = async (id: number) => {
+  await axios.delete(`${API_URL}/${id}`);
+};
+
 //phòng học
 export const getAllrooms = async (page = 1, perPage = 10) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/rooms`, { params: { page, per_page: perPage } });
+    const response = await axios.get(`${API_BASE_URL}/rooms`, {
+      params: { page, per_page: perPage },
+    });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách phòng học", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách phòng học",
+      error.response?.data || error.message
+    );
     throw error;
   }
-
-}
+};
 
 export const addroom = async (Data: FormData) => {
   try {
-    const response = await api.post('/rooms', Data);
+    const response = await api.post("/rooms", Data);
     return response.data;
   } catch (error: any) {
-    console.error("Lỗi khi thêm phòng học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm phòng học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
-}
+};
 
 export const updateroom = async (id: number, Data: any) => {
   try {
@@ -513,7 +651,10 @@ export const updateroom = async (id: number, Data: any) => {
     const response = await api.post(`/rooms/${id}`, Data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật phòng học:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi cập nhật phòng học:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -526,39 +667,45 @@ export const deleteroom = async (id: number) => {
     console.error("Lỗi xóa lớp học", error.response?.data || error.message);
     throw error;
   }
-}
+};
 //Đăng ký môn
 export const getAllAttendance = async (page = 1, perPage = 10) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/attendances`, { params: { page, per_page: perPage } });
+    const response = await axios.get(`${API_BASE_URL}/attendances`, {
+      params: { page, per_page: perPage },
+    });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách đăng ký môn", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách đăng ký môn",
+      error.response?.data || error.message
+    );
     throw error;
   }
-
-}
-
-
+};
 
 //niên khóa
 export const getAllgrades = async (page = 1, perPage = 10) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/grades`, { params: { page, per_page: perPage } });
+    const response = await axios.get(`${API_BASE_URL}/grades`, {
+      params: { page, per_page: perPage },
+    });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách lớp", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách lớp",
+      error.response?.data || error.message
+    );
     throw error;
   }
-
-}
+};
 //ĐĂNG NHẬP
 export const login = async (username: string, password: string) => {
   try {
     const response = await api.post(`auth/login`, { username, password });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi đăng nhập", error.response?.data || error.message)
+    console.error("Lỗi khi đăng nhập", error.response?.data || error.message);
     throw error;
   }
-}
+};
