@@ -539,6 +539,38 @@ export const getAllAttendance = async (page = 1, perPage = 10) => {
 
 }
 
+export const addAttendance = async (Data: FormData) => {
+  try {
+    const response = await api.post('/attendances', Data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Lỗi đăng ký môn:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+
+export const updateAttendance = async (id: number, Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/attendances/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật đăng ký môn:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+export const deleteAttendance = async (id: number) => {
+  try {
+    const response = await api.delete(`/attendances/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi xóa đăng ký môn", error.response?.data || error.message);
+    throw error;
+  }
+}
 
 
 //niên khóa

@@ -73,15 +73,17 @@ const StudentLessons = () => {
             <td>{item.lesson.day}</td>
             <td className="hidden lg:table-cell">{formatDate(item.lesson.startTime)}</td>
             <td className="hidden lg:table-cell">{formatDate(item.lesson.endTime)}</td>
-            <td>
-                <div className="flex items-center gap-2">
-                    <Link href={`/list/students/${item.id}`}>
-                        <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-                            <Image src="/view.png" alt="View" width={16} height={16} />
-                        </button>
-                    </Link>
-                    {role === "admin" && <FormModal table="studentlesson" type="delete" id={item.id} />}
-                </div>
+            <td className="flex items-center gap-2">
+                {role === "admin" && (
+                    <>
+                        <FormModal table="studentlesson" type="update" data={{
+                            id: item.id,
+                            student_id: item.student.id,
+                            lesson_id: item.lesson.id,
+                        }} />
+                        <FormModal table="studentlesson" type="delete" id={item.id} />
+                    </>
+                )}
             </td>
         </tr>
     );

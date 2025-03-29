@@ -3,7 +3,8 @@ import {
   deleteTeacher, deleteStudent, deleteSClass,
   deleteSubject, deleteParent, deleteLesson,
   deleteSubjectTeacher,
-  deleteroom
+  deleteroom,
+  deleteAttendance
 } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -145,9 +146,11 @@ const FormModal = ({
         if (table === "subjectteacher") {
           await deleteSubjectTeacher(id);
         }
-
         if (table === "room") {
           await deleteroom(id);
+        }
+        if (table === "studentlesson") {
+          await deleteAttendance(id);
         }
 
 
