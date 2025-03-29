@@ -1,15 +1,19 @@
 "use client";
 import {
-  deleteTeacher, deleteStudent, deleteSClass,
-  deleteSubject, deleteParent, deleteLesson,
+  deleteTeacher,
+  deleteStudent,
+  deleteSClass,
+  deleteSubject,
+  deleteParent,
+  deleteLesson,
   deleteSubjectTeacher,
   deleteroom,
-  deleteAttendance
+  deleteAttendance,
+  removeGrade,
 } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
-
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -23,7 +27,6 @@ const getIcon = (type: string) => {
       return "";
   }
 };
-
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -63,8 +66,6 @@ const RoomForm = dynamic(() => import("./forms/RoomForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
-
-
 const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
 } = {
@@ -74,7 +75,9 @@ const forms: {
   parent: (type, data) => <ParentForm type={type} data={data} />,
   subject: (type, data) => <SubjectForm type={type} data={data} />,
   lesson: (type, data) => <LessonForm type={type} data={data} />,
-  subjectteacher: (type, data) => <SubjectTeacherForm type={type} data={data} />,
+  subjectteacher: (type, data) => (
+    <SubjectTeacherForm type={type} data={data} />
+  ),
   grade: (type, data) => <GradeForm type={type} data={data} />,
   announcement: (type, data) => <LessonForm type={type} data={data} />,
   studentlesson: (type, data) => <StudentLessonForm type={type} data={data} />,
@@ -101,7 +104,8 @@ const FormModal = ({
   | "attendance"
   | "event"
   | "announcement"
-  | "room";
+  | "room"
+  | "grade";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
@@ -153,6 +157,9 @@ const FormModal = ({
           await deleteAttendance(id);
         }
 
+        if (table === "grade") {
+          await removeGrade(id);
+        }
 
         setSuccessMessage(`Xóa thành công!`);
         setShowSuccessModal(true);
@@ -188,7 +195,10 @@ const FormModal = ({
         <span className="text-center font-medium">
           Toàn bộ dữ liệu sẽ bị xóa, bạn có chắc chăn không? {table}?
         </span>
-        <button onClick={handleDelete} className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
+        <button
+          onClick={handleDelete}
+          className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center"
+        >
           Xóa
         </button>
       </form>
@@ -205,7 +215,12 @@ const FormModal = ({
         className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
         onClick={() => setOpen(true)}
       >
-        <Image src={getIcon(type)} alt={`${type} icon`} width={16} height={16} />
+        <Image
+          src={getIcon(type)}
+          alt={`${type} icon`}
+          width={16}
+          height={16}
+        />
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
@@ -237,10 +252,15 @@ const FormModal = ({
       {showSuccessModal && (
         <div className="w-screen h-screen fixed left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md relative w-[90%] sm:w-[70%] md:w-[50%] lg:w-[30%] flex flex-col items-center text-center">
-            <h2 className="text-green-600 text-lg font-semibold my-4">Thành công</h2>
+            <h2 className="text-green-600 text-lg font-semibold my-4">
+              Thành công
+            </h2>
             <p>{successMessage}</p>
             <button
-              onClick={() => { setShowSuccessModal(false); window.location.reload() }}
+              onClick={() => {
+                setShowSuccessModal(false);
+                window.location.reload();
+              }}
               className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md"
             >
               Đóng
