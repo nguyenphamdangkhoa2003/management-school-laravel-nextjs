@@ -22,7 +22,7 @@ class AttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'required|date_format:Y-m-d H:i:s',
+            'date' => 'sometime|date_format:Y-m-d H:i:s',
             'present' => 'required|boolean',
             'student_id' => 'required|exists:students,id',
             'lesson_id' => 'required|exists:lessons,id'

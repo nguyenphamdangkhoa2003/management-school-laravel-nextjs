@@ -6,7 +6,7 @@ use App\Http\Requests\AttendanceRequest;
 use App\Http\Resources\AttendanceResource;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException; 
 use Symfony\Component\HttpFoundation\Response;
 
 class AttendanceController extends Controller
@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         try {
-            $attendances = Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')->paginate(10);
+            $attendances = Attendance::with('students', 'lessons', 'lessons.subject_teacher', 'lessons.rooms', 'lessons.subject_teacher.teacher', 'lessons.subject_teacher.subject')->paginate(10);
             return AttendanceResource::collection($attendances);
         } catch (\Exception $e) {
             return response()->json([
@@ -24,30 +24,59 @@ class AttendanceController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
     public function store(AttendanceRequest $request)
     {
         try {
             $validatedData = $request->validated();
+
+            $existingAttendance = Attendance::where('student_id', $validatedData['student_id'])
+                ->where('lesson_id', $validatedData['lesson_id'])
+                ->first();
+
+            if ($existingAttendance) {
+                throw ValidationException::withMessages([
+                    'lesson_id' => 'This student is already registered for this course'
+                ]);
+            }
+
             $attendance = Attendance::create($validatedData);
-            return response()->json($attendance, 201);
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Lỗi cơ sở dữ liệu khi tạo Attendance
+
+            return response()->json([
+                'status' => Response::HTTP_CREATED,
+                'message' => 'Attendance record created successfully',
+                'data' => $attendance
+            ], Response::HTTP_CREATED);
+
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_BAD_REQUEST,
-                'message' => 'Database error occurred while creating attendance.',
-                'error' => $e->getMessage(),
+                'message' => 'Validation error',
+                'errors' => $e->getMessage()
             ], Response::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
-            // Lỗi tổng quát khi tạo Attendance
+
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'attendances_student_id_lesson_id_unique')) {
+                return response()->json([
+                    'status' => Response::HTTP_CONFLICT,
+                    'message' => 'This student is already registered for this course',
+                    'error' => 'Duplicate registration detected'
+                ], Response::HTTP_CONFLICT);
+            }
+
+            return response()->json([
+                'status' => Response::HTTP_BAD_REQUEST,
+                'message' => 'Database error while creating attendance record',
+                'error' => $e->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                'message' => 'An error occurred while creating the attendance.',
-                'error' => $e->getMessage(),
+                'message' => 'An error occurred while creating attendance record',
+                'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
     public function show(string $id)
     {
         try {
@@ -59,7 +88,7 @@ class AttendanceController extends Controller
                 'lessons.subject_teacher.teacher',
                 'lessons.subject_teacher.subject'
             ])->findOrFail($id);
-        
+
             return response()->json([
                 'status' => Response::HTTP_OK,
                 'data' => $attendance,
@@ -159,18 +188,18 @@ class AttendanceController extends Controller
             if ($updated_at) {
                 $query->orWhere("updated_at", "=", $updated_at);
             }
-  // Khởi tạo query với eager loading các mối quan hệ
-  $query = Attendance::with([
-    'students',
-    'lessons',
-    'lessons.subject_teacher',
-    'lessons.rooms',
-    'lessons.subject_teacher.teacher',
-    'lessons.subject_teacher.subject'
-]);
+            // Khởi tạo query với eager loading các mối quan hệ
+            $query = Attendance::with([
+                'students',
+                'lessons',
+                'lessons.subject_teacher',
+                'lessons.rooms',
+                'lessons.subject_teacher.teacher',
+                'lessons.subject_teacher.subject'
+            ]);
 
-// Thực hiện truy vấn và phân trang kết quả
-$attendances = $query->paginate(10);
+            // Thực hiện truy vấn và phân trang kết quả
+            $attendances = $query->paginate(10);
 
             // Kiểm tra kết quả và trả về phản hồi
             if (!$attendances->isEmpty()) {
@@ -194,43 +223,44 @@ $attendances = $query->paginate(10);
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-public function getLessonAttendances($lessonId)
-{
-    try {
-        $attendances = Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')
-         ->whereHas('lessons', function($query) use ($lessonId) {
-                // Tìm kiếm theo teacher_id hoặc name của teacher
-                $query->where('id', $lessonId);       })    
-            ->paginate(10);
-            
-        return AttendanceResource::collection($attendances);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            'message' => 'An error occurred while retrieving lesson attendances',
-            'error' => $e->getMessage(),
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-}
+    public function getLessonAttendances($lessonId)
+    {
+        try {
+            $attendances = Attendance::with('students', 'lessons', 'lessons.subject_teacher', 'lessons.rooms', 'lessons.subject_teacher.teacher', 'lessons.subject_teacher.subject')
+                ->whereHas('lessons', function ($query) use ($lessonId) {
+                    // Tìm kiếm theo teacher_id hoặc name của teacher
+                    $query->where('id', $lessonId);
+                })
+                ->paginate(10);
 
-public function getStudentAttendances($studentId)
-{
-    try {
-        $attendances =  Attendance::with('students', 'lessons','lessons.subject_teacher','lessons.rooms','lessons.subject_teacher.teacher','lessons.subject_teacher.subject')
-        ->whereHas('students', function($query) use ($studentId) {
-               // Tìm kiếm theo teacher_id hoặc name của teacher
-               $query->where('id', $studentId);       
-            })    
-           ->paginate(10);
-            
-        return AttendanceResource::collection($attendances);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-            'message' => 'An error occurred while retrieving student attendances',
-            'error' => $e->getMessage(),
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return AttendanceResource::collection($attendances);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'An error occurred while retrieving lesson attendances',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-}
+
+    public function getStudentAttendances($studentId)
+    {
+        try {
+            $attendances = Attendance::with('students', 'lessons', 'lessons.subject_teacher', 'lessons.rooms', 'lessons.subject_teacher.teacher', 'lessons.subject_teacher.subject')
+                ->whereHas('students', function ($query) use ($studentId) {
+                    // Tìm kiếm theo teacher_id hoặc name của teacher
+                    $query->where('id', $studentId);
+                })
+                ->paginate(10);
+
+            return AttendanceResource::collection($attendances);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'An error occurred while retrieving student attendances',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

@@ -14,11 +14,14 @@ return new class extends Migration {
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->dateTime("date");
+            $table->dateTime("date")->default(Date::now());
             $table->boolean("present");
             $table->foreignIdFor(Student::class)->constrained();
             $table->foreignIdFor(Lesson::class)->constrained();
             $table->timestamps();
+
+            // Thêm composite unique constraint
+            $table->unique(['student_id', 'lesson_id']);
         });
     }
 
