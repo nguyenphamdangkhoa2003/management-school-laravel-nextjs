@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   {
@@ -10,7 +11,7 @@ const menuItems = [
       {
         icon: "/profile.png",
         label: "Hồ sơ",
-        href: "/profile", // Sẽ được cập nhật động sau
+        href: "/profile", // default, sẽ được cập nhật động
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
@@ -32,14 +33,31 @@ const menuItems = [
 
 const Acount = () => {
   const router = useRouter();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const [user, setUser] = useState<any>(null);
+  const [role, setRole] = useState("");
 
-  // Nếu có user, cập nhật link "Hồ sơ" để trỏ đến /student/[id]
-  if (user) {
-    menuItems[0].items = menuItems[0].items.map((item) =>
-      item.label === "Hồ sơ" ? { ...item, href: `/student/${user.id}` } : item
-    );
-  }
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    const storedRole = localStorage.getItem("role") || "";
+    setUser(storedUser);
+    setRole(storedRole);
+  }, []);
+
+  // Cập nhật link "Hồ sơ" dựa trên vai trò và user
+  const updatedMenuItems = menuItems.map((group) => ({
+    ...group,
+    items: group.items.map((item) => {
+      if (item.label === "Hồ sơ" && user && role) {
+        let href = "/profile"; // default
+        if (role === "teacher") href = `/teacher/${user.id}`;
+        else if (role === "student") href = `/student/${user.id}`;
+        else if (role === "parent") href = `/parent/${user.id}`;
+        else if (role === "admin") href = `/profile/${user.id}`; // admin có thể có route riêng nếu cần
+        return { ...item, href };
+      }
+      return item;
+    }),
+  }));
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -49,11 +67,11 @@ const Acount = () => {
   };
 
   return (
-    <div className="">
-      {menuItems.map((group, index) => (
+    <div>
+      {updatedMenuItems.map((group, index) => (
         <div key={index} className="flex flex-col gap-1">
-          {group.items.map((item) => {
-            return item.isLogout ? (
+          {group.items.map((item) =>
+            item.isLogout ? (
               <button
                 key={item.label}
                 onClick={handleLogout}
@@ -71,8 +89,8 @@ const Acount = () => {
                 <Image src={item.icon} alt="" width={20} height={20} />
                 <span className="hidden lg:block">{item.label}</span>
               </Link>
-            );
-          })}
+            )
+          )}
         </div>
       ))}
     </div>
