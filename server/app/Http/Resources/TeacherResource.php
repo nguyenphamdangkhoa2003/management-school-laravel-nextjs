@@ -22,11 +22,13 @@ class TeacherResource extends JsonResource
             "surname" => $this->surname,
             "phone" => $this->phone,
             "address" => $this->address,
+            "dob" => $this->birthday,
             "img" => $this->img,
             'email' => $this->email,
             "bloodType" => $this->bloodType,
             "sex" => $this->sex,
             "school_classes" => ClassResource::collection($this->school_classes),
+            "subject" => SubjectResource::collection($this->subjects),
         ];
     }
 }
