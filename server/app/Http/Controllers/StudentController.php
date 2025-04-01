@@ -5,26 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Http\Requests\StudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Services\CloudinaryService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
 {
-    public function index()
-    {
-        // Eager load mối quan hệ 'schoolClass', 'guardians', 'grades' và phân trang dữ liệu
-        $students = Student::with('schoolClass', 'guardians', 'grades')->paginate(10);
+    protected $cloudinaryService;
 
-        // Trả về resource collection đã được phân trang
-        return StudentResource::collection($students);
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
     }
 
+    public function index()
+    {
+        $students = Student::with('schoolClass', 'guardians', 'grades')->paginate(10);
+        return StudentResource::collection($students);
+    }
 
     public function store(StudentRequest $request): JsonResponse
     {
@@ -32,8 +35,8 @@ class StudentController extends Controller
             $validatedData = $request->validated();
 
             if ($request->hasFile('img')) {
-                $imagePath = $request->file('img')->store('images/students', 'public');
-                $validatedData['img'] = $imagePath;
+                // Upload ảnh lên Cloudinary và lưu URL vào trường img
+                $validatedData['img'] = $this->cloudinaryService->upload($request->file('img'), 'students');
             }
 
             $student = Student::create($validatedData);
@@ -44,14 +47,14 @@ class StudentController extends Controller
                 'error' => 'Validation failed',
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // HTTP status 422 cho lỗi validation
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => 'Something went wrong',
                 'message' => $e->getMessage(),
                 'data' => $request->all(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR); // HTTP status 500 cho lỗi server
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,14 +93,13 @@ class StudentController extends Controller
             $validatedData = $request->validated();
 
             if ($request->hasFile('img')) {
-                // Xóa ảnh cũ nếu tồn tại
-                if ($student->img && Storage::disk('public')->exists($student->img)) {
-                    Storage::disk('public')->delete($student->img);
+                // Xóa ảnh cũ từ Cloudinary nếu có và là URL Cloudinary
+                if ($student->img && strpos($student->img, 'cloudinary.com') !== false) {
+                    $this->cloudinaryService->deleteByUrl($student->img);
                 }
 
-                // Lưu ảnh mới
-                $imagePath = $request->file('img')->store('images/students', 'public');
-                $validatedData['img'] = $imagePath;
+                // Upload ảnh mới lên Cloudinary
+                $validatedData['img'] = $this->cloudinaryService->upload($request->file('img'), 'students');
             }
 
             $student->update($validatedData);
@@ -124,10 +126,10 @@ class StudentController extends Controller
         try {
             $student = Student::findOrFail($id);
 
-            if ($student->img && Storage::disk('public')->exists($student->img)) {
-                Storage::disk('public')->delete($student->img);
+            // Xóa ảnh từ Cloudinary nếu có và là URL Cloudinary
+            if ($student->img && strpos($student->img, 'cloudinary.com') !== false) {
+                $this->cloudinaryService->deleteByUrl($student->img);
             }
-
             $student->delete();
             return response()->json(['message' => 'Student deleted successfully'], 200);
         } catch (\Exception $e) {
@@ -311,5 +313,6 @@ class StudentController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 }
+
+  

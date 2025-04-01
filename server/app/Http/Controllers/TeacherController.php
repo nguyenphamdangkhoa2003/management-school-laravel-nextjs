@@ -5,18 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
+use App\Services\CloudinaryService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateTeacherRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 class TeacherController extends Controller
 {
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,15 +38,24 @@ class TeacherController extends Controller
      */
     public function store(StoreTeacherRequest $request)
     {
-        $validatedData = $request->validated();
-        if ($request->hasFile('img')) {
-            $imagePath = $request->file('img')->store('images/teachers', 'public');
-            $validatedData['img'] = $imagePath;
+        try {
+            $validatedData = $request->validated();
+            
+            if ($request->hasFile('img')) {
+                // Upload ảnh lên Cloudinary và lưu URL vào trường img
+                $validatedData['img'] = $this->cloudinaryService->upload($request->file('img'), 'teachers');
+            }
+
+            $teacher = Teacher::create($validatedData);
+
+            return response()->json($teacher, 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => 'An error occurred while creating the teacher.',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $teacher = Teacher::create($validatedData);
-
-        return response()->json($teacher, 201);
     }
 
     /**
@@ -66,6 +82,7 @@ class TeacherController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
     /**
      * Update the specified resource in storage.
      */
@@ -85,14 +102,13 @@ class TeacherController extends Controller
             $validatedData = $request->validated();
 
             if ($request->hasFile('img')) {
-                // Xóa ảnh cũ nếu tồn tại
-                if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
-                    Storage::disk('public')->delete($teacher->img);
+                // Xóa ảnh cũ từ Cloudinary nếu có và là URL Cloudinary
+                if ($teacher->img && strpos($teacher->img, 'cloudinary.com') !== false) {
+                    $this->cloudinaryService->deleteByUrl($teacher->img);
                 }
 
-                // Lưu ảnh mới
-                $imagePath = $request->file('img')->store('images/teachers', 'public');
-                $validatedData['img'] = $imagePath;
+                // Upload ảnh mới lên Cloudinary
+                $validatedData['img'] = $this->cloudinaryService->upload($request->file('img'), 'teachers');
             }
 
             $teacher->update($validatedData);
@@ -119,15 +135,29 @@ class TeacherController extends Controller
      */
     public function destroy($id)
     {
-        $teacher = Teacher::findOrFail($id);
+        try {
+            $teacher = Teacher::findOrFail($id);
 
-        if ($teacher->img && Storage::disk('public')->exists($teacher->img)) {
-            Storage::disk('public')->delete($teacher->img);
+            // Xóa ảnh từ Cloudinary nếu có và là URL Cloudinary
+            if ($teacher->img && strpos($teacher->img, 'cloudinary.com') !== false) {
+                $this->cloudinaryService->deleteByUrl($teacher->img);
+            }
+
+            $teacher->delete();
+
+            return response()->json(['message' => 'Teacher deleted successfully'], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Teacher not found',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => 'An error occurred while deleting the teacher.',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $teacher->delete();
-
-        return response()->json(['message' => 'Teacher deleted successfully'], 200);
     }
 
     public function search(Request $request)

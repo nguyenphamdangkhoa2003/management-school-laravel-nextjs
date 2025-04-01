@@ -38,6 +38,7 @@ class LessonController extends Controller
             $path = $file->store('materials', 'public'); // Lưu vào storage/app/public/materials
             $validatedData['link'] = "/storage/" . $path;
         }
+        
             $lesson = Lesson::create($validatedData);
             return response()->json($lesson, 201);
         } catch (ValidationException $e) {
@@ -106,6 +107,16 @@ class LessonController extends Controller
             $path = $file->store('materials', 'public');
             $validatedData['link'] = "/storage/" . $path;
         }
+// if ($request->hasFile('file')) {
+//     // Xóa file cũ từ Cloudinary nếu có và là URL Cloudinary
+//     if ($lesson->link && strpos($lesson->link, 'cloudinary.com') !== false) {
+//         $this->cloudinaryService->deleteByUrl($lesson->link);
+//     }
+
+//     // Upload file mới lên Cloudinary
+//     $validatedData['link'] = $this->cloudinaryService->upload($request->file('file'), 'materials');
+// }
+
             
             $lesson->update($validatedData);
     
