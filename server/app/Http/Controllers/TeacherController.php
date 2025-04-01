@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateTeacherRequest;
 use Illuminate\Http\JsonResponse;
@@ -49,19 +51,19 @@ class TeacherController extends Controller
             $teacher = Teacher::findOrFail($id);
 
             return response()->json([
-                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK, // 200
+                "status" => Response::HTTP_OK, // 200
                 "data" => $teacher
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND, // 404
+                "status" => Response::HTTP_NOT_FOUND, // 404
                 "message" => "Teacher not found",
-            ], \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND);
+            ], Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return response()->json([
-                "status" => \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR, // 500
+                "status" => Response::HTTP_INTERNAL_SERVER_ERROR, // 500
                 "message" => "An error occurred while retrieving the teacher",
-            ], \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
     /**
@@ -103,7 +105,7 @@ class TeacherController extends Controller
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => 'An error occurred while updating the teacher.',
@@ -130,91 +132,83 @@ class TeacherController extends Controller
 
     public function search(Request $request)
     {
-        $name = $request->query("name");
-        $username = $request->query("username");
-        $email = $request->query("email");
-        $phone = $request->query("phone");
-        $surname = $request->query("surname");
-        $address = $request->query("address");
-        $img = $request->query("img");
-        $bloodType = $request->query("bloodType");
-        $birthday = $request->query("birthday");
-        $password = $request->query("password");
-        $sex = $request->query("sex");
-        $created_at = $request->query("created_at");
-        $updated_at = $request->query("updated_at");
+        $filterableFields = [
+            'name',
+            'username',
+            'email',
+            'phone',
+            'surname',
+            'address',
+            'img',
+            'bloodType',
+            'birthday',
+            'password',
+            'sex',
+            'created_at',
+            'updated_at'
+        ];
 
         $query = Teacher::query();
+        $hasConditions = false;
 
-        if ($name) {
-            $query->where("name", "like", "%" . $name . "%");
+        foreach ($filterableFields as $field) {
+            if ($value = $request->query($field)) {
+                $query->orWhere($field, 'like', "%{$value}%");
+                $hasConditions = true;
+            }
         }
 
-        if ($username) {
-            $query->orWhere("username", "like", "%" . $username . "%");
-        }
-
-        if ($email) {
-            $query->orWhere("email", "like", "%" . $email . "%");
-        }
-
-        if ($phone) {
-            $query->orWhere("phone", "like", "%" . $phone . "%");
-        }
-
-        if ($surname) {
-            $query->orWhere("surname", "like", "%" . $surname . "%");
-        }
-
-        if ($address) {
-            $query->orWhere("address", "like", "%" . $address . "%");
-        }
-
-        if ($img) {
-            $query->orWhere("img", "like", "%" . $img . "%");
-        }
-
-        if ($bloodType) {
-            $query->orWhere("bloodType", "like", "%" . $bloodType . "%");
-        }
-
-        if ($birthday) {
-            $query->orWhere("birthday", "like", "%" . $birthday . "%");
-        }
-
-        if ($password) {
-            $query->orWhere("password", "like", "%" . $password . "%");
-        }
-
-        if ($sex) {
-            $query->orWhere("sex", "like", "%" . $sex . "%");
-        }
-
-        if ($created_at) {
-            $query->orWhere("created_at", "like", "%" . $created_at . "%");
-        }
-
-        if ($updated_at) {
-            $query->orWhere("updated_at", "like", "%" . $updated_at . "%");
-        }
-
-        $teachers = $query->paginate(10);
-
-        if (!$teachers->isEmpty()) {
-            return response()->json(
-                [
-                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-                    'message' => 'Teachers retrieved successfully.',
-                    "data" => $teachers,
-                ]
-            );
+        // Nếu không có điều kiện nào, trả về tất cả giáo viên
+        if (!$hasConditions) {
+            $teachers = Teacher::paginate(10);
         } else {
-            return response()->json(
-                [
-                    "status" => \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND,
-                    'message' => 'No teachers found.',
-                ]
-            );
+            $teachers = $query->paginate(10);
+        }
+
+        return response()->json([
+            'status' => $teachers->isNotEmpty()
+                ? Response::HTTP_OK
+                : Response::HTTP_NOT_FOUND,
+            'message' => $teachers->isNotEmpty()
+                ? 'Teachers retrieved successfully.'
+                : 'No teachers found.',
+            'data' => $teachers->isNotEmpty() ? $teachers : null,
+        ]);
+    }
+
+    public function update_password(Request $request, string $id)
+    {
+        try {
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $user = Teacher::findOrFail($id);
+
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'status' => Response::HTTP_UNAUTHORIZED,
+                    'message' => 'Current password is incorrect',
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+
+            // Cập nhật mật khẩu mới
+            $user->setPasswordAttribute($request->new_password);
+            return response()->json([
+                'status' => Response::HTTP_OK,
+                'message' => 'Password updated successfully',
+            ]);
+        } catch (ModelNotFoundException $ex) {
+            return response()->json([
+                "status" => Response::HTTP_NOT_FOUND, // 404
+                "message" => "Teacher not found",
+            ], Response::HTTP_NOT_FOUND);
+        } catch (Exception $ex) {
+            return response()->json([
+                "status" => Response::HTTP_INTERNAL_SERVER_ERROR,
+                "message" => $ex->getMessage()
+            ]);
         }
     }
 }

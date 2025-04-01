@@ -34,7 +34,6 @@ Route::post('/teachers', [TeacherController::class, 'store']);
 Route::put('/teachers/{id}', [TeacherController::class, 'update']);
 Route::delete('/teachers/{id}', [TeacherController::class, 'destroy']);
 Route::put('teachers/{id}/update-password', [TeacherController::class, "update_password"]);
-Route::apiResource('users', UserController::class);
 
 // Student Routes
 Route::get("/students", [StudentController::class, "index"]);
@@ -43,6 +42,7 @@ Route::get("/students/search", [StudentController::class, "search"]);
 Route::post('/students', [StudentController::class, 'store']);
 Route::put('/students/{id}', [StudentController::class, 'update']);
 Route::delete('/students/{id}', [StudentController::class, 'destroy']);
+Route::put("/students/{id}/update-password", [StudentController::class, "update_password"]);
 
 // Guardian Routes
 Route::get('/guardians', [GuardianController::class, 'index']);
