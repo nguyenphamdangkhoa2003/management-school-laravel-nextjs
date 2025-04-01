@@ -33,7 +33,7 @@ Route::get("/teachers/search", [TeacherController::class, "search"]);
 Route::post('/teachers', [TeacherController::class, 'store']);
 Route::put('/teachers/{id}', [TeacherController::class, 'update']);
 Route::delete('/teachers/{id}', [TeacherController::class, 'destroy']);
-
+Route::put('teachers/{id}/update-password', [TeacherController::class, "update_password"]);
 Route::apiResource('users', UserController::class);
 
 // Student Routes
@@ -147,7 +147,7 @@ Route::put('/admins/{id}', [AdminController::class, 'update']);
 Route::delete('/admins/{id}', [AdminController::class, 'destroy']);
 
 // SubjectTeacher Routes
-Route::get('subject-teachers', [SubjectTeacherController::class,"index"]);
+Route::get('subject-teachers', [SubjectTeacherController::class, "index"]);
 Route::get('subject-teachers/search', [SubjectTeacherController::class, 'search']);
 Route::get('teachers/{teacher}/subjects', [SubjectTeacherController::class, 'getTeacherSubjects']);
 Route::get('subjects/{subject}/teachers', [SubjectTeacherController::class, 'getSubjectTeachers']);
