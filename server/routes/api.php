@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GuardianController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\SubjectTeacherController;
 use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -170,3 +172,8 @@ Route::get('rooms/search/query', [RoomController::class, 'search']);
 
 //Auth Routes
 Route::post('auth/login', [AuthController::class, 'login']);
+
+
+// Dashboard
+
+Route::get("/dashboard", [DashboardController::class, "dashboardStats"]);
