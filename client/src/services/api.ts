@@ -718,6 +718,36 @@ export const deleteAttendance = async (id: number) => {
   }
 }
 
+//kết quả (result)
+export const getAllresults = async (page = 1, perPage = 10) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/results`, {
+      params: { page, per_page: perPage },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy danh sách điểm",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+
+}
+
+export const getLessonsByStudentid = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/attendances/${id}/students`)
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy danh sách môn học theo sinh viên",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
 //niên khóa
 export const getAllgrades = async (page = 1, perPage = 10) => {
   try {

@@ -1,80 +1,77 @@
+"use client";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import {
-  resultsData,
-  role,
-} from "@/lib/data";
 import Image from "next/image";
-
-type Result = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  student: string;
-  type: "exam" | "assignment";
-  date: string;
-  score: number;
-};
+import Link from "next/link";
+import React, { useEffect, useState, useCallback } from "react";
+import { getAllresults } from "@/services/api";
 
 const columns = [
-  {
-    header: "Subject Name",
-    accessor: "name",
-  },
-  {
-    header: "Student",
-    accessor: "student",
-  },
-  {
-    header: "Score",
-    accessor: "score",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Teacher",
-    accessor: "teacher",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Class",
-    accessor: "class",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Date",
-    accessor: "date",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+  { header: "Mã sinh viên", accessor: "code_room" },
+  { header: "Tên sinh viên", accessor: "name" },
+  { header: "môn học", accessor: "floor" },
+  { header: "điểm giữa kì", accessor: "capacity" },
+  { header: "điểm cuối kì", accessor: "type" },
+  { header: "điểm trung bình", accessor: "is_available" },
+  { header: "Tùy chọn", accessor: "action" },
 ];
 
-const ResultListPage = () => {
-  const renderRow = (item: Result) => (
-    <tr
-      key={item.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-    >
-      <td className="flex items-center gap-4 p-4">{item.subject}</td>
-      <td>{item.student}</td>
-      <td className="hidden md:table-cell">{item.score}</td>
-      <td className="hidden md:table-cell">{item.teacher}</td>
-      <td className="hidden md:table-cell">{item.class}</td>
-      <td className="hidden md:table-cell">{item.date}</td>
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" || role === "teacher" && (
-            <>
-              <FormModal table="result" type="update" data={item} />
-              <FormModal table="result" type="delete" id={item.id} />
-            </>
-          )}
-        </div>
+const ResutlsList = () => {
+  const [results, setAllresults] = useState([]);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+
+  const fetchAttendance = useCallback(async (page = 1) => {
+    try {
+      const data = await getAllresults(page, 10);
+      console.log(">><>>", data);
+      setAllresults(data);
+      setTotalPages(data.meta?.last_page || 1);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu phòng học:", err);
+      setError(err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAttendance(currentPage);
+  }, [fetchAttendance, currentPage]);
+
+  // const handleSearch = useCallback(async (e) => {
+  //   const searchValue = e.target.value.trim();
+  //   if (searchValue === "") {
+  //     fetchAttendance(currentPage);
+  //     return;
+  //   }
+  //   try {
+  //     const filteredResults = await searchAttendance(searchValue);
+  //     setAllresults(filteredResults);
+  //   } catch (error) {
+  //     console.error("Lỗi khi tìm kiếm:", error);
+  //   }
+  // }, [currentPage]);
+
+  const renderRow = (item) => (
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+      <td className="p-4">{item.student.code}</td>
+      <td>{`${item.student.surname} ${item.student.name}`}</td>
+      <td>{item.subject.name}</td>
+      <td>{item.process_score}</td>
+      <td>{item.semi_score}</td>
+      <td>{item.final_scrore}</td>
+      <td className="flex items-center gap-2">
+        {role === "admin" && (
+          <>
+            <FormModal table="result" type="update" data={{
+
+            }} />
+            <FormModal table="result" type="delete" id={item.id} />
+          </>
+        )}
       </td>
     </tr>
   );
@@ -83,9 +80,9 @@ const ResultListPage = () => {
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Results</h1>
+        <h1 className="hidden md:block text-lg font-semibold">Danh sách phòng học</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          {/* <TableSearch onChange={handleSearch} /> */}
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />
@@ -93,16 +90,18 @@ const ResultListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" || role === "teacher" && <FormModal table="result" type="create" />}
+            {role === "admin" && (
+              <FormModal table="result" type="create" />
+            )}
           </div>
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={resultsData} />
+      <Table columns={columns} renderRow={renderRow} data={results} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </div>
   );
 };
 
-export default ResultListPage;
+export default ResutlsList;
