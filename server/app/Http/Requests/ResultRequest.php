@@ -19,9 +19,9 @@ class ResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'process_score' => 'somtimes|numeric|min:0|max:10',
-            'semi_score' => 'somtimes|numeric|min:0|max:10',
-            'final_scrore' => 'somtimes|numeric|min:0|max:10',
+            'process_score' => 'sometimes|numeric|min:0|max:10',
+            'semi_score' => 'sometimes|numeric|min:0|max:10',
+            'final_scrore' => 'sometimes|numeric|min:0|max:10',
             'subject_id' => 'required|exists:subjects,id',
             'student_id' => 'required|exists:students,id',
         ];

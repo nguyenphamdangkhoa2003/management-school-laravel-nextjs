@@ -747,6 +747,16 @@ export const getLessonsByStudentid = async (id: number) => {
     throw error;
   }
 }
+export const addResult = async (Data: FormData) => {
+  try {
+    const response = await api.post('/results', Data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Lỗi Thêm điểm:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
 
 //niên khóa
 export const getAllgrades = async (page = 1, perPage = 10) => {
