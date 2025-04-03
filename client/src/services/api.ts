@@ -110,6 +110,21 @@ export const getStudents = async (page = 1, perPage = 10) => {
   }
 };
 
+export const getOneStudents = async (id: number) => {
+  try {
+    const response = await api.get(`/students/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy thông tin sinh viên:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+
+
 export const getStudent = async (search: string) => {
   try {
     const response = await api.get(`/students/search`, {
@@ -147,6 +162,24 @@ export const addStudent = async (Data: FormData) => {
   } catch (error) {
     console.error(
       "Lỗi khi thêm sinh viên:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const updateStudent = async (id: number, studentData: FormData) => {
+  try {
+    studentData.append("_method", "PUT");
+
+    const response = await api.post(`/students/${id}`, studentData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi cập nhật sinh viên",
       error.response?.data || error.message
     );
     throw error;
@@ -467,7 +500,7 @@ export const getLessonsForStudentLesson = async (page = 1, perPage = 10) => {
   }
 };
 
-//SINH VIÊN
+//lesson
 export const getLessonByStudentid = async (id: number) => {
   try {
     const response = await axios.get(

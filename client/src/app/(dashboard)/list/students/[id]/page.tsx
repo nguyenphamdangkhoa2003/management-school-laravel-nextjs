@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getLessonByStudentid } from "@/services/api";
+import { getLessonByStudentid, getOneStudents } from "@/services/api";
 import FormModal from "@/components/FormModal";
 
 const SingleStudentPage = () => {
@@ -21,18 +21,9 @@ const SingleStudentPage = () => {
 
     const fetchData = async () => {
       try {
-        // Lấy danh sách sinh viên
-        const res = await axios.get(`http://127.0.0.1:8000/api/students`);
-        console.log("Danh sách sinh viên:", res.data);
-        // Giả sử response có dạng { data: [...] } hoặc trực tiếp là mảng
-        const allStudents = res.data.data ? res.data.data : res.data;
-        // Tìm sinh viên có id trùng với useParams()
-        const foundStudent = allStudents.find((s) => s.id === Number(id));
-        if (foundStudent) {
-          setStudent(foundStudent);
-        } else {
-          console.error("Không tìm thấy sinh viên với id:", id);
-        }
+        const foundStudent = await getOneStudents(id);
+        console.log("student>>", foundStudent);
+        setStudent(foundStudent);
 
         // Lấy lịch của sinh viên
         const lessonData = await getLessonByStudentid(id);
@@ -57,7 +48,7 @@ const SingleStudentPage = () => {
               <Image
                 src={
                   student?.img
-                    ? `${process.env.NEXT_PUBLIC_API_URL}/${student.img}`
+                    ? `${student.img}`
                     : "https://images.pexels.com/photos/5414817/pexels-photo-5414817.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 }
                 alt="Student avatar"
@@ -78,9 +69,12 @@ const SingleStudentPage = () => {
                     table="student"
                     type="update"
                     data={{
-                      username: student?.username || "",
-                      email: student?.email || "",
-                      password: "password", // password mặc định, có thể thay đổi
+                      id: id,
+                      username: student.username,
+                      code: student.code,
+                      email: student.email,
+                      password: "password",
+                      grade_id: student.grade_id,
                       surname: student?.surname || "",
                       name: student?.name || "",
                       phone: student?.phone || "",
@@ -90,8 +84,9 @@ const SingleStudentPage = () => {
                         ? new Date(student.birthday).toISOString().split("T")[0]
                         : "",
                       sex: student?.sex || "",
+                      guardian_id: student?.guardian_id,
                       img: student?.img
-                        ? `${process.env.NEXT_PUBLIC_API_URL}/${student.img}`
+                        ? `${student.img}`
                         : "",
                     }}
                   />

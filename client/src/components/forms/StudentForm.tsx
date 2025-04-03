@@ -2,49 +2,50 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { tuple, z } from "zod";
 import InputField from "../InputField";
-import Image from "next/image";
-import { addStudent, addParent, getClasses, getGrades } from "@/services/api";
 import { useState, useEffect } from "react";
+import { getClasses, getGrades, addParent, addStudent, updateStudent } from "@/services/api";
+import Image from "next/image";
 import moment from "moment";
-const schema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
-    .max(20, { message: "Username must be at most 20 characters long!" }),
-  email: z.string().email({ message: "Invalid email address!" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long!" }),
-  firstName: z.string().min(1, { message: "First name is required!" }),
-  lastName: z.string().min(1, { message: "Last name is required!" }),
-  phone: z.string().min(1, { message: "Phone is required!" }),
-  address: z.string().min(1, { message: "Address is required!" }),
-  bloodType: z.string().min(1, { message: "Blood Type is required!" }),
-  birthday: z.preprocess(
-    (val) => (typeof val === "string" ? new Date(val) : val),
-    z.date({ message: "Birthday is required!" })
-  ),
-  sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required!" }),
-  img: z.instanceof(File, { message: "Image is required" }),
-  code: z.string().length(10, { message: "Code must be exactly 10 characters long!" }),
-  classID: z.string().nonempty("vui lòng chọn lớp"),
-  gradeID: z.string().nonempty("vui lòng chọn niên khóa"),
-  parentUsername: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
-    .max(20, { message: "Username must be at most 20 characters long!" }),
-  parentFirstName: z.string().min(1, { message: "Parent's first name is required!" }),
-  parentLastName: z.string().min(1, { message: "Parent's last name is required!" }),
-  parentEmail: z.string().email({ message: "Invalid parent email!" }),
-  parentPhone: z.string().min(1, { message: "Parent's phone is required!" }),
-  parentAddress: z.string().min(1, { message: "Parent's address is required!" }),
-  parentsex: z.enum(["MALE", "FEMALE"], { message: "Sex is required!" }),
 
-});
-
-type Inputs = z.infer<typeof schema>;
+const schema = (type: "create" | "update") =>
+  z.object({
+    ...(type === "create" ? {
+      parentUsername: z
+        .string()
+        .min(3, { message: "Tên tài khoản phụ huynh phải có ít nhất 3 ký tự!" })
+        .max(20, { message: "Tên tài khoản phụ huynh phải có tối đa 20 ký tự!" }),
+      parentFirstName: z.string().min(1, { message: "Họ phụ huynh là bắt buộc!" }),
+      parentLastName: z.string().min(1, { message: "Tên phụ huynh là bắt buộc!" }),
+      parentEmail: z.string().email({ message: "Email phụ huynh không hợp lệ!" }),
+      parentPhone: z.string().min(1, { message: "Số điện thoại phụ huynh là bắt buộc!" }),
+      parentAddress: z.string().min(1, { message: "Địa chỉ phụ huynh là bắt buộc!" }),
+      parentsex: z.enum(["MALE", "FEMALE"], { message: "Giới tính phụ huynh là bắt buộc!" }),
+    } : {}),
+    username: z
+      .string()
+      .min(3, { message: "Tên tài khoản phải có ít nhất 3 ký tự!" })
+      .max(20, { message: "Tên tài khoản phải có tối đa 20 ký tự!" }),
+    email: z.string().email({ message: "Địa chỉ email không hợp lệ!" }),
+    password: z
+      .string()
+      .min(8, { message: "Mật khẩu phải có ít nhất 8 ký tự!" }),
+    firstName: z.string().min(1, { message: "Họ là bắt buộc!" }),
+    lastName: z.string().min(1, { message: "Tên là bắt buộc!" }),
+    phone: z.string().min(1, { message: "Số điện thoại là bắt buộc!" }),
+    address: z.string().min(1, { message: "Địa chỉ là bắt buộc!" }),
+    bloodType: z.string().min(1, { message: "Nhóm máu là bắt buộc!" }),
+    birthday: z.preprocess(
+      (val) => (typeof val === "string" ? new Date(val) : val),
+      z.date({ message: "Ngày sinh là bắt buộc!" })
+    ),
+    sex: z.enum(["MALE", "FEMALE"], { message: "Giới tính là bắt buộc!" }),
+    img: type === "create" ? z.instanceof(File, { message: "Ảnh là bắt buộc!" }) : z.optional(z.instanceof(File)),
+    code: z.string().length(10, { message: "Mã phải có đúng 10 ký tự!" }),
+    classID: z.string().nonempty("Vui lòng chọn lớp học!"),
+    gradeID: z.string().nonempty("Vui lòng chọn niên khóa!"),
+  });
 
 const StudentForm = ({
   type,
@@ -55,11 +56,12 @@ const StudentForm = ({
 }) => {
   const {
     register,
-    handleSubmit,
     setValue,
+    handleSubmit,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema(type)),
+    defaultValues: type === "create" ? data : {},
   });
   const [showForm, setShowForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -81,7 +83,7 @@ const StudentForm = ({
       }
     };
     fetchAllData();
-  }, [type, data, setValue]);
+  }, [type, data]);
 
   const fetchAllPages = async (fetchFunction: any) => {
     const firstPage = await fetchFunction(1, 10);
@@ -93,18 +95,8 @@ const StudentForm = ({
   };
 
   const onSubmit = handleSubmit(async (formData) => {
-    console.log("hehe")
+    console.log("aa");
     const formDataStudent = new FormData();
-    const formDataParent = new FormData();
-
-    formDataParent.append("username", formData.parentUsername);
-    formDataParent.append("name", formData.parentLastName);
-    formDataParent.append("surname", formData.parentFirstName);
-    formDataParent.append("password", formData.password);
-    formDataParent.append("email", formData.parentEmail);
-    formDataParent.append("phone", formData.parentPhone);
-    formDataParent.append("address", formData.parentAddress);
-    formDataParent.append("sex", formData.parentsex);
 
     formDataStudent.append("username", formData.username);
     formDataStudent.append("code", formData.code);
@@ -119,6 +111,8 @@ const StudentForm = ({
     formDataStudent.append("grade_id", formData.gradeID);
     formDataStudent.append("school_class_id", formData.classID);
     formDataStudent.append("sex", formData.sex);
+    formDataStudent.append("guardian_id", data.guardian_id);
+
     if (formData.img instanceof File) {
       formDataStudent.append("img", formData.img);
     } else if (Array.isArray(formData.img) && formData.img.length > 0 && formData.img[0] instanceof File) {
@@ -126,20 +120,34 @@ const StudentForm = ({
     }
 
     try {
-      let parentResponse, studentResponse;
+      let parentResponse, studentResponse, updstudent;
 
-      parentResponse = await addParent(formDataParent);
-      if (parentResponse?.id) {
-        const parentID = parentResponse.id;
-        formDataStudent.append("guardian_id", parentID);
-        studentResponse = await addStudent(formDataStudent);
-        if (studentResponse?.id) {
-          setStudents((prev) => [...prev, studentResponse]);
+      if (type === "create") {
+        const formDataParent = new FormData();
+        formDataParent.append("username", formData.parentUsername);
+        formDataParent.append("name", formData.parentLastName);
+        formDataParent.append("surname", formData.parentFirstName);
+        formDataParent.append("password", formData.password);
+        formDataParent.append("email", formData.parentEmail);
+        formDataParent.append("phone", formData.parentPhone);
+        formDataParent.append("address", formData.parentAddress);
+        formDataParent.append("sex", formData.parentsex);
+        parentResponse = await addParent(formDataParent);
+        if (parentResponse?.id) {
+          const parentID = parentResponse.id;
+          formDataStudent.append("guardian_id", parentID);
+          studentResponse = await addStudent(formDataStudent);
+          if (studentResponse?.id) {
+            setStudents((prev) => [...prev, studentResponse]);
+          }
         }
+      } else if (type === "update") {
+        updstudent = await updateStudent(data.id, formDataStudent);
       }
 
       setShowForm(false);
       setErrorMessage(null);
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error: any) {
       setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
     }
@@ -193,6 +201,7 @@ const StudentForm = ({
               <select
                 className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                 {...register("classID")}
+
               >
                 <option value="">Chọn lớp học</option>
                 {classes?.map((classin) => (
@@ -231,14 +240,14 @@ const StudentForm = ({
             <InputField
               label="Họ"
               name="firstName"
-              defaultValue={data?.firstName}
+              defaultValue={data?.surname}
               register={register}
               error={errors.firstName}
             />
             <InputField
               label="Tên"
               name="lastName"
-              defaultValue={data?.lastName}
+              defaultValue={data?.name}
               register={register}
               error={errors.lastName}
             />
@@ -294,82 +303,91 @@ const StudentForm = ({
                 <span>Hình ảnh</span>
               </label>
               <input type="file" id="img" className="hidden" onChange={handleFileChange} />
-              {previewImage && <Image src={previewImage} alt="Preview" width={100} height={100} />}
-              {errors.img?.message && <p className="text-xs text-red-400">{errors.img.message.toString()}</p>}
+              {/* Hiển thị ảnh nếu có hoặc nếu có preview */}
+              {previewImage || data?.img ? (
+                <Image src={previewImage || data.img} alt="Preview" width={100} height={100} />
+              ) : null}
+              {/* Hiển thị lỗi nếu có */}
+              {errors.img?.message && !previewImage && !data?.img && (
+                <p className="text-xs text-red-400">{errors.img.message.toString()}</p>
+              )}
             </div>
+
             <div className='w-[25%]'>
 
             </div>
 
           </div>
+          {type === "create" &&
+            <>
+              <span className="text-xs text-gray-400 font-medium">
+                Thông tin phụ huynh
+              </span>
+              <div className="flex justify-between flex-wrap gap-4">
+                <InputField
+                  label="Tên tài khoản phụ huynh"
+                  name="parentUsername"
+                  defaultValue={data?.parentUsername}
+                  register={register}
+                  error={errors.parentUsername}
+                />
+                <InputField
+                  label="Họ"
+                  name="parentFirstName"
+                  defaultValue={data?.parentFirstName}
+                  register={register}
+                  error={errors.parentFirstName}
+                />
+                <InputField
+                  label="Tên"
+                  name="parentLastName"
+                  defaultValue={data?.parentLastName}
+                  register={register}
+                  error={errors.parentLastName}
+                />
 
-          <span className="text-xs text-gray-400 font-medium">
-            Thông tin phụ huynh
-          </span>
-          <div className="flex justify-between flex-wrap gap-4">
-            <InputField
-              label="Tên tài khoản phụ huynh"
-              name="parentUsername"
-              defaultValue={data?.parentUsername}
-              register={register}
-              error={errors.parentUsername}
-            />
-            <InputField
-              label="Họ"
-              name="parentFirstName"
-              defaultValue={data?.parentFirstName}
-              register={register}
-              error={errors.parentFirstName}
-            />
-            <InputField
-              label="Tên"
-              name="parentLastName"
-              defaultValue={data?.parentLastName}
-              register={register}
-              error={errors.parentLastName}
-            />
+                <InputField
+                  label="email"
+                  name="parentEmail"
+                  defaultValue={data?.parentEmail}
+                  register={register}
+                  error={errors.parentEmail}
+                />
 
-            <InputField
-              label="email"
-              name="parentEmail"
-              defaultValue={data?.parentEmail}
-              register={register}
-              error={errors.parentEmail}
-            />
+                <InputField
+                  label="Số điện thoại"
+                  name="parentPhone"
+                  defaultValue={data?.parentPhone}
+                  register={register}
+                  error={errors.parentPhone}
+                />
+                <InputField
+                  label="Địa chỉ"
+                  name="parentAddress"
+                  defaultValue={data?.parentAddress}
+                  register={register}
+                  error={errors.parentAddress}
+                />
 
-            <InputField
-              label="Số điện thoại"
-              name="parentPhone"
-              defaultValue={data?.parentPhone}
-              register={register}
-              error={errors.parentPhone}
-            />
-            <InputField
-              label="Địa chỉ"
-              name="parentAddress"
-              defaultValue={data?.parentAddress}
-              register={register}
-              error={errors.parentAddress}
-            />
-
-            <div className="flex flex-col gap-2 w-full md:w-1/4">
-              <label className="text-xs text-gray-500">Giới tính</label>
-              <select
-                className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-                {...register("parentsex")}
-                defaultValue={data?.parentsex}
-                name="parentsex"
-              >
-                <option value="MALE">Nam</option>
-                <option value="FEMALE">Nữ</option>
-              </select>
-              {errors.parentsex?.message && (
-                <p className="text-xs text-red-400">
-                  {errors.parentsex.message.toString()}
-                </p>
-              )}
-            </div>
-          </div>
+                <div className="flex flex-col gap-2 w-full md:w-1/4">
+                  <label className="text-xs text-gray-500">Giới tính</label>
+                  <select
+                    className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+                    {...register("parentsex")}
+                    defaultValue={data?.parentsex}
+                    name="parentsex"
+                  >
+                    <option value="MALE">Nam</option>
+                    <option value="FEMALE">Nữ</option>
+                  </select>
+                  {errors.parentsex?.message && (
+                    <p className="text-xs text-red-400">
+                      {errors.parentsex.message.toString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </>}
           <button className="bg-blue-400 text-white p-2 rounded-md">
             {type === "create" ? "Create" : "Update"}
           </button>
