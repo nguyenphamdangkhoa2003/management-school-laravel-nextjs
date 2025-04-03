@@ -405,6 +405,20 @@ export const addParent = async (Data: FormData) => {
     throw error;
   }
 };
+
+export const updateParent = async (id: number, Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/guardians/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Lỗi cập nhật phụ huynh:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
 //BÀI GIẢNG
 export const getLessons = async (page = 1, perPage = 10) => {
   try {
