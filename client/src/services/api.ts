@@ -763,6 +763,22 @@ export const getAllgrades = async (page = 1, perPage = 10) => {
     throw error;
   }
 };
+
+
+//thống kê
+export const getDataChart = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/dashboard`);
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy dữ liệu biểu đồ",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
 //ĐĂNG NHẬP
 export const login = async (username: string, password: string) => {
   try {

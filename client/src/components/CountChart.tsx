@@ -1,28 +1,17 @@
-"use client"
+"use client";
 import Image from 'next/image';
-import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
+import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 
-const data = [
-    {
-        name: 'Total',
-        count: 100,
-        fill: 'white',
-    },
-    {
-        name: 'Girls',
-        count: 40,
-        fill: '#fae27c',
-    },
-    {
-        name: 'Boys',
-        count: 60,
-        fill: '#c3ebfa',
-    },
+const CountChart = ({ data }: { data: any[] }) => {
+    // Lấy số lượng nam, nữ và tổng số sinh viên từ data
+    const totalStudents = data.find(item => item.name === "Tổng")?.count || 0;
+    const maleStudents = data.find(item => item.name === "Nam")?.count || 0;
+    const femaleStudents = data.find(item => item.name === "Nữ")?.count || 0;
 
+    // Tính % nam, nữ (tránh chia cho 0)
+    const malePercentage = totalStudents ? ((maleStudents / totalStudents) * 100).toFixed(1) : 0;
+    const femalePercentage = totalStudents ? ((femaleStudents / totalStudents) * 100).toFixed(1) : 0;
 
-];
-
-const CountChart = () => {
     return (
         <div className='bg-white w-full h-full p-4'>
             <div className='flex w-full justify-between'>
@@ -32,29 +21,27 @@ const CountChart = () => {
             <div className='w-full h-[75%] relative'>
                 <ResponsiveContainer>
                     <RadialBarChart cx="50%" cy="50%" innerRadius="30%" outerRadius="100%" barSize={36} data={data}>
-                        <RadialBar
-                            background
-                            dataKey="count"
-                        />
+                        <RadialBar background dataKey="count" />
                     </RadialBarChart>
                 </ResponsiveContainer>
                 <Image src="/maleFemale.png" alt='' width={80} height={80} className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' />
             </div>
             <div className='flex flex-row gap-16 justify-center'>
-                <div className='flex flex-col gap-1'>
-                    <div className='w-5 h-5 rounded-full bg-lamaSky' />
-                    <h1 className='font-bold'>1.234</h1>
-                    <h2 className='text-sm text-gray-300'>Boys (35%)</h2>
+                {/* Hiển thị thông tin số lượng nam */}
+                <div className='flex flex-col gap-1 items-center'>
+                    <div className='w-5 h-5 rounded-full' style={{ backgroundColor: '#c3ebfa' }} />
+                    <h1 className='font-bold'>{maleStudents}</h1>
+                    <h2 className='text-sm text-gray-400'>Nam ({malePercentage}%)</h2>
                 </div>
-
-                <div className='flex flex-col gap-1'>
-                    <div className='w-5 h-5 rounded-full bg-lamaYellow' />
-                    <h1 className='font-bold'>1.234</h1>
-                    <h2 className='text-sm text-gray-300'>Girls (35%)</h2>
+                {/* Hiển thị thông tin số lượng nữ */}
+                <div className='flex flex-col gap-1 items-center'>
+                    <div className='w-5 h-5 rounded-full' style={{ backgroundColor: '#fae27c' }} />
+                    <h1 className='font-bold'>{femaleStudents}</h1>
+                    <h2 className='text-sm text-gray-400'>Nữ ({femalePercentage}%)</h2>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default CountChart
+export default CountChart;
