@@ -15,7 +15,7 @@ const CountChart = ({ data }: { data: any[] }) => {
     return (
         <div className='bg-white w-full h-full p-4'>
             <div className='flex w-full justify-between'>
-                <h1 className='text-lg font-semibold'>Students</h1>
+                <h1 className='text-lg font-semibold'>Sinh Viên</h1>
                 <Image src="/moredark.png" alt='' width={20} height={20} />
             </div>
             <div className='w-full h-[75%] relative'>
