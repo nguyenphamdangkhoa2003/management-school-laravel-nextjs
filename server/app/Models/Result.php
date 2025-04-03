@@ -11,7 +11,7 @@ class Result extends Model
     public $fillable = [
         'process_score',
         'semi_score',
-        'final_scrore',
+        'final_score',
         'subject_id',
         "student_id"
     ];

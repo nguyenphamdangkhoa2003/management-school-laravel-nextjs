@@ -39,12 +39,12 @@ class DatabaseSeeder extends Seeder
             "password" => Hash::make("12345678"),
         ]);
 
-       // GRADE
-for ($i = 1; $i <= 6; $i++) {
-    Grade::create([
-        "level" => "Năm học 202{$i}-202" . ($i + 4),
-    ]);
-}
+        // GRADE
+        for ($i = 1; $i <= 6; $i++) {
+            Grade::create([
+                "level" => "Năm học 202{$i}-202" . ($i + 4),
+            ]);
+        }
 
 
         // SCHOOL CLASS
@@ -60,7 +60,7 @@ for ($i = 1; $i <= 6; $i++) {
         $subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Science", "Literature", "English"];
         $subjectIds = [];
         foreach ($subjects as $s) {
-            $subject=Subject::create([
+            $subject = Subject::create([
                 "name" => $s,
                 "credit" => rand(1, 3),
                 "course_credit" => rand(1, 3),
@@ -82,13 +82,13 @@ for ($i = 1; $i <= 6; $i++) {
                 "sex" => $i % 2 === 0 ? "MALE" : "FEMALE",
                 "img" => fake()->imageUrl(),
                 "birthday" => fake()->date(),
-                "password" => Hash::make("12345678")          
+                "password" => Hash::make("12345678")
             ]);
             $teacherIds[] = $teacher->id;
         }
         //subject teacher
-           // Assign subjects to teachers via pivot table
-           foreach ($teacherIds as $teacherId) {
+        // Assign subjects to teachers via pivot table
+        foreach ($teacherIds as $teacherId) {
             $teacherSubjects = array_rand($subjectIds, rand(1, 3)); // Randomly assign 1-3 subjects to each teacher
 
             // Ensure $teacherSubjects is an array even if a single item is chosen
@@ -105,12 +105,12 @@ for ($i = 1; $i <= 6; $i++) {
                 ]);
             }
         }
-        
+
 
         for ($i = 1; $i <= 6; $i++) {
             SchoolClass::where("id", $i)->update(["supervisor_id" => $i % 16 + 1]);
         }
-  
+
         for ($i = 1; $i <= 30; $i++) {
             Room::create([
                 'code_room' => 'C80' . $i,
@@ -118,16 +118,16 @@ for ($i = 1; $i <= 6; $i++) {
                 'name' => 'Phòng ' . $i,
                 'capacity' => rand(10, 100),
                 'type' => ['lecture', 'lab', 'office', 'meeting'][array_rand(['lecture', 'lab', 'office', 'meeting'])],
-                'is_available' => (bool)rand(0, 1),
+                'is_available' => (bool) rand(0, 1),
             ]);
         }
         //Lesson
-          // Lấy danh sách ID của tất cả các phòng có sẵn
-          $roomIds = Room::pluck('id')->toArray();
-        
-          // Shuffle (xáo trộn) danh sách để tránh trùng lặp khi lấy ngẫu nhiên
-          shuffle($roomIds);
-        for ($i = 0; $i <=29; $i++) {
+        // Lấy danh sách ID của tất cả các phòng có sẵn
+        $roomIds = Room::pluck('id')->toArray();
+
+        // Shuffle (xáo trộn) danh sách để tránh trùng lặp khi lấy ngẫu nhiên
+        shuffle($roomIds);
+        for ($i = 0; $i <= 29; $i++) {
             Lesson::create([
                 "link" => fake()->word,
                 "day" => strtoupper(fake()->dayOfWeek),
@@ -137,7 +137,7 @@ for ($i = 1; $i <= 6; $i++) {
                 "ending_class_time" => date("H:i:s", strtotime("+5 hour")),
                 "subject_teacher_id" => rand(1, 4),
                 "room_id" => $roomIds[$i],
-              
+
             ]);
         }
 
@@ -198,18 +198,18 @@ for ($i = 1; $i <= 6; $i++) {
         // }
 
         //Result
-      // In the DatabaseSeeder.php file, update the Result creation part:
+        // In the DatabaseSeeder.php file, update the Result creation part:
 
-//Result
-for ($i = 1; $i <= 50; $i++) {
-    Result::create([
-        'process_score' => rand(50, 100) / 10,
-        'semi_score' => rand(50, 100) / 10,
-        'final_scrore' => rand(50, 100) / 10,
-        'subject_id' => rand(1, count($subjectIds)),
-        'student_id' => rand(1, 50),
-    ]);
-}
+        //Result
+        for ($i = 1; $i <= 50; $i++) {
+            Result::create([
+                'process_score' => rand(50, 100) / 10,
+                'semi_score' => rand(50, 100) / 10,
+                'final_score' => rand(50, 100) / 10,
+                'subject_id' => rand(1, count($subjectIds)),
+                'student_id' => rand(1, 50),
+            ]);
+        }
 
 
         //ATTENDANCE
@@ -242,6 +242,6 @@ for ($i = 1; $i <= 50; $i++) {
                 "school_class_id" => ($i % 5) + 1,
             ]);
         }
-     
+
     }
 }

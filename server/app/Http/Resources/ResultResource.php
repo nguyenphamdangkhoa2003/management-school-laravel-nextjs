@@ -18,9 +18,9 @@ class ResultResource extends JsonResource
             "id" => $this->id,
             "process_score" => $this->process_score,
             "semi_score" => $this->semi_score,
-            "final_scrore" => $this->final_scrore,
+            "final_score" => $this->final_score,
             "subject" => new SubjectResource($this->whenLoaded('subjects')),
-            "student" =>  new StudentResource($this->whenLoaded('students')),
+            "student" => new StudentResource($this->whenLoaded('students')),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];

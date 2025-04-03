@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->float("process_score")->nullable();
             $table->float("semi_score")->nullable();
-            $table->float("final_scrore")->nullable();
+            $table->float("final_score")->nullable();
             $table->foreignIdFor(Subject::class)->constrained();
             $table->foreignIdFor(Student::class)->constrained();
             $table->timestamps();
