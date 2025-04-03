@@ -19,6 +19,9 @@ class SubjectResource extends JsonResource
             'name' => $this->name,
             'credit' => $this->credit,
             'course_credit' => $this->course_credit,
+            'process_percent' => $this->process_percent,
+            'midterm_percent' => $this->midterm_percent,
+            'final_percent' => $this->final_percent,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

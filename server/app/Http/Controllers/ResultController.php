@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ResultRequest;
 use App\Http\Resources\ResultResource;
 use App\Models\Result;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -15,7 +16,7 @@ class ResultController extends Controller
     public function index()
     {
         try {
-            $results = Result::with('students','subjects')->paginate(10);
+            $results = Result::with('students', 'subjects')->paginate(10);
             return ResultResource::collection($results);
         } catch (\Exception $e) {
             return response()->json([
@@ -32,7 +33,7 @@ class ResultController extends Controller
             $validatedData = $request->validated();
             $result = Result::create($validatedData);
             return response()->json($result, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',
@@ -57,7 +58,7 @@ class ResultController extends Controller
                 'status' => Response::HTTP_OK,
                 'data' => $result
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
                 'message' => 'Result not found',
@@ -75,7 +76,7 @@ class ResultController extends Controller
     {
         try {
             $result = Result::find($id);
-    
+
             if (!$result) {
                 return response()->json([
                     'status' => Response::HTTP_NOT_FOUND,
@@ -83,10 +84,10 @@ class ResultController extends Controller
                     'error' => "No query results for model [App\\Models\\Result] $id"
                 ], Response::HTTP_NOT_FOUND);
             }
-    
+
             $validatedData = $request->validated();
             $result->update($validatedData);
-    
+
             return response()->json($result, Response::HTTP_OK);
         } catch (ValidationException $e) {
             return response()->json([
@@ -130,23 +131,23 @@ class ResultController extends Controller
             $subject_id = $request->query('subject_id');
             $created_at = $request->query('created_at');
             $updated_at = $request->query('updated_at');
-    
+
             // Khởi tạo truy vấn
             $query = Result::query();
-    
+
             // Điều kiện tìm kiếm cho các tham số
             if ($student_id) {
                 $query->where('student_id', '=', $student_id);
             }
-    
+
             if ($process_score) {
                 $query->orWhere('process_score', '=', $process_score);
             }
-    
+
             if ($semi_score) {
                 $query->orWhere('semi_score', '=', $semi_score);
             }
-    
+
             if ($final_score) {
                 $query->orWhere('final_score', '=', $final_score);
             }
@@ -156,14 +157,14 @@ class ResultController extends Controller
             if ($created_at) {
                 $query->orWhere('created_at', 'like', '%' . $created_at . '%');
             }
-    
+
             if ($updated_at) {
                 $query->orWhere('updated_at', 'like', '%' . $updated_at . '%');
             }
-    
+
             // Thực hiện truy vấn và phân trang kết quả
             $results = $query->paginate(10);
-    
+
             // Kiểm tra kết quả và trả về phản hồi
             if (!$results->isEmpty()) {
                 return response()->json([
@@ -186,5 +187,5 @@ class ResultController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
 }

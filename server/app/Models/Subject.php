@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subject extends Model
 {
-    public $fillable = ["name", "credit", "course_credit"];
+    public $fillable = ["name", "credit", "course_credit", "process_percent", "midterm_percent", "final_percent"];
 
-  public function teachers()
+    public function teachers()
     {
         return $this->belongsToMany(Teacher::class, 'subject_teacher');
     }
-    
+
 
     public function lessons(): BelongsTo
     {
