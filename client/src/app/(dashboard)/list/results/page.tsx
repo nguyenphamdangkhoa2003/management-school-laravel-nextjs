@@ -7,14 +7,15 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState, useCallback } from "react";
 import { getAllresults } from "@/services/api";
+import { date } from "zod";
 
 const columns = [
   { header: "Mã sinh viên", accessor: "code_room" },
   { header: "Tên sinh viên", accessor: "name" },
-  { header: "môn học", accessor: "floor" },
-  { header: "điểm giữa kì", accessor: "capacity" },
-  { header: "điểm cuối kì", accessor: "type" },
-  { header: "điểm trung bình", accessor: "is_available" },
+  { header: "Môn học", accessor: "floor" },
+  { header: "Điểm quá trình", accessor: "is_available" },
+  { header: "Điểm giữa kì", accessor: "capacity" },
+  { header: "Điểm cuối kì", accessor: "type" },
   { header: "Tùy chọn", accessor: "action" },
 ];
 
@@ -29,7 +30,7 @@ const ResutlsList = () => {
     try {
       const data = await getAllresults(page, 10);
       console.log(">><>>", data);
-      setAllresults(data);
+      setAllresults(data.data);
       setTotalPages(data.meta?.last_page || 1);
     } catch (err) {
       console.error("Lỗi khi lấy dữ liệu phòng học:", err);
@@ -62,12 +63,19 @@ const ResutlsList = () => {
       <td>{item.subject.name}</td>
       <td>{item.process_score}</td>
       <td>{item.semi_score}</td>
-      <td>{item.final_scrore}</td>
+      <td>{item.final_score}</td>
       <td className="flex items-center gap-2">
         {role === "admin" && (
           <>
             <FormModal table="result" type="update" data={{
-
+              id: item.id,
+              student_id: item.student.id,
+              student_name: `${item.student.surname} ${item.student.name} `,
+              subject_id: item.subject.id,
+              subject_name: item.subject.name,
+              process_score: item.process_score,
+              semi_score: item.semi_score,
+              final_score: item.final_score,
             }} />
             <FormModal table="result" type="delete" id={item.id} />
           </>

@@ -724,7 +724,7 @@ export const getAllresults = async (page = 1, perPage = 10) => {
     const response = await axios.get(`${API_BASE_URL}/results`, {
       params: { page, per_page: perPage },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error(
       "Lỗi khi lấy danh sách điểm",
@@ -756,6 +756,18 @@ export const addResult = async (Data: FormData) => {
     throw error;
   }
 }
+
+export const updateResult = async (id: number, Data: any) => {
+  try {
+    Data.append("_method", "PUT");
+    const response = await api.post(`/results/${id}`, Data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật điểm:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 
 
 //niên khóa

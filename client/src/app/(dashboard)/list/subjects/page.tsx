@@ -12,6 +12,9 @@ type Subject = {
   name: string;
   credit: number;
   course_credit: number
+  process_percent: number
+  midterm_percent: number
+  final_percent: number
 };
 
 const columns = [
@@ -19,15 +22,18 @@ const columns = [
     header: "Tên môn học",
     accessor: "name",
   },
+
+  {
+    header: "Hệ số điểm",
+    accessor: "credits",
+  },
   {
     header: "Tín chỉ",
     accessor: "credits",
-    className: "hidden md:table-cell",
   },
   {
     header: "Tín chỉ học phần",
     accessor: "credit tuit",
-    className: "hidden md:table-cell",
   },
   {
     header: "Tùy chọn",
@@ -46,6 +52,7 @@ const SubjectListPage = () => {
 
       try {
         const data = await getSubjects(currentPage, 10);
+        console.log("data>>", data);
         setAllSubjects(data.data);
         setTotalPages(data.meta?.last_page || 1);
       } catch (error: any) {
@@ -60,8 +67,9 @@ const SubjectListPage = () => {
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td className="hidden md:table-cell">{item.credit}</td>
-      <td className="hidden md:table-cell">{item.course_credit}</td>
+      <td className="">{`${item?.process_percent || 0} | ${item?.midterm_percent || 0} | ${item?.final_percent || 0}`} </td>
+      <td className="">{item.credit}</td>
+      <td className="">{item.course_credit}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
@@ -77,7 +85,7 @@ const SubjectListPage = () => {
           )}
         </div>
       </td>
-    </tr>
+    </tr >
   );
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();

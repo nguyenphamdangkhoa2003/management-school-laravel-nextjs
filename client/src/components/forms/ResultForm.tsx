@@ -1,6 +1,6 @@
 "use client";
 
-import { addResult, getLessonsByStudentid, getStudents } from "@/services/api";
+import { addResult, getLessonsByStudentid, getStudents, updateResult } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -8,11 +8,17 @@ import { z } from "zod";
 import InputField from "../InputField";
 import SearchableSelect from "../SearchableSelect";
 
-// Schema kiểm tra dữ liệu
 const schema = (type: "create" | "update") =>
     z.object({
-        student_id: z.string().min(1, "Vui lòng chọn sinh viên"),
-        subject_id: z.string().min(1, "Vui lòng chọn môn học"),
+        ...(type === "create" ? {
+            student_id: z.string().min(1, "Vui lòng chọn sinh viên"),
+            subject_id: z.string().min(1, "Vui lòng chọn môn học"),
+        } : {}),
+        process_score: z
+            .union([z.coerce.number(), z.undefined()])
+            .refine((val) => val === undefined || (Number.isFinite(val) && val >= 0 && val <= 10), {
+                message: "Điểm quá trình phải từ 0 đến 10",
+            }),
         midterm_score: z
             .union([z.coerce.number(), z.undefined()])
             .refine((val) => val === undefined || (Number.isFinite(val) && val >= 0 && val <= 10), {
@@ -23,10 +29,8 @@ const schema = (type: "create" | "update") =>
             .refine((val) => val === undefined || (Number.isFinite(val) && val >= 0 && val <= 10), {
                 message: "Điểm cuối kỳ phải từ 0 đến 10",
             }),
-    }).refine((data) => type !== "update" || data.id !== undefined, {
-        message: "ID là bắt buộc khi cập nhật",
-        path: ["id"],
     });
+
 
 const ResultForm = ({ type, data }) => {
     const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm({
@@ -92,29 +96,29 @@ const ResultForm = ({ type, data }) => {
     }, [selectedStudentId, type, data, setValue]);
 
     const onSubmit = handleSubmit(async (formData) => {
-        console.log(">>>>", formData);
-        const resultform = new FormData;
-        resultform.append("student_id", formData.student_id);
-        resultform.append("subject_id", formData.subject_id);
-        if (formData.final_score)
-            resultform.append("semi_score", formData.final_score || null);
-        if (formData.midterm_score)
-            resultform.append("final_scrore", formData.midterm_score || null);
-        resultform.append("process_score", "7");
 
+        console.log("dataday>>", data);
+        console.log("data>>", data);
+        const resultform = new FormData;
+        if (formData.process_score !== undefined)
+            resultform.append("process_score", formData.process_score);
+        if (formData.midterm_score !== undefined)
+            resultform.append("semi_score", formData.midterm_score);
+        if (formData.final_score !== undefined)
+            resultform.append("final_score", formData.final_score);
 
         try {
-            let newresult, upresult;
+            let newresult, updresult;
             if (type === "create") {
+                resultform.append("student_id", formData.student_id);
+                resultform.append("subject_id", formData.subject_id);
                 newresult = await addResult(resultform);
-                // setTimeout(() => window.location.reload(), 1500);
-            }
-            else if (type === "update") {
-                //  = updateroom(data?.id, resultform);
-                // setTimeout(() => window.location.reload(), 1500);
+            } else if (type === "update") {
+                updresult = await updateResult(data.id, resultform);
             }
             setShowForm(false);
             setErrorMessage(null);
+            setTimeout(() => window.location.reload(), 1500);
         } catch (error: any) {
             setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
         }
@@ -132,43 +136,73 @@ const ResultForm = ({ type, data }) => {
                         {type === "update" && data && (
                             <InputField label="ID" name="id" defaultValue={data?.id} register={register} error={errors?.id} hidden />
                         )}
-                        <div>
-                            <label className="block font-medium">Chọn sinh viên</label>
-                            <SearchableSelect
-                                options={studentOptions}
-                                placeholder="Chọn sinh viên..."
-                                getOptionLabel={(e) => `${e.code} - ${e.name}`}
-                                defaultValue={String(data?.student_id || "")}
-                                onChange={(selected) => {
-                                    setValue("student_id", String(selected?.value || ""));
-                                    setSelectedStudentId(String(selected?.value || ""));
-                                    trigger("student_id");
-                                }}
+                        {type === "create" ?
+                            <>
+                                <div>
+                                    <label className="block font-medium">Chọn sinh viên</label>
+                                    <SearchableSelect
+                                        options={studentOptions}
+                                        placeholder="Chọn sinh viên..."
+                                        getOptionLabel={(e) => `${e.code} - ${e.name}`}
+                                        defaultValue={String(data?.student_id || "")}
+                                        onChange={(selected) => {
+                                            setValue("student_id", String(selected?.value || ""));
+                                            setSelectedStudentId(String(selected?.value || ""));
+                                            trigger("student_id");
+                                        }}
+                                    />
+                                    {errors.student_id && <p className="text-red-500 text-sm">{errors.student_id.message}</p>}
+                                </div>
+                                <div>
+                                    <label className="block font-medium">Chọn môn học</label>
+                                    <SearchableSelect
+                                        key={selectedStudentId} // Add the key to force re-render
+                                        options={lessonOptions}
+                                        placeholder="Chọn môn học..."
+                                        getOptionLabel={(e) => e.name}
+                                        defaultValue={data?.subject_id || ""}
+                                        onChange={(selected) => {
+                                            setValue("subject_id", String(selected?.value || ""));
+                                            trigger("subject_id");
+                                        }}
+                                    />
+                                    {errors.subject_id && <p className="text-red-500 text-sm">{errors.subject_id.message}</p>}
+                                </div>
+                            </> : <>
+                                <div className='flex flex-col gap-4 w-full justify-between'>
+                                    <div>
+                                        <label className="block text-xs text-gray-500">Tên sinh viên</label>
+                                        <input type="text" defaultValue={data.student_name} className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                    hover:border-blue-400 transition-all" readOnly />
+
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs text-gray-500">Môn học</label>
+                                        <input type="text" defaultValue={data.subject_name} className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                    hover:border-blue-400 transition-all" readOnly />
+
+                                    </div>
+                                </div>
+                            </>}
+                        <div className="flex justify-between">
+                            <InputField
+                                label="Điểm quá trình"
+                                name="process_score"
+                                type="number"
+                                step="0.1"
+                                defaultValue={data?.process_score || ""}
+                                register={register}
+                                error={errors.process_score}
                             />
-                            {errors.student_id && <p className="text-red-500 text-sm">{errors.student_id.message}</p>}
-                        </div>
-                        <div>
-                            <label className="block font-medium">Chọn môn học</label>
-                            <SearchableSelect
-                                key={selectedStudentId} // Add the key to force re-render
-                                options={lessonOptions}
-                                placeholder="Chọn môn học..."
-                                getOptionLabel={(e) => e.name}
-                                defaultValue={data?.subject_id || ""}
-                                onChange={(selected) => {
-                                    setValue("subject_id", String(selected?.value || ""));
-                                    trigger("subject_id");
-                                }}
-                            />
-                            {errors.subject_id && <p className="text-red-500 text-sm">{errors.subject_id.message}</p>}
-                        </div>
-                        <div className="flex gap-8">
+
                             <InputField
                                 label="Điểm giữa kỳ"
                                 name="midterm_score"
                                 type="number"
                                 step="0.1"
-                                defaultValue={data?.midterm_score || ""}
+                                defaultValue={data?.semi_score}
                                 register={register}
                                 error={errors.midterm_score}
                             />
@@ -177,7 +211,7 @@ const ResultForm = ({ type, data }) => {
                                 name="final_score"
                                 type="number"
                                 step="0.1"
-                                defaultValue={data?.final_score || ""}
+                                defaultValue={data?.final_score}
                                 register={register}
                                 error={errors.final_score}
                             />
