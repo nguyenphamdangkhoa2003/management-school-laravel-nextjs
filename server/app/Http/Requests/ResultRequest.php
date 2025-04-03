@@ -18,12 +18,19 @@ class ResultRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->isMethod('post')) {
+            return [
+                'process_score' => 'sometimes|numeric|min:0|max:10',
+                'semi_score' => 'sometimes|numeric|min:0|max:10',
+                'final_score' => 'sometimes|numeric|min:0|max:10',
+                'subject_id' => 'required|exists:subjects,id',
+                'student_id' => 'required|exists:students,id',
+            ];
+        }
         return [
             'process_score' => 'sometimes|numeric|min:0|max:10',
             'semi_score' => 'sometimes|numeric|min:0|max:10',
-            'final_scrore' => 'sometimes|numeric|min:0|max:10',
-            'subject_id' => 'required|exists:subjects,id',
-            'student_id' => 'required|exists:students,id',
+            'final_score' => 'sometimes|numeric|min:0|max:10',
         ];
     }
 }
