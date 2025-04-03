@@ -10,6 +10,7 @@ import {
   deleteroom,
   deleteAttendance,
   removeGrade,
+  deleteResult,
 } from "@/services/api";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -164,6 +165,10 @@ const FormModal = ({
 
         if (table === "grade") {
           await removeGrade(id);
+        }
+
+        if (table === "result") {
+          await deleteResult(id);
         }
 
         setSuccessMessage(`Xóa thành công!`);

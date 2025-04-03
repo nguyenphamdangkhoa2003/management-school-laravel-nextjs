@@ -815,6 +815,15 @@ export const updateResult = async (id: number, Data: any) => {
   }
 };
 
+export const deleteResult = async (id: number) => {
+  try {
+    const response = await api.delete(`/results/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi xóa điểm", error.response?.data || error.message);
+    throw error;
+  }
+}
 
 
 //niên khóa
