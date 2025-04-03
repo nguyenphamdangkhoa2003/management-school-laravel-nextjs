@@ -19,11 +19,11 @@ class ResultRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'process_score' => 'required|numeric|min:0|max:10',
-        'semi_score' => 'required|numeric|min:0|max:10',
-        'final_scrore' => 'required|numeric|min:0|max:10',
-        'subject_id' => 'required|exists:subjects,id',
-        'student_id' => 'required|exists:students,id',
+            'process_score' => 'somtimes|numeric|min:0|max:10',
+            'semi_score' => 'somtimes|numeric|min:0|max:10',
+            'final_scrore' => 'somtimes|numeric|min:0|max:10',
+            'subject_id' => 'required|exists:subjects,id',
+            'student_id' => 'required|exists:students,id',
         ];
     }
 }

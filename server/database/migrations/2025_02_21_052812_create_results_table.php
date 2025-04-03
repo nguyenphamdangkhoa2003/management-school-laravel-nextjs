@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Assignment;
-use App\Models\Exam;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Database\Migrations\Migration;
@@ -16,9 +14,9 @@ return new class extends Migration {
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->float("process_score");
-            $table->float("semi_score");
-            $table->float("final_scrore");
+            $table->float("process_score")->nullable();
+            $table->float("semi_score")->nullable();
+            $table->float("final_scrore")->nullable();
             $table->foreignIdFor(Subject::class)->constrained();
             $table->foreignIdFor(Student::class)->constrained();
             $table->timestamps();

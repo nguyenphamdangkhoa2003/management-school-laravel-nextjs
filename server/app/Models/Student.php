@@ -24,9 +24,9 @@ class Student extends Model
         "bloodType",
         "birthday",
         "password",
-    "guardian_id",
-    "school_class_id",
-    "grade_id",
+        "guardian_id",
+        "school_class_id",
+        "grade_id",
 
     ];
     public function setPasswordAttribute($value)

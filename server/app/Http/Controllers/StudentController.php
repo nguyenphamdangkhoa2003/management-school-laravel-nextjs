@@ -48,7 +48,7 @@ class StudentController extends Controller
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => 'Something went wrong',
@@ -63,12 +63,12 @@ class StudentController extends Controller
         try {
             $student = Student::findOrFail($id);
             return response()->json($student);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
                 'message' => 'Student not found',
             ], Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while retrieving the student',
@@ -112,7 +112,7 @@ class StudentController extends Controller
                 'message' => 'The given data was invalid.',
                 'errors' => $e->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => 'An error occurred while updating the student.',
@@ -132,7 +132,7 @@ class StudentController extends Controller
             }
             $student->delete();
             return response()->json(['message' => 'Student deleted successfully'], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'An error occurred while deleting the student',
@@ -251,7 +251,7 @@ class StudentController extends Controller
                     'message' => 'No students found.',
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Xử lý lỗi nếu có
             return response()->json([
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -315,4 +315,4 @@ class StudentController extends Controller
     }
 }
 
-  
+

@@ -33,7 +33,7 @@ class SubjectController extends Controller
             $validatedData = $request->validated();
             $subject = Subject::create($validatedData);
             return response()->json($subject, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => 'Validation failed',

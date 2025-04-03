@@ -5,8 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,6 +16,9 @@ return new class extends Migration
             $table->string("name")->unique();
             $table->string('credit');
             $table->string('course_credit');
+            $table->double("process_percent")->nullable();
+            $table->double("midterm_percent")->nullable();
+            $table->double("final_percent")->nullable();
             $table->timestamps();
         });
     }

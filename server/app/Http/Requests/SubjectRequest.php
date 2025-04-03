@@ -25,6 +25,9 @@ class SubjectRequest extends FormRequest
             'name' => 'required|string|unique:subjects,name,' . $this->route('id'),
             'credit' => 'required|integer',
             'course_credit' => 'required|integer',
+            'process_percent' => 'required|numeric|min:0|max:100',
+            'midterm_percent' => 'required|numeric|min:0|max:100',
+            'final_percent' => 'required|numeric|min:0|max:100',
         ];
     }
 }
