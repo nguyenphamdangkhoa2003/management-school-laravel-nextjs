@@ -66,6 +66,10 @@ const RoomForm = dynamic(() => import("./forms/RoomForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
+const ResultForm = dynamic(() => import("./forms/ResultForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
 const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
 } = {
@@ -82,6 +86,7 @@ const forms: {
   announcement: (type, data) => <LessonForm type={type} data={data} />,
   studentlesson: (type, data) => <StudentLessonForm type={type} data={data} />,
   room: (type, data) => <RoomForm type={type} data={data} />,
+  result: (type, data) => <ResultForm type={type} data={data} />,
 };
 
 const FormModal = ({
