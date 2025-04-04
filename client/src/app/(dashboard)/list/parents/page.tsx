@@ -11,9 +11,22 @@ type Parent = {
   id: number;
   name: string;
   email?: string;
-  students: string[];
   phone: string;
   address: string;
+  students?: Student[]; // optional nếu có quan hệ nghịch
+};
+
+type Student = {
+  id: number;
+  name: string;
+  email?: string;
+  age?: number;
+  gender?: "male" | "female" | "other";
+  class_name?: string;
+  guardian: {
+    id: number;
+    name?: string;
+  };
 };
 
 const columns = [
@@ -43,9 +56,9 @@ const columns = [
 ];
 
 const ParentListPage = () => {
-  const [parents, setAllParent] = useState([]);
-  const [students, setAllStudens] = useState([]);
-  const [error, setError] = useState([null]);
+  const [students, setAllStudents] = useState<Student[]>([]);
+  const [parents, setAllParent] = useState<Parent[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = localStorage.getItem("role");
@@ -58,10 +71,14 @@ const ParentListPage = () => {
         ]);
 
         setAllParent(parentData.data);
-        setAllStudens(studentData.data);
+        setAllStudents(studentData.data);
         setTotalPages(parentData.meta?.last_page || 1);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Đã xảy ra lỗi không xác định.");
+        }
       }
     };
 
@@ -104,7 +121,7 @@ const ParentListPage = () => {
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value.trim();
     if (searchValue === " ") {
-      const data = getParents(currentPage, 10)
+      const data = await getParents(currentPage, 10)
       setAllParent(data.data)
       return
     }
