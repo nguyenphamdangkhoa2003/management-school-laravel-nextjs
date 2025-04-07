@@ -6,7 +6,7 @@ import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState, useCallback } from "react";
-import { getAllrooms, searchAttendance } from "@/services/api";
+import { getAllrooms } from "@/services/api";
 
 const columns = [
     { header: "Mã phòng", accessor: "code_room" },
@@ -18,7 +18,18 @@ const columns = [
     { header: "Tùy chọn", accessor: "action" },
 ];
 
-const StudentLessons = () => {
+type Room = {
+    id: number;
+    code_room: string;
+    name: string;
+    floor: number;
+    capacity: number;
+    type: "lecture" | "lab" | "office" | "meeting"; // hoặc string nếu không chắc chắn
+    is_available: boolean;
+};
+
+
+const ListRoom = () => {
     const [rooms, setAllrooms] = useState([]);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -30,7 +41,7 @@ const StudentLessons = () => {
             const data = await getAllrooms(page, 10);
             setAllrooms(data.data);
             setTotalPages(data.meta?.last_page || 1);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Lỗi khi lấy dữ liệu phòng học:", err);
             setError(err.message);
         }
@@ -40,21 +51,21 @@ const StudentLessons = () => {
         fetchAttendance(currentPage);
     }, [fetchAttendance, currentPage]);
 
-    const handleSearch = useCallback(async (e) => {
-        const searchValue = e.target.value.trim();
-        if (searchValue === "") {
-            fetchAttendance(currentPage);
-            return;
-        }
-        try {
-            const filteredRooms = await searchAttendance(searchValue);
-            setAllrooms(filteredRooms);
-        } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
-        }
-    }, [currentPage]);
+    // const handleSearch = useCallback(async (e) => {
+    //     const searchValue = e.target.value.trim();
+    //     if (searchValue === "") {
+    //         fetchAttendance(currentPage);
+    //         return;
+    //     }
+    //     try {
+    //         const filteredRooms = await searchAttendance(searchValue);
+    //         setAllrooms(filteredRooms);
+    //     } catch (error) {
+    //         console.error("Lỗi khi tìm kiếm:", error);
+    //     }
+    // }, [currentPage]);
 
-    const renderRow = (item) => (
+    const renderRow = (item: Room) => (
         <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
             <td className="p-4">{item.code_room}</td>
             <td>{item.name}</td>
@@ -87,7 +98,7 @@ const StudentLessons = () => {
             <div className="flex items-center justify-between">
                 <h1 className="hidden md:block text-lg font-semibold">Danh sách phòng học</h1>
                 <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                    <TableSearch onChange={handleSearch} />
+                    {/* <TableSearch onChange={handleSearch} /> */}
                     <div className="flex items-center gap-4 self-end">
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
                             <Image src="/filter.png" alt="" width={14} height={14} />
@@ -109,4 +120,4 @@ const StudentLessons = () => {
     );
 };
 
-export default StudentLessons;
+export default ListRoom;

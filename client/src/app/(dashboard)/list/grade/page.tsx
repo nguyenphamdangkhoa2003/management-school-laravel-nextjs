@@ -27,7 +27,7 @@ const StudentLessons = () => {
             setAllgrades(data.data);
             console.log(">>>>>", data.data);
             setTotalPages(data.meta?.last_page || 1);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Lỗi khi lấy dữ liệu điểm danh:", err);
             setError(err.message);
         }
@@ -38,19 +38,19 @@ const StudentLessons = () => {
     }, [fetchAttendance, currentPage]);
 
 
-    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = e.target.value.trim();
-        if (searchValue === "") {
-            fetchAttendance(currentPage);
-            return;
-        }
-        try {
-            const filteredAttendance = await searchAttendance(searchValue);
-            setAllSAttendance(filteredAttendance);
-        } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
-        }
-    };
+    // const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const searchValue = e.target.value.trim();
+    //     if (searchValue === "") {
+    //         fetchAttendance(currentPage);
+    //         return;
+    //     }
+    //     try {
+    //         const filteredAttendance = await searchAttendance(searchValue);
+    //         setAllSAttendance(filteredAttendance);
+    //     } catch (error) {
+    //         console.error("Lỗi khi tìm kiếm:", error);
+    //     }
+    // };
 
     const renderRow = (item: any) => (
         <tr
@@ -83,7 +83,7 @@ const StudentLessons = () => {
             <div className="flex items-center justify-between">
                 <h1 className="hidden md:block text-lg font-semibold">Danh sách niên khóa</h1>
                 <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                    <TableSearch onChange={handleSearch} />
+                    {/* <TableSearch onChange={handleSearch} /> */}
                     <div className="flex items-center gap-4 self-end">
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
                             <Image src="/filter.png" alt="" width={14} height={14} />

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
-import { addTeacher, updateTeacher,getSubjects,addSubjectTeacher } from "@/services/api";
+import { addTeacher, updateTeacher, getSubjects, addSubjectTeacher } from "@/services/api";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
@@ -57,39 +57,39 @@ const TeacherForm = ({
   const [teacher, setTeacher] = useState(null);
   const [subjects, setSubjects] = useState(null);
   useEffect(() => {
-  if (type === "update") {
-    if (id) {
-      axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
-        .then((res) => {
-          if (res.data?.data) {
-            setTeacher(res.data.data);
-          } else {
-            console.error("Không tìm thấy giáo viên.");
-          }
-        })
-        .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
-    }
-  } else {
-    const fetchAllTeachers = async () => {
-      try {
-        const firstPage = await getSubjects(1, 10);
-        const totalPages = firstPage.meta?.last_page || 1;
-
-        const allSubjectPages = await Promise.all(
-          Array.from({ length: totalPages }, (_, i) => getSubjects(i + 1, 10))
-        );
-        const allSubject = allSubjectPages.flatMap((page) => page.data);
-        setSubjects(allSubject);
-      } catch (err: any) {
-        setErrorMessage(err.message);
+    if (type === "update") {
+      if (id) {
+        axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
+          .then((res) => {
+            if (res.data?.data) {
+              setTeacher(res.data.data);
+            } else {
+              console.error("Không tìm thấy giáo viên.");
+            }
+          })
+          .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
       }
-    };
+    } else {
+      const fetchAllTeachers = async () => {
+        try {
+          const firstPage = await getSubjects(1, 10);
+          const totalPages = firstPage.meta?.last_page || 1;
 
-    fetchAllTeachers();
-  }
-}, [type, id]); 
+          const allSubjectPages = await Promise.all(
+            Array.from({ length: totalPages }, (_, i) => getSubjects(i + 1, 10))
+          );
+          const allSubject = allSubjectPages.flatMap((page) => page.data);
+          setSubjects(allSubject);
+        } catch (err: any) {
+          setErrorMessage(err.message);
+        }
+      };
 
-  
+      fetchAllTeachers();
+    }
+  }, [type, id]);
+
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -133,7 +133,7 @@ const TeacherForm = ({
             subjectTeacherData.append("teacher_id", teacherId);
             subjectTeacherData.append("subject_id", subjectId);
             console.log("Adding subject-teacher:", { teacherId, subjectId });
-            
+
             await addSubjectTeacher(subjectTeacherData);
           }
         }
@@ -169,7 +169,7 @@ const TeacherForm = ({
             {type === "create" && (
               <div className="flex flex-col gap-2 w-full md:w-1/4">
                 <label className="text-xs font-medium text-gray-600">Môn học</label>
-                
+
                 <select
                   className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500

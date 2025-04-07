@@ -6,7 +6,10 @@ import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
-const accessControl = {
+// Định nghĩa rõ kiểu role để tránh lỗi khi truy cập accessControl
+type Role = 'admin' | 'teacher' | 'student' | 'parent';
+
+const accessControl: Record<Role, string[]> = {
   admin: ["/admin", "/list/teachers", "/list/students", "/list/parents", "/list/subjects", "/list/classes", "/list/lessons", "/list/subject-teacher", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements", "/list/student-lessons", "/list/rooms", "/list/grade"],
   teacher: ["/teacher", "/list/classes", "/list/teachers", "/list/students", "/list/parents", "/list/lessons", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements"],
   student: ["/student", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements"],
@@ -20,10 +23,10 @@ export default function DashboardLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<Role | null>(null); // Định nghĩa rõ kiểu role
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
+    const storedRole = localStorage.getItem("role") as Role | null;
     setRole(storedRole);
 
     if (!storedRole) {

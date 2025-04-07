@@ -1,6 +1,6 @@
 "use client";
 
-import { getTeachers, getSubjects, addSubjectTeacher,updateSubjectTeacher } from "@/services/api";
+import { getTeachers, getSubjects, addSubjectTeacher, updateSubjectTeacher } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -19,7 +19,7 @@ const schema = (type: "create" | "update") =>
     }
     return true;
   }, { message: "ID là bắt buộc khi cập nhật", path: ["id"] });
-type Inputs = z.infer<typeof schema>;
+type Inputs = z.infer<ReturnType<typeof schema>>;
 
 const SubjectTeacherForm = ({
   type,
@@ -38,7 +38,7 @@ const SubjectTeacherForm = ({
     defaultValues: {
       subjectId: data?.subjectId || "",
       teacherId: data?.teacherId || "",
-      
+
     },
   });
 
@@ -99,7 +99,7 @@ const SubjectTeacherForm = ({
       if (type === "create") {
         await addSubjectTeacher(subjectTeacherData);
         setTimeout(() => window.location.reload(), 1500);
-      }else if (type === "update") {
+      } else if (type === "update") {
         subjectTeacherData.append("id", formData?.id);
         await updateSubjectTeacher(formData?.id, subjectTeacherData);
         setTimeout(() => window.location.reload(), 1500);
@@ -127,17 +127,17 @@ const SubjectTeacherForm = ({
           </span>
 
           <div className="flex flex-col gap-4">
-            {data &&(
-                    <InputField
-                        label="id"
-                        name="id"
-                        defaultValue={data?.id}
-                        register={register}
-                        error={errors?.id}
-                        hidden
-                    />
-                    )
-                }
+            {data && (
+              <InputField
+                label="id"
+                name="id"
+                defaultValue={data?.id}
+                register={register}
+                error={errors?.id}
+                hidden
+              />
+            )
+            }
             {/* Select chọn môn học */}
             <div>
               <label className="block font-medium">Chọn môn học</label>

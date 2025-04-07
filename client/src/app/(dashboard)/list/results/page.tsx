@@ -19,6 +19,24 @@ const columns = [
   { header: "Tùy chọn", accessor: "action" },
 ];
 
+type Result = {
+  id: number;
+  student: {
+    id: number;
+    code: string;
+    surname: string;
+    name: string;
+  };
+  subject: {
+    id: number;
+    name: string;
+  };
+  process_score: number;
+  semi_score: number;
+  final_score: number;
+};
+
+
 const ResutlsList = () => {
   const [results, setAllresults] = useState([]);
   const [error, setError] = useState(null);
@@ -32,7 +50,7 @@ const ResutlsList = () => {
       console.log(">><>>", data);
       setAllresults(data.data);
       setTotalPages(data.meta?.last_page || 1);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Lỗi khi lấy dữ liệu phòng học:", err);
       setError(err.message);
     }
@@ -56,7 +74,7 @@ const ResutlsList = () => {
   //   }
   // }, [currentPage]);
 
-  const renderRow = (item) => (
+  const renderRow = (item: Result) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
       <td className="p-4">{item.student.code}</td>
       <td>{`${item.student.surname} ${item.student.name}`}</td>

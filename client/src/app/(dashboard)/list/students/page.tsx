@@ -7,17 +7,30 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getStudents, getStudent } from "@/services/api";
-type Student = {
+export type Student = {
   id: number;
   code: string;
   name: string;
   surname: string;
   email?: string;
-  photo: string;
   phone?: string;
-  grade: number;
-  school_class: string;
   address: string;
+  img?: string;
+  grade?: Grade;
+  school_class?: SchoolClass;
+  birthday?: string;
+  bloodType?: string;
+  guardian_id?: number;
+};
+
+type Grade = {
+  id: number;
+  level: string;
+};
+
+type SchoolClass = {
+  id: number;
+  name: string;
 };
 
 const columns = [
@@ -63,7 +76,7 @@ const StudentListPage = () => {
         const data = await getStudents(currentPage, 10);
         setAllStudens(data.data);
         setTotalPages(data.meta?.last_page || 1);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };

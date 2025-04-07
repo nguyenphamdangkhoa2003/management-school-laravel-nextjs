@@ -10,23 +10,52 @@ import axios from "axios";
 import { getLessonByStudentid, getOneStudents } from "@/services/api";
 import FormModal from "@/components/FormModal";
 
+type Student = {
+  id: number;
+  username: string;
+  code: string;
+  email: string;
+  password: string;
+  grade_id: number;
+  surname: string;
+  name: string;
+  phone: string;
+  address: string;
+  bloodType: string;
+  birthday: string;
+  sex: string;
+  guardian_id: number;
+  img: string;
+};
+
+type Lesson = {
+  id: number;
+  title: string;
+  start: string | Date;
+  end: string | Date;
+  room?: string;
+  teacher?: string;
+  subject?: string;
+};
+
+
 const SingleStudentPage = () => {
   const { id } = useParams();
-  const [student, setStudent] = useState(null);
+  const [student, setStudent] = useState<Student | null>(null);
   const [lessons, setAllLessonById] = useState([]);
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || Array.isArray(id)) return;
+
+    const studentId = parseInt(id, 10); // ✅ ép kiểu an toàn
 
     const fetchData = async () => {
       try {
-        const foundStudent = await getOneStudents(id);
-        console.log("student>>", foundStudent);
+        const foundStudent = await getOneStudents(studentId);
         setStudent(foundStudent);
 
-        // Lấy lịch của sinh viên
-        const lessonData = await getLessonByStudentid(id);
+        const lessonData = await getLessonByStudentid(studentId);
         setAllLessonById(lessonData);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);

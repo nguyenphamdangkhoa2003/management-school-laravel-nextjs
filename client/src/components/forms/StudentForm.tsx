@@ -41,25 +41,18 @@ const schema = (type: "create" | "update") =>
       z.date({ message: "Ngày sinh là bắt buộc!" })
     ),
     sex: z.enum(["MALE", "FEMALE"], { message: "Giới tính là bắt buộc!" }),
-    img: type === "create" ? z.instanceof(File, { message: "Ảnh là bắt buộc!" }) : z.optional(z.instanceof(File)),
+    img: type === "create"
+      ? z.instanceof(File, { message: "Ảnh là bắt buộc!" })
+      : z.union([z.instanceof(File), z.array(z.instanceof(File))]).optional(),
     code: z.string().length(10, { message: "Mã phải có đúng 10 ký tự!" }),
     classID: z.string().nonempty("Vui lòng chọn lớp học!"),
     gradeID: z.string().nonempty("Vui lòng chọn niên khóa!"),
   });
 
-const StudentForm = ({
-  type,
-  data,
-}: {
-  type: "create" | "update";
-  data?: any;
-}) => {
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>({
+type Inputs = z.infer<ReturnType<typeof schema>>;
+
+const StudentForm = ({ type, data }: { type: "create" | "update"; data?: any }) => {
+  const { register, setValue, handleSubmit, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(schema(type)),
     defaultValues: type === "create" ? data : {},
   });
@@ -111,7 +104,7 @@ const StudentForm = ({
     formDataStudent.append("grade_id", formData.gradeID);
     formDataStudent.append("school_class_id", formData.classID);
     formDataStudent.append("sex", formData.sex);
-    formDataStudent.append("guardian_id", data.guardian_id);
+    const formDataParent = new FormData();
 
     if (formData.img instanceof File) {
       formDataStudent.append("img", formData.img);
@@ -120,18 +113,17 @@ const StudentForm = ({
     }
 
     try {
-      let parentResponse, studentResponse, updstudent;
+      let parentResponse, studentResponse: any, updstudent;
 
       if (type === "create") {
-        const formDataParent = new FormData();
-        formDataParent.append("username", formData.parentUsername);
-        formDataParent.append("name", formData.parentLastName);
-        formDataParent.append("surname", formData.parentFirstName);
-        formDataParent.append("password", formData.password);
-        formDataParent.append("email", formData.parentEmail);
-        formDataParent.append("phone", formData.parentPhone);
-        formDataParent.append("address", formData.parentAddress);
-        formDataParent.append("sex", formData.parentsex);
+        formDataParent.append("username", formData.parentUsername as string);
+        formDataParent.append("name", formData.parentLastName as string);
+        formDataParent.append("surname", formData.parentFirstName as string);
+        formDataParent.append("password", formData.password as string);
+        formDataParent.append("email", formData.parentEmail as string);
+        formDataParent.append("phone", formData.parentPhone as string);
+        formDataParent.append("address", formData.parentAddress as string);
+        formDataParent.append("sex", formData.parentsex as string);
         parentResponse = await addParent(formDataParent);
         if (parentResponse?.id) {
           const parentID = parentResponse.id;
@@ -152,6 +144,7 @@ const StudentForm = ({
       setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
     }
   });
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

@@ -3,10 +3,28 @@
 import { addResult, getLessonsByStudentid, getStudents, updateResult } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 import SearchableSelect from "../SearchableSelect";
+
+type StudentOption = {
+    value: string;
+    code: string;
+    name: string;
+};
+
+type Lesson = {
+    lesson: {
+        subject_teacher: {
+            subject: {
+                id: number;
+                name: string;
+            };
+        };
+    };
+}
+
 
 const schema = (type: "create" | "update") =>
     z.object({
@@ -32,18 +50,24 @@ const schema = (type: "create" | "update") =>
     });
 
 
-const ResultForm = ({ type, data }) => {
+const ResultForm = ({ type, data }: {
+    type: "create" | "update";
+    data?: any;
+}) => {
     const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm({
         resolver: zodResolver(schema(type)),
         defaultValues: {
             student_id: String(data?.student_id || ""),
             subject_id: String(data?.subject_id || ""),
+            process_score: data?.process_score || "",
+            midterm_score: data?.midterm_score || "",
+            final_score: data?.final_score || "",
         },
     });
     const [showForm, setShowForm] = useState(true);
-    const [studentOptions, setStudentOptions] = useState([]);
+    const [studentOptions, setStudentOptions] = useState<StudentOption[]>([]);
     const [lessonOptions, setLessonOptions] = useState([]);
-    const [selectedStudentId, setSelectedStudentId] = useState(null);
+    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
@@ -65,7 +89,7 @@ const ResultForm = ({ type, data }) => {
                     setValue("student_id", String(data.student_id));
                     setSelectedStudentId(String(data.student_id));
                 }
-            } catch (err) {
+            } catch (err: any) {
                 setErrorMessage(err.message);
             }
         };
@@ -78,8 +102,8 @@ const ResultForm = ({ type, data }) => {
 
         const fetchLessons = async () => {
             try {
-                const allLessons = await getLessonsByStudentid(selectedStudentId);
-                setLessonOptions(allLessons.map((item) => ({
+                const allLessons = await getLessonsByStudentid(Number(selectedStudentId));
+                setLessonOptions(allLessons.map((item: Lesson) => ({
                     value: String(item.lesson?.subject_teacher?.subject?.id || ""),
                     name: item.lesson?.subject_teacher?.subject?.name || "Không xác định",
                 })));
@@ -87,7 +111,7 @@ const ResultForm = ({ type, data }) => {
                 if (type === "update" && data?.subject_id) {
                     setValue("subject_id", String(data.subject_id));
                 }
-            } catch (err) {
+            } catch (err: any) {
                 setErrorMessage(err.message);
             }
         };
@@ -134,7 +158,7 @@ const ResultForm = ({ type, data }) => {
                     </h1>
                     <div className="flex flex-col gap-4">
                         {type === "update" && data && (
-                            <InputField label="ID" name="id" defaultValue={data?.id} register={register} error={errors?.id} hidden />
+                            <InputField label="ID" name="id" defaultValue={data?.id} register={register} hidden />
                         )}
                         {type === "create" ?
                             <>
@@ -143,9 +167,9 @@ const ResultForm = ({ type, data }) => {
                                     <SearchableSelect
                                         options={studentOptions}
                                         placeholder="Chọn sinh viên..."
-                                        getOptionLabel={(e) => `${e.code} - ${e.name}`}
+                                        getOptionLabel={(e: any) => `${e.code} - ${e.name}`}
                                         defaultValue={String(data?.student_id || "")}
-                                        onChange={(selected) => {
+                                        onChange={(selected: any) => {
                                             setValue("student_id", String(selected?.value || ""));
                                             setSelectedStudentId(String(selected?.value || ""));
                                             trigger("student_id");
@@ -159,9 +183,9 @@ const ResultForm = ({ type, data }) => {
                                         key={selectedStudentId} // Add the key to force re-render
                                         options={lessonOptions}
                                         placeholder="Chọn môn học..."
-                                        getOptionLabel={(e) => e.name}
-                                        defaultValue={data?.subject_id || ""}
-                                        onChange={(selected) => {
+                                        getOptionLabel={(e: any) => e.name}
+                                        defaultValue={String(data?.subject_id || "")}
+                                        onChange={(selected: any) => {
                                             setValue("subject_id", String(selected?.value || ""));
                                             trigger("subject_id");
                                         }}
@@ -194,7 +218,7 @@ const ResultForm = ({ type, data }) => {
                                 step="0.1"
                                 defaultValue={data?.process_score || ""}
                                 register={register}
-                                error={errors.process_score}
+                                error={errors.process_score as FieldError | undefined}
                             />
 
                             <InputField
@@ -204,7 +228,7 @@ const ResultForm = ({ type, data }) => {
                                 step="0.1"
                                 defaultValue={data?.semi_score}
                                 register={register}
-                                error={errors.midterm_score}
+                                error={errors.midterm_score as FieldError | undefined}
                             />
                             <InputField
                                 label="Điểm cuối kỳ"
@@ -213,7 +237,7 @@ const ResultForm = ({ type, data }) => {
                                 step="0.1"
                                 defaultValue={data?.final_score}
                                 register={register}
-                                error={errors.final_score}
+                                error={errors.final_score as FieldError | undefined}
                             />
                         </div>
                     </div>

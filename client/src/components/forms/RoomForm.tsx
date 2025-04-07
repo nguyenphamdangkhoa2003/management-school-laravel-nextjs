@@ -29,7 +29,8 @@ const schema = (type: "create" | "update") =>
     return true;
   }, { message: "ID là bắt buộc khi cập nhật", path: ["id"] });
 
-type Inputs = z.infer<typeof schema>;
+type Inputs = z.infer<ReturnType<typeof schema>>;
+
 
 const ClassForm = ({
   type,
@@ -52,22 +53,26 @@ const ClassForm = ({
   const [grades, setAllGrades] = useState<any[]>([]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const roomform = new FormData;
-    roomform.append("id", data.id);
+    const roomform = new FormData();
+
+    if (type === "update" && data.id !== undefined) {
+      roomform.append("id", String(data.id));
+    }
+
     roomform.append("code_room", data.code_room);
-    roomform.append("floor", data.floor);
+    roomform.append("floor", String(data.floor));
     roomform.append("name", data.name);
-    roomform.append("capacity", data.capacity);
+    roomform.append("capacity", String(data.capacity));
     roomform.append("type", data.type);
     roomform.append("is_available", data.available);
+
     try {
       let newroom, updroom;
       if (type === "create") {
         newroom = await addroom(roomform);
         setTimeout(() => window.location.reload(), 1500);
-      }
-      else if (type === "update") {
-        updroom = updateroom(data?.id, roomform);
+      } else if (type === "update") {
+        updroom = await updateroom(Number(data.id), roomform);
         setTimeout(() => window.location.reload(), 1500);
       }
       setShowForm(false);
@@ -75,7 +80,6 @@ const ClassForm = ({
     } catch (error: any) {
       setErrorMessage(error.response?.data?.message || error.message || "Lỗi không xác định");
     }
-
   });
 
   return (

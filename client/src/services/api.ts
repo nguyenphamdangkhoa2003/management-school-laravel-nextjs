@@ -19,7 +19,7 @@ export const getTeachers = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data; // Trả về toàn bộ dữ liệu gồm danh sách + meta
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách giáo viên:",
       error.response?.data || error.message
@@ -27,6 +27,20 @@ export const getTeachers = async (page = 1, perPage = 10) => {
     throw error;
   }
 };
+
+export const getOneTeachers = async (id: number) => {
+  try {
+    const response = await api.get(`/teachers/${id}`);
+    return response.data.data;
+  } catch (error: any) {
+    console.error(
+      "Lỗi khi lấy giảng viên:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
 
 export const getTeacher = async (searchQuery: string) => {
   try {
@@ -39,7 +53,7 @@ export const getTeacher = async (searchQuery: string) => {
       },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi tìm kiếm giáo viên:",
       error.response?.data || error.message
@@ -54,7 +68,7 @@ export const addTeacher = async (teacherData: FormData) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi thêm giáo viên:",
       error.response?.data || error.message
@@ -72,7 +86,7 @@ export const updateTeacher = async (id: number, teacherData: FormData) => {
     });
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật giáo viên:",
       error.response?.data || error.message
@@ -85,7 +99,7 @@ export const deleteTeacher = async (id: number) => {
   try {
     const response = await api.delete(`/teachers/${id}`);
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi xóa giáo viên:",
       error.response?.data || error.message
@@ -101,7 +115,7 @@ export const getStudents = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách sinh viên:",
       error.response?.data || error.message
@@ -114,7 +128,7 @@ export const getOneStudents = async (id: number) => {
   try {
     const response = await api.get(`/students/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy thông tin sinh viên:",
       error.response?.data || error.message
@@ -137,7 +151,7 @@ export const getStudent = async (search: string) => {
       },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi tìm sinh viên", error.response?.data || error.message);
     throw error;
   }
@@ -147,7 +161,7 @@ export const deleteStudent = async (id: number) => {
   try {
     const response = await api.delete(`/students/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa sinh viên", error.response?.data || error.message);
     throw error;
   }
@@ -159,7 +173,7 @@ export const addStudent = async (Data: FormData) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi thêm sinh viên:",
       error.response?.data || error.message
@@ -177,7 +191,7 @@ export const updateStudent = async (id: number, studentData: FormData) => {
     });
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật sinh viên",
       error.response?.data || error.message
@@ -192,7 +206,7 @@ export const getSubjects = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách môn học:",
       error.response?.data || error.message
@@ -206,7 +220,7 @@ export const getSubject = async (search: string) => {
       params: { name: search },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi tìm môn học", error.response?.data || error.message);
     throw error;
   }
@@ -215,7 +229,7 @@ export const deleteSubject = async (id: number) => {
   try {
     const response = await api.delete(`/subjects/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa môn học", error.response?.data || error.message);
     throw error;
   }
@@ -224,7 +238,7 @@ export const addSubject = async (Data: FormData) => {
   try {
     const response = await api.post(`/subjects`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi thêm môn học:",
       error.response?.data || error.message
@@ -237,7 +251,7 @@ export const updateSubject = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/subjects/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật môn học:",
       error.response?.data || error.message
@@ -251,7 +265,7 @@ export const getSubjectTeachers = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách môn học theo giáo viên:",
       error.response?.data || error.message
@@ -263,7 +277,7 @@ export const addSubjectTeacher = async (Data: FormData) => {
   try {
     const response = await api.post(`/subject-teachers`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi thêm môn học:",
       error.response?.data || error.message
@@ -276,7 +290,7 @@ export const updateSubjectTeacher = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/subject-teachers/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật môn học:",
       error.response?.data || error.message
@@ -288,7 +302,7 @@ export const deleteSubjectTeacher = async (id: number) => {
   try {
     const response = await api.delete(`/subject-teachers/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa môn học", error.response?.data || error.message);
     throw error;
   }
@@ -300,7 +314,7 @@ export const getClasses = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách lớp:",
       error.response?.data || error.message
@@ -315,7 +329,7 @@ export const getClass = async (search: string) => {
       params: { name: search },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi tìm lớp học", error.response?.data || error.message);
     throw error;
   }
@@ -338,7 +352,7 @@ export const updateClass = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/school-classes/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật lớp học:",
       error.response?.data || error.message
@@ -351,7 +365,7 @@ export const deleteSClass = async (id: number) => {
   try {
     const response = await api.delete(`/school-classes/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa lớp học", error.response?.data || error.message);
     throw error;
   }
@@ -364,7 +378,7 @@ export const getParents = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách phụ huynh:",
       error.response?.data || error.message
@@ -379,7 +393,7 @@ export const getParent = async (search: string) => {
       params: { name: search, username: search, email: search, phone: search },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi tìm phụ huynh", error.response?.data || error.message);
     throw error;
   }
@@ -388,7 +402,7 @@ export const deleteParent = async (id: number) => {
   try {
     const response = await api.delete(`/guardians/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa phụ huynh", error.response?.data || error.message);
     throw error;
   }
@@ -411,7 +425,7 @@ export const updateParent = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/guardians/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi cập nhật phụ huynh:",
       error.response?.data || error.message
@@ -426,7 +440,7 @@ export const getLessons = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách bài giảng:",
       error.response?.data || error.message
@@ -472,7 +486,7 @@ export const getLessonsByTeacherid = async (id: number) => {
     });
     console.log(filteredData);
     return filteredData;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi gọi API:", error);
     return [];
   }
@@ -508,7 +522,7 @@ export const getLessonsForStudentLesson = async (page = 1, perPage = 10) => {
     console.log("Filtered Data:", filteredData);
 
     return { data: filteredData, meta };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi gọi API:", error);
     return { data: [], meta: {} };
   }
@@ -547,7 +561,7 @@ export const getLessonByStudentid = async (id: number) => {
     });
     console.log(filteredData);
     return filteredData;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi gọi API:", error);
     return [];
   }
@@ -566,7 +580,7 @@ export const getAllStudentByLessonId = async (
       }
     );
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi gọi API:", error);
     return [];
   }
@@ -578,7 +592,7 @@ export const getLesson = async (search: string) => {
       params: { name: search },
     });
     return response.data.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi tìm bài giảng", error.response?.data || error.message);
     throw error;
   }
@@ -592,7 +606,7 @@ export const addLesson = async (Data: FormData) => {
       },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi thêm bài giảng:",
       error.response?.data || error.message
@@ -610,7 +624,7 @@ export const updateLesson = async (id: number, Data: any) => {
       },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật bài giảng:",
       error.response?.data || error.message
@@ -622,7 +636,7 @@ export const deleteLesson = async (id: number) => {
   try {
     const response = await api.delete(`/lessons/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa bài giảng", error.response?.data || error.message);
     throw error;
   }
@@ -635,7 +649,7 @@ export const getGrades = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách bài giảng:",
       error.response?.data || error.message
@@ -670,7 +684,7 @@ export const getAllrooms = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách phòng học",
       error.response?.data || error.message
@@ -697,7 +711,7 @@ export const updateroom = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/rooms/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi cập nhật phòng học:",
       error.response?.data || error.message
@@ -710,7 +724,7 @@ export const deleteroom = async (id: number) => {
   try {
     const response = await api.delete(`/rooms/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa lớp học", error.response?.data || error.message);
     throw error;
   }
@@ -722,7 +736,7 @@ export const getAllAttendance = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách đăng ký môn",
       error.response?.data || error.message
@@ -748,7 +762,7 @@ export const updateAttendance = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/attendances/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi cập nhật đăng ký môn:", error.response?.data || error.message);
     throw error;
   }
@@ -759,7 +773,7 @@ export const deleteAttendance = async (id: number) => {
   try {
     const response = await api.delete(`/attendances/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa đăng ký môn", error.response?.data || error.message);
     throw error;
   }
@@ -772,7 +786,7 @@ export const getAllresults = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách điểm",
       error.response?.data || error.message
@@ -786,7 +800,7 @@ export const getLessonsByStudentid = async (id: number) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/attendances/${id}/students`)
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách môn học theo sinh viên",
       error.response?.data || error.message
@@ -809,7 +823,7 @@ export const updateResult = async (id: number, Data: any) => {
     Data.append("_method", "PUT");
     const response = await api.post(`/results/${id}`, Data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi cập nhật điểm:", error.response?.data || error.message);
     throw error;
   }
@@ -819,7 +833,7 @@ export const deleteResult = async (id: number) => {
   try {
     const response = await api.delete(`/results/${id}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi xóa điểm", error.response?.data || error.message);
     throw error;
   }
@@ -833,7 +847,7 @@ export const getAllgrades = async (page = 1, perPage = 10) => {
       params: { page, per_page: perPage },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy danh sách lớp",
       error.response?.data || error.message
@@ -848,7 +862,7 @@ export const getDataChart = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/dashboard`);
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Lỗi khi lấy dữ liệu biểu đồ",
       error.response?.data || error.message
@@ -862,7 +876,7 @@ export const login = async (username: string, password: string) => {
   try {
     const response = await api.post(`auth/login`, { username, password });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi đăng nhập", error.response?.data || error.message);
     throw error;
   }

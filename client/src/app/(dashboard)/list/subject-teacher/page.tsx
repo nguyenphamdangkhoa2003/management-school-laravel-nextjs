@@ -7,12 +7,21 @@ import { getSubjectTeachers } from "@/services/api";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
-type SubjectTeacher = {
+type Subject = {
   id: number;
-  subject: string;
-  teacher: string;
+  name: string;
 };
 
+type Teacher = {
+  id: number;
+  name: string;
+};
+
+export type SubjectTeacher = {
+  id: number;
+  subject: Subject;
+  teacher: Teacher;
+};
 const columns = [
   {
     header: "Tên môn học",

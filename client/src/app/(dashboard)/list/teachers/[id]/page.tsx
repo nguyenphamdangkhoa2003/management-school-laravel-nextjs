@@ -8,28 +8,61 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
-import { getLessonsByTeacherid } from "@/services/api";
+import { getLessonsByTeacherid, getOneTeachers } from "@/services/api";
+
+type Teacher = {
+  id: number;
+  name: string;
+  surname: string;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+  bloodType: string;
+  birthday: string;
+  sex: string;
+  img: string;
+};
+
+type Lesson = {
+  id: number;
+  title: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  subject: string;
+  teacher_id: number;
+};
+
+type Event = {
+  id: number;
+  title: string;
+  start: string;
+  end: string;
+  teacherId: number;
+  location: string;
+  subject: string;
+};
 
 const SingleTeacherPage = () => {
   const { id } = useParams();
-  const [teacher, setTeacher] = useState(null);
-  const [lessons,setAllLessonById ]=useState([]);
+  const teacherId = typeof id === 'string' ? Number(id) : 0;
+  const [teacher, setTeacher] = useState<Teacher | null>(null);
+  const [lessons, setAllLessonById] = useState<Lesson[]>([]);
   const role = localStorage.getItem("role");
-   useEffect(() => {
+  useEffect(() => {
     if (!id) return;
+    const teacherId = typeof id === 'string' ? Number(id) : 0;
 
     const fetchData = async () => {
       try {
         // Lấy thông tin giáo viên
-        const teacherRes = await axios.get(`http://127.0.0.1:8000/api/teachers/${id}`);
-        if (teacherRes.data?.data) {
-          setTeacher(teacherRes.data.data);
-        } else {
-          console.error("Không tìm thấy giáo viên.");
-        }
+        const teacherRes = await getOneTeachers(teacherId);
+        console.log("teacher>>", teacherRes)
+        setTeacher(teacherRes);
 
         // Lấy danh sách bài giảng
-        const lessonData = await getLessonsByTeacherid(id);
+        const lessonData = await getLessonsByTeacherid(teacherId);
         setAllLessonById(lessonData);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
@@ -49,7 +82,7 @@ const SingleTeacherPage = () => {
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
               <Image
-                src={(teacher?.img) ?`${process.env.NEXT_PUBLIC_API_URL}/${teacher?.img}`:"/avatar.png"}
+                src={(teacher?.img) ? `${teacher?.img}` : "/avatar.png"}
                 alt=""
                 width={144}
                 height={144}
@@ -58,7 +91,7 @@ const SingleTeacherPage = () => {
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
               <div className="flex items-center gap-4">
-                <h1 className="text-xl font-semibold">{teacher?.surname +" "+ teacher?.name}</h1>
+                <h1 className="text-xl font-semibold">{teacher?.surname + " " + teacher?.name}</h1>
                 {role === "admin" && <FormModal
                   table="teacher"
                   type="update"
@@ -163,7 +196,7 @@ const SingleTeacherPage = () => {
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
           <h1>Teacher&apos;s Schedule</h1>
-          <BigCalendar events={lessons}/>
+          <BigCalendar events={lessons} />
         </div>
       </div>
       {/* RIGHT */}

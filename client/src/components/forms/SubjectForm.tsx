@@ -59,8 +59,7 @@ const schema = (type: "create" | "update") =>
 
 
 
-
-type Inputs = z.infer<typeof schema>;
+type Inputs = z.infer<ReturnType<typeof schema>>;
 
 const ClassForm = ({
   type,

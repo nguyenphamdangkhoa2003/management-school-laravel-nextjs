@@ -10,9 +10,27 @@ import { useState, useEffect } from "react";
 
 type Lesson = {
   id: number;
+  day: string;
   subject: string;
   class: string;
   teacher: string;
+  startTime: string;
+  endTime: string;
+  class_time: string;
+  ending_class_time: string;
+  room: {
+    id: number;
+    code_room: string;
+  }
+  subject_teacher: {
+    id: number,
+    subject: {
+      name: string;
+    },
+    teacher: {
+      name: string;
+    }
+  }
 };
 
 const columns = [
@@ -96,7 +114,7 @@ const LessonListPage = () => {
                 enddate: item?.endTime ? new Date(item.endTime).toLocaleDateString("en-CA") : "",
                 starttime: item.class_time,
                 endtime: item.ending_class_time,
-                roomId: item.room.id
+                roomId: item.room.id,
               }} />
               <FormModal table="lesson" type="delete" id={item.id} />
             </>

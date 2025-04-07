@@ -81,7 +81,7 @@ const ClassForm = ({
                             name="surname"
                             defaultValue={data?.surname}
                             register={register}
-                            error={errors?.parentname}
+                            error={errors?.surname}
                             className="w-full"
                         />
 
@@ -90,7 +90,7 @@ const ClassForm = ({
                             name="name"
                             defaultValue={data?.name}
                             register={register}
-                            error={errors?.parentname}
+                            error={errors?.name}
                             className="w-full"
                         />
                     </div>

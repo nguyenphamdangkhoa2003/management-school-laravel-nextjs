@@ -8,7 +8,6 @@ import InputField from "../InputField";
 import {
   createGrade,
   modifyGrade,
-  deleteGrade,
   fetchGrades,
 } from "@/services/api";
 import { useRouter } from "next/navigation";
@@ -35,8 +34,7 @@ const schema = (type: "create" | "update") =>
       { message: "ID là bắt buộc khi cập nhật", path: ["id"] }
     );
 
-type Inputs = z.infer<typeof schema>;
-
+type Inputs = z.infer<ReturnType<typeof schema>>;
 const GradeForm = ({
   type,
   data,

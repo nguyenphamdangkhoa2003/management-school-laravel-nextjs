@@ -10,8 +10,8 @@ type Class = {
   id: number;
   name: string;
   capacity: number;
-  grade: number;
-  supervisor: string;
+  grade_id: number;
+  supervisor_id: string;
 };
 
 const columns = [
@@ -53,7 +53,7 @@ const ClassListPage = () => {
         setAllClass(data.data);
         console.log(data.data);
         setTotalPages(data.meta?.last_page || 1);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };

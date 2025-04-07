@@ -8,16 +8,33 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTeachers, getTeacher, getSubjectTeachers } from "@/services/api";
 
-type Teacher = {
+type Subject = {
   id: number;
   name: string;
+};
+
+type SchoolClass = {
+  id: number;
+  name: string;
+};
+type Teacher = {
+  id: number;
+  img: string;
+  name: string;
+  surname: string; // Nếu có trường này
   email?: string;
   photo: string;
   phone: string;
-  subjects: string[];
-  school_classes: string[];
+  subjects: Subject[];
+  school_classes: SchoolClass[];
   address: string;
 };
+
+type SubjectTeacher = {
+  teacher: Teacher;
+  subject: Subject;
+};
+
 
 const columns = [
   {
@@ -57,7 +74,7 @@ const columns = [
 
 const TeacherListPage = () => {
   const [teachers, setAllTeachers] = useState([]);
-  const [subjectteacher, setAllSubjectTeacher] = useState([]);
+  const [subjectteacher, setAllSubjectTeacher] = useState<SubjectTeacher[]>([]);
   const [error, setError] = useState([null]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

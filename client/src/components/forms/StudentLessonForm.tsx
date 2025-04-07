@@ -18,7 +18,7 @@ const schema = (type: "create" | "update") =>
         return true;
     }, { message: "ID là bắt buộc khi cập nhật", path: ["id"] });
 
-type Inputs = z.infer<typeof schema>;
+type Inputs = z.infer<ReturnType<typeof schema>>;
 
 const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: any }) => {
     const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm<Inputs>({
