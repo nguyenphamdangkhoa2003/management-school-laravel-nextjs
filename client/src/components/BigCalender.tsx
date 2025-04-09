@@ -3,7 +3,7 @@
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "moment/locale/vi";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -19,10 +19,13 @@ const localizer = momentLocalizer(moment);
 const BigCalendar = ({ events }: { events: any[] }) => {
   const [view, setView] = useState<View>(Views.WEEK);
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
+  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
+  const [popupPos, setPopupPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   const parseDateTime = (date: string | Date, time: string) => {
     const parsedDate = moment(date, "YYYY-MM-DD").toDate();
-
     const [hours, minutes] = time?.split(":").map(Number) || [0, 0];
 
     return new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), hours, minutes);
@@ -34,7 +37,6 @@ const BigCalendar = ({ events }: { events: any[] }) => {
     events.forEach((event) => {
       if (event.repeat === "weekly") {
         let startDate = moment(event.startDate);
-        let endDate = moment(event.endDate);
         let repeatUntil = moment(event.endDate);
 
         while (startDate.isBefore(repeatUntil)) {
@@ -66,44 +68,14 @@ const BigCalendar = ({ events }: { events: any[] }) => {
   const allEvents = generateRecurringEvents();
 
   const handleViewChange = (newView: View, selectedDate?: Date) => {
+    setView(newView);
+    setSelectedEvent(null);
     if (newView === Views.DAY) {
       setCurrentDate(selectedDate ?? moment().toDate());
     } else if (newView === Views.WEEK) {
       setCurrentDate(moment().startOf("week").toDate());
     }
-    setView(newView);
   };
-
-  const CustomEvent = ({ event }: { event: any }) => (
-    <div className="flex flex-col justify-center items-center p-1 text-gray-700">
-      <div className="text-xs">
-        {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
-      </div>
-      <div className="text-xs font-bold">{event.title}</div>
-      <div className="text-xs italic">{event.teacher}</div>
-      <div className="text-xs italic">{event.room}</div>
-      {event.link && (
-        <a
-          href={event?.link ? `${process.env.NEXT_PUBLIC_API_URL_FILE}${event.link}` : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 text-xs underline"
-        >
-          Xem bài giảng
-        </a>
-      )}
-
-      {event.link && (
-        <a
-          href={`/teacher/students/${event.id}`}
-          rel="noopener noreferrer"
-          className="text-blue-600 text-xs underline"
-        >
-          Danh sách lớp
-        </a>
-      )}
-    </div>
-  );
 
   const handleNavigate = (direction: "prev" | "next") => {
     setCurrentDate((prevDate) =>
@@ -111,10 +83,97 @@ const BigCalendar = ({ events }: { events: any[] }) => {
         ? moment(prevDate).subtract(1, view === Views.WEEK ? "weeks" : "days").toDate()
         : moment(prevDate).add(1, view === Views.WEEK ? "weeks" : "days").toDate()
     );
+    setSelectedEvent(null);
   };
 
+  const handleSelectEvent = (event: any, e: any) => {
+    e.stopPropagation(); // tránh click lan ra background
+    const rect = calendarRef.current?.getBoundingClientRect();
+    const clickX = e.clientX - (rect?.left ?? 0);
+    const clickY = e.clientY - (rect?.top ?? 0);
+    setSelectedEvent(selectedEvent?.id === event.id ? null : event);
+    setPopupPos({ x: clickX, y: clickY });
+  };
+
+  const CustomEvent = ({ event }: { event: any }) => {
+    return (
+      <div className="flex flex-col justify-center items-center text-gray-700 text-xs font-medium">
+        <div className="text-[10px]">
+          {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
+        </div>
+        <div className="font-bold">{event.title}</div>
+        <div className="">{event.room}</div>
+      </div>
+    );
+  };
+
+  const EventPopup = () => {
+    if (!selectedEvent) return null;
+
+    const popupWidth = 200;
+    const popupHeight = 150;
+
+    const calendarWidth = calendarRef.current?.offsetWidth || 0;
+    const calendarHeight = calendarRef.current?.offsetHeight || 0;
+
+    const xRightSpace = calendarWidth - popupPos.x;
+    const yBottomSpace = calendarHeight - popupPos.y;
+
+    const isRight = xRightSpace > popupWidth;
+    const top = yBottomSpace < popupHeight ? popupPos.y - popupHeight + 20 : popupPos.y;
+
+    const style: React.CSSProperties = {
+      position: "absolute",
+      top,
+      left: isRight ? popupPos.x + 10 : popupPos.x - popupWidth - 10,
+      width: popupWidth,
+      backgroundColor: "white",
+      border: "1px solid #ccc",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+      padding: "8px",
+      zIndex: 100,
+      fontSize: "0.75rem",
+      borderRadius: 8,
+    };
+
+    return (
+      <div style={style}>
+        <div className="font-semibold">{selectedEvent.title}</div>
+        <div>Giảng viên: {selectedEvent.teacher}</div>
+        <div>Phòng: {selectedEvent.room}</div>
+        {selectedEvent.link && (
+          <div className="flex justify-between mt-2 gap-1">
+            <a
+              href={`${process.env.NEXT_PUBLIC_API_URL_FILE}${selectedEvent.link}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1 rounded-sm shadow-md bg-cyan-900 text-white block text-center text-xs w-full"
+            >
+              Xem bài giảng
+            </a>
+            <a
+              href={`/teacher/students/${selectedEvent.id}`}
+              className="p-1 rounded-sm shadow-md bg-cyan-900 text-white block text-center text-xs w-full"
+            >
+              Danh sách lớp
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+
+
+  // Đóng popup khi click ngoài lịch
+  useEffect(() => {
+    const handleClickOutside = () => setSelectedEvent(null);
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, []);
+
   return (
-    <div className="p-4 relative overflow-x-scroll">
+    <div className="p-4 relative overflow-x-auto" ref={calendarRef}>
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-1 justify-between md:absolute md:left-1/2 md:-translate-x-1/2">
           <button
@@ -141,7 +200,9 @@ const BigCalendar = ({ events }: { events: any[] }) => {
             <span
               key={id}
               onClick={() => handleViewChange(id)}
-              className={`cursor-pointer px-3 py-1 rounded-md ${id === view ? "text-white bg-cyan-900" : "text-cyan-900 bg-gray-200 hover:bg-gray-300"
+              className={`cursor-pointer px-3 py-1 rounded-md ${id === view
+                ? "text-white bg-cyan-900"
+                : "text-cyan-900 bg-gray-200 hover:bg-gray-300"
                 }`}
             >
               {label}
@@ -169,8 +230,11 @@ const BigCalendar = ({ events }: { events: any[] }) => {
         components={{
           event: CustomEvent,
         }}
+        onSelectEvent={handleSelectEvent}
         onDrillDown={(date) => handleViewChange(Views.DAY, date)}
       />
+
+      <EventPopup />
     </div>
   );
 };

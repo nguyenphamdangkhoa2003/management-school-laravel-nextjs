@@ -10,7 +10,7 @@ import Link from "next/link";
 type Role = 'admin' | 'teacher' | 'student' | 'parent';
 
 const accessControl: Record<Role, string[]> = {
-  admin: ["/admin", "/list/teachers", "/list/students", "/list/parents", "/list/subjects", "/list/classes", "/list/lessons", "/list/subject-teacher", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements", "/list/student-lessons", "/list/rooms", "/list/grade"],
+  admin: ["/admin", "/list/teachers", "/list/students", "/list/parents", "/list/subjects", "/list/classes", "/list/lessons", "/list/subject-teacher", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements", "/list/student-lessons", "/list/rooms", "/list/grade", "/teacher/students"],
   teacher: ["/teacher", "/list/classes", "/list/teachers", "/list/students", "/list/parents", "/list/lessons", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements"],
   student: ["/student", "/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements"],
   parent: ["/list/assignments", "/list/results", "/list/attendance", "/list/messages", "/list/announcements"],
