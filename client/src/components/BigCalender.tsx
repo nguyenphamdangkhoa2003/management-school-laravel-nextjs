@@ -21,6 +21,7 @@ const BigCalendar = ({ events }: { events: any[] }) => {
   const [currentDate, setCurrentDate] = useState(moment().startOf("week").toDate());
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const role = localStorage.getItem("role");
 
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -97,7 +98,7 @@ const BigCalendar = ({ events }: { events: any[] }) => {
 
   const CustomEvent = ({ event }: { event: any }) => {
     return (
-      <div className="flex flex-col justify-center items-center text-gray-700 text-xs font-medium">
+      <div className="flex h-full flex-col justify-center items-center text-gray-700 text-xs font-medium">
         <div className="text-[10px]">
           {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
         </div>
@@ -151,6 +152,7 @@ const BigCalendar = ({ events }: { events: any[] }) => {
             >
               Xem bài giảng
             </a>
+
             <a
               href={`/teacher/students/${selectedEvent.id}`}
               className="p-1 rounded-sm shadow-md bg-cyan-900 text-white block text-center text-xs w-full"

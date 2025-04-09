@@ -10,12 +10,13 @@ import { getAllresults } from "@/services/api";
 import { date } from "zod";
 
 const columns = [
-  { header: "Mã sinh viên", accessor: "code_room" },
+  { header: "Mã sinh viên", accessor: "studentcode" },
   { header: "Tên sinh viên", accessor: "name" },
-  { header: "Môn học", accessor: "floor" },
-  { header: "Điểm quá trình", accessor: "is_available" },
-  { header: "Điểm giữa kì", accessor: "capacity" },
-  { header: "Điểm cuối kì", accessor: "type" },
+  { header: "Môn học", accessor: "subject" },
+  { header: "Điểm quá trình", accessor: "processscore" },
+  { header: "Điểm giữa kì", accessor: "midtermscore" },
+  { header: "Điểm cuối kì", accessor: "finalscore" },
+  { header: "Điểm trung bình", accessor: "averagescore" },
   { header: "Tùy chọn", accessor: "action" },
 ];
 
@@ -30,10 +31,14 @@ type Result = {
   subject: {
     id: number;
     name: string;
+    process_percent: number;
+    midterm_percent: number,
+    final_percent: number,
   };
   process_score: number;
   semi_score: number;
   final_score: number;
+  average_score: number;
 };
 
 
@@ -74,33 +79,50 @@ const ResutlsList = () => {
   //   }
   // }, [currentPage]);
 
-  const renderRow = (item: Result) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
-      <td className="p-4">{item.student.code}</td>
-      <td>{`${item.student.surname} ${item.student.name}`}</td>
-      <td>{item.subject.name}</td>
-      <td>{item.process_score}</td>
-      <td>{item.semi_score}</td>
-      <td>{item.final_score}</td>
-      <td className="flex items-center gap-2">
-        {role === "admin" && (
-          <>
-            <FormModal table="result" type="update" data={{
-              id: item.id,
-              student_id: item.student.id,
-              student_name: `${item.student.surname} ${item.student.name} `,
-              subject_id: item.subject.id,
-              subject_name: item.subject.name,
-              process_score: item.process_score,
-              semi_score: item.semi_score,
-              final_score: item.final_score,
-            }} />
-            <FormModal table="result" type="delete" id={item.id} />
-          </>
-        )}
-      </td>
-    </tr>
-  );
+  const renderRow = (item: Result) => {
+    const p = item.subject?.process_percent || 0;
+    const m = item.subject?.midterm_percent || 0;
+    const f = item.subject?.final_percent || 0;
+
+    const ps = item.process_score || 0;
+    const ss = item.semi_score || 0;
+    const fs = item.final_score || 0;
+
+    const totalWeight = p + m + f;
+    const average =
+      totalWeight > 0
+        ? ((ps * p + ss * m + fs * f) / totalWeight).toFixed(2)
+        : "0.00";
+
+    return (
+      <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+        <td className="p-4">{item.student.code}</td>
+        <td>{`${item.student.surname} ${item.student.name}`}</td>
+        <td>{item.subject.name}</td>
+        <td>{item.process_score}</td>
+        <td>{item.semi_score}</td>
+        <td>{item.final_score}</td>
+        <td>{average}</td>
+        <td className="flex items-center gap-2">
+          {role === "admin" && (
+            <>
+              <FormModal table="result" type="update" data={{
+                id: item.id,
+                student_id: item.student.id,
+                student_name: `${item.student.surname} ${item.student.name} `,
+                subject_id: item.subject.id,
+                subject_name: item.subject.name,
+                process_score: item.process_score,
+                semi_score: item.semi_score,
+                final_score: item.final_score,
+              }} />
+              <FormModal table="result" type="delete" id={item.id} />
+            </>
+          )}
+        </td>
+      </tr>
+    );
+  };
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

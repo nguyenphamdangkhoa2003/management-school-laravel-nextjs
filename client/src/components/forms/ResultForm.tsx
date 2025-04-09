@@ -37,7 +37,7 @@ const schema = (type: "create" | "update") =>
             .refine((val) => val === undefined || (Number.isFinite(val) && val >= 0 && val <= 10), {
                 message: "Điểm quá trình phải từ 0 đến 10",
             }),
-        midterm_score: z
+        semi_score: z
             .union([z.coerce.number(), z.undefined()])
             .refine((val) => val === undefined || (Number.isFinite(val) && val >= 0 && val <= 10), {
                 message: "Điểm giữa kỳ phải từ 0 đến 10",
@@ -60,7 +60,7 @@ const ResultForm = ({ type, data }: {
             student_id: String(data?.student_id || ""),
             subject_id: String(data?.subject_id || ""),
             process_score: data?.process_score || "",
-            midterm_score: data?.midterm_score || "",
+            semi_score: data?.semi_score || "",
             final_score: data?.final_score || "",
         },
     });
@@ -126,10 +126,10 @@ const ResultForm = ({ type, data }: {
         const resultform = new FormData;
         if (formData.process_score !== undefined)
             resultform.append("process_score", formData.process_score);
-        if (formData.midterm_score !== undefined)
-            resultform.append("semi_score", formData.midterm_score);
+        if (formData.semi_score !== undefined)
+            resultform.append("semi_score", formData.semi_score);
         if (formData.final_score !== undefined)
-            resultform.append("final_score", formData.final_score);
+            resultform.append("final_scrore", formData.final_score);
 
         try {
             let newresult, updresult;
@@ -223,12 +223,12 @@ const ResultForm = ({ type, data }: {
 
                             <InputField
                                 label="Điểm giữa kỳ"
-                                name="midterm_score"
+                                name="semi_score"
                                 type="number"
                                 step="0.1"
                                 defaultValue={data?.semi_score}
                                 register={register}
-                                error={errors.midterm_score as FieldError | undefined}
+                                error={errors.semi_score as FieldError | undefined}
                             />
                             <InputField
                                 label="Điểm cuối kỳ"

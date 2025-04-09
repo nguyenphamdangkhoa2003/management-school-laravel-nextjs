@@ -557,6 +557,7 @@ export const getLessonByStudentid = async (id: number) => {
         room: item.lesson.room.code_room,
         repeat: "weekly",
         dayOfWeek: dayMapping[item.lesson.day],
+        id: item.id,
       };
     });
     console.log(filteredData);
