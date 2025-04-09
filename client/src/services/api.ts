@@ -2,8 +2,8 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import moment from "moment";
 import exp from "constants";
-const API_BASE_URL = "http://127.0.0.1:8000/api";
-const API_URL = "http://127.0.0.1:8000/api/grades";
+const API_BASE_URL = "https://khachsan2k.id.vn/api";
+const API_URL = "https://khachsan2k.id.vn/api/grades";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {

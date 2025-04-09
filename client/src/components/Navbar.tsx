@@ -7,11 +7,11 @@ import Acount from "./Acount";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const user=JSON.parse(localStorage.getItem("user")||"null");
-  const guard=localStorage.getItem("role");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const guard = localStorage.getItem("role");
   const [role, setRole] = useState("");
   const [avatar, setAvatar] = useState(
-    user?.img ? `${process.env.NEXT_PUBLIC_API_URL}/${user.img}` : "/avatar.png"
+    user?.img ? `${user.img}` : "/avatar.png"
   );
   useEffect(() => {
     if (guard === "admin") {
@@ -20,14 +20,14 @@ const Navbar = () => {
       setRole("Giảng viên");
     } else if (guard === "student") {
       setRole("Sinh viên");
-    }else if(guard ==="parent"){
+    } else if (guard === "parent") {
       setRole("Phụ huynh")
     }
   }, [guard]);
 
   // Đóng menu khi click bên ngoài
   useEffect(() => {
-    
+
 
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -56,7 +56,7 @@ const Navbar = () => {
           <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-500 text-white rounded-full text-xs">1</div>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">{user.name ?user.surname+" "+ user.name:user.username}</span>
+          <span className="text-xs leading-3 font-medium">{user.name ? user.surname + " " + user.name : user.username}</span>
           <span className="text-[10px] text-gray-500 text-right">{role}</span>
         </div>
 
