@@ -121,15 +121,14 @@ const ResultForm = ({ type, data }: {
 
     const onSubmit = handleSubmit(async (formData) => {
 
-        console.log("dataday>>", data);
-        console.log("data>>", data);
+        console.log("dataday>>", formData);
         const resultform = new FormData;
         if (formData.process_score !== undefined)
             resultform.append("process_score", formData.process_score);
         if (formData.semi_score !== undefined)
             resultform.append("semi_score", formData.semi_score);
         if (formData.final_score !== undefined)
-            resultform.append("final_scrore", formData.final_score);
+            resultform.append("final_score", formData.final_score);
 
         try {
             let newresult, updresult;
@@ -226,7 +225,7 @@ const ResultForm = ({ type, data }: {
                                 name="semi_score"
                                 type="number"
                                 step="0.1"
-                                defaultValue={data?.semi_score}
+                                defaultValue={data?.semi_score || ""}
                                 register={register}
                                 error={errors.semi_score as FieldError | undefined}
                             />
@@ -235,7 +234,7 @@ const ResultForm = ({ type, data }: {
                                 name="final_score"
                                 type="number"
                                 step="0.1"
-                                defaultValue={data?.final_score}
+                                defaultValue={data?.final_score || ""}
                                 register={register}
                                 error={errors.final_score as FieldError | undefined}
                             />

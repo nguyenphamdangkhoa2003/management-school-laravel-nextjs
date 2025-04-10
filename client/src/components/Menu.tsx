@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   {
@@ -9,9 +10,17 @@ const menuItems = [
       {
         icon: "/home.png",
         label: "Trang chủ",
-        href: "/",
-        visible: ["admin", "teacher", "student", "parent"],
+        href: "/admin",
+        visible: ["admin"],
       },
+
+      {
+        icon: "/home.png",
+        label: "Trang chủ",
+        href: "/",
+        visible: ["teacher", "student", "parent"],
+      },
+
       {
         icon: "/teacher.png",
         label: "Lịch dạy",
@@ -87,7 +96,14 @@ const menuItems = [
         icon: "/result.png",
         label: "Kết quả",
         href: "/list/results",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin"],
+      },
+
+      {
+        icon: "/result.png",
+        label: "Kết quả",
+        href: "/results/1",
+        visible: ["student"],
       },
 
       {
@@ -108,17 +124,25 @@ const menuItems = [
 ];
 
 const Menu = () => {
-  const role = localStorage.getItem("role");
-  console.log(localStorage.getItem("user"));
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    setRole(storedRole);
+    console.log(localStorage.getItem("user"));
+  }, []);
+
+  if (!role) return null; // hoặc loading UI tùy bạn
+
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i, index) => (
         <div className="flex flex-col gap-1" key={`menu-group-${index}`}>
           {i.items.map((item) => {
-            if (item.visible.includes(role)) {
+            if (role && item.visible.includes(role)) {
               return (
                 <Link
-                  href={item.href}
+                  href={item.href.trim()}
                   key={`${item.label}-${item.href}`}
                   className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 md:px-2 rounded-md hover:bg-lamaSkyLight"
                 >
@@ -127,6 +151,7 @@ const Menu = () => {
                 </Link>
               );
             }
+            return null;
           })}
         </div>
       ))}

@@ -30,7 +30,7 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
         shouldUnregister: false, // Giữ lại giá trị khi component re-render
     });
     const [showForm, setShowForm] = useState(true);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null); // Sửa kiểu từ null thành string | null
     const [studentOptions, setStudentOptions] = useState<any[]>([]);
     const [lessonOptions, setLessonOptions] = useState<any[]>([]);
 
@@ -92,16 +92,20 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
         attendanceForm.append("student_id", Data.student_id);
         attendanceForm.append("lesson_id", Data.lesson_id);
         attendanceForm.append("date", formattedDate);
-        attendanceForm.append("present", 1);
+        attendanceForm.append("present", "1"); // Chuyển 1 thành chuỗi "1"
+
+        // Chỉ thêm id nếu type là update và Data.id tồn tại
+        if (type === "update" && Data.id) {
+            attendanceForm.append("id", String(Data.id)); // Chuyển id thành chuỗi
+        }
 
         console.log("att>>", attendanceForm);
 
         try {
             if (type === "create") {
                 await addAttendance(attendanceForm);
-            } else if (type === "update") {
-                attendanceForm.append("id", Data.id);
-                await updateAttendance(data?.id, attendanceForm);
+            } else if (type === "update" && Data.id) { // Kiểm tra Data.id
+                await updateAttendance(Data.id, attendanceForm);
             }
             setTimeout(() => window.location.reload(), 1500);
             setShowForm(false);
@@ -110,7 +114,6 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
             setErrorMessage(type === "create" ? "Lỗi đăng ký" : "Lỗi cập nhật");
         }
     });
-
 
     return (
         <>
@@ -135,9 +138,9 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
                             <SearchableSelect
                                 options={studentOptions}
                                 placeholder="Chọn sinh viên..."
-                                getOptionLabel={(e) => `${e.code} - ${e.name}`}
+                                getOptionLabel={(e: any) => `${e.code} - ${e.name}`}
                                 defaultValue={String(data?.student_id || "")} // Đảm bảo dữ liệu là chuỗi
-                                onChange={(selected) => {
+                                onChange={(selected: any) => {
                                     setValue("student_id", String(selected?.value || ""));
                                     trigger("student_id");
                                 }}
@@ -153,9 +156,9 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
                             <SearchableSelect
                                 options={lessonOptions}
                                 placeholder="Chọn 1 bài học..."
-                                getOptionLabel={(e) => `${e.subject} - ${e.teacher} - ${e.day} - ${e.Time}`}
+                                getOptionLabel={(e: any) => `${e.subject} - ${e.teacher} - ${e.day} - ${e.Time}`}
                                 defaultValue={data?.lesson_id || ""}
-                                onChange={(selected) => {
+                                onChange={(selected: any) => {
                                     setValue("lesson_id", String(selected?.value || ""));
                                     trigger("lesson_id");
                                 }}
@@ -170,7 +173,6 @@ const SubjectTeacherForm = ({ type, data }: { type: "create" | "update"; data?: 
                         {type === "create" ? "Đăng ký môn" : "Cập nhật"}
                     </button>
                 </form>
-
             ) : (
                 <div>
                     {type === "create" && (

@@ -33,6 +33,25 @@ const schema = z.object({
   img: z.instanceof(File, { message: "Image is required" }),
 });
 
+interface Subject {
+  id: string;
+  name: string;
+}
+
+interface Teacher {
+  id: number;
+  username: string;
+  email: string;
+  surname: string;
+  name: string;
+  phone: string;
+  address: string;
+  bloodType: string;
+  birthday: string;
+  sex: "MALE" | "FEMALE";
+  img?: string;
+}
+
 type Inputs = z.infer<typeof schema>;
 
 const TeacherForm = ({
@@ -54,23 +73,23 @@ const TeacherForm = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { id } = useParams();
-  const [teacher, setTeacher] = useState(null);
-  const [subjects, setSubjects] = useState(null);
+  const [teacher, setTeacher] = useState<Teacher | null>(null);
+  const [subjects, setSubjects] = useState<Subject[] | null>(null);
+
   useEffect(() => {
-    if (type === "update") {
-      if (id) {
-        axios.get(`http://127.0.0.1:8000/api/teachers/${id}`)
-          .then((res) => {
-            if (res.data?.data) {
-              setTeacher(res.data.data);
-            } else {
-              console.error("Không tìm thấy giáo viên.");
-            }
-          })
-          .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
-      }
-    } else {
-      const fetchAllTeachers = async () => {
+    if (type === "update" && id) {
+      axios
+        .get(`http://127.0.0.1:8000/api/teachers/${id}`)
+        .then((res) => {
+          if (res.data?.data) {
+            setTeacher(res.data.data);
+          } else {
+            console.error("Không tìm thấy giáo viên.");
+          }
+        })
+        .catch((err) => console.error("Lỗi khi lấy dữ liệu giáo viên:", err));
+    } else if (type === "create") {
+      const fetchAllSubjects = async () => {
         try {
           const firstPage = await getSubjects(1, 10);
           const totalPages = firstPage.meta?.last_page || 1;
@@ -78,18 +97,15 @@ const TeacherForm = ({
           const allSubjectPages = await Promise.all(
             Array.from({ length: totalPages }, (_, i) => getSubjects(i + 1, 10))
           );
-          const allSubject = allSubjectPages.flatMap((page) => page.data);
-          setSubjects(allSubject);
+          const allSubjects = allSubjectPages.flatMap((page) => page.data);
+          setSubjects(allSubjects);
         } catch (err: any) {
           setErrorMessage(err.message);
         }
       };
-
-      fetchAllTeachers();
+      fetchAllSubjects();
     }
   }, [type, id]);
-
-
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -98,6 +114,7 @@ const TeacherForm = ({
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
 
@@ -105,10 +122,12 @@ const TeacherForm = ({
       if (key === "birthday" && typeof value === "string") {
         formData.append(key, formatDate(value));
       } else if (key === "img" && value) {
-        if (value instanceof File) {
-          formData.append("img", value);
-        } else if (value.length > 0 && value[0] instanceof File) {
-          formData.append("img", value[0]);
+        // Ép kiểu value thành File hoặc File[] để kiểm tra an toàn
+        const fileValue = value as File | File[];
+        if (fileValue instanceof File) {
+          formData.append("img", fileValue);
+        } else if (Array.isArray(fileValue) && fileValue.length > 0 && fileValue[0] instanceof File) {
+          formData.append("img", fileValue[0]);
         }
       } else if (typeof value === "string") {
         formData.append(key, value);
@@ -130,20 +149,18 @@ const TeacherForm = ({
           console.log("Adding subject for teacher:", teacherId, "Subject ID:", selectedSubjects);
           for (const subjectId of selectedSubjects) {
             const subjectTeacherData = new FormData();
-            subjectTeacherData.append("teacher_id", teacherId);
+            subjectTeacherData.append("teacher_id", teacherId.toString());
             subjectTeacherData.append("subject_id", subjectId);
             console.log("Adding subject-teacher:", { teacherId, subjectId });
-
             await addSubjectTeacher(subjectTeacherData);
           }
         }
-      } else if (type === "update") {
+      } else if (type === "update" && teacher) { // Kiểm tra teacher trước khi dùng
         await updateTeacher(teacher.id, formData);
         setTimeout(() => window.location.reload(), 2000);
       }
       setShowForm(false);
       setErrorMessage(null);
-
     } catch (error: any) {
       setErrorMessage(type === "create" ? "Giáo viên này đã tồn tại!" : "Lỗi cập nhật giáo viên");
     }
@@ -169,7 +186,6 @@ const TeacherForm = ({
             {type === "create" && (
               <div className="flex flex-col gap-2 w-full md:w-1/4">
                 <label className="text-xs font-medium text-gray-600">Môn học</label>
-
                 <select
                   className="border border-gray-300 p-2 rounded-lg text-sm w-full bg-white 
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
@@ -179,7 +195,7 @@ const TeacherForm = ({
                   defaultValue={data?.subjects ?? []}
                 >
                   {subjects ? (
-                    subjects.map((subject: any) => (
+                    subjects.map((subject) => (
                       <option key={subject.id} value={subject.id} className="p-2">
                         {subject.name}
                       </option>
@@ -188,11 +204,8 @@ const TeacherForm = ({
                     <option disabled>Đang tải...</option>
                   )}
                 </select>
-
                 {errors.subjects?.message && (
-                  <p className="text-xs text-red-500 font-medium mt-1">
-                    {errors.subjects.message.toString()}
-                  </p>
+                  <p className="text-xs text-red-500 font-medium mt-1">{errors.subjects.message.toString()}</p>
                 )}
               </div>
             )}

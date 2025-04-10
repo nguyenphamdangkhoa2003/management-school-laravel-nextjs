@@ -35,7 +35,8 @@ const SigninPage = () => {
                 parent: "/parent",
             };
 
-            router.push(rolePaths[data.guard] || "/");
+            router.push(rolePaths[data.guard as keyof typeof rolePaths] || "/");
+
         } catch (error) {
             setError("Tên tài khoản hoặc mật khẩu không đúng.");
             setTimeout(() => setError(""), 5000);
@@ -65,14 +66,14 @@ const SigninPage = () => {
                             type="text"
                             placeholder="Tên đăng nhập"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                         />
                         <FormInput
                             icon={<Lock className="absolute left-4 top-3 text-gray-500" />}
                             type={showPassword ? "text" : "password"}
                             placeholder="Mật khẩu"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                             rightIcon={
                                 <button
                                     type="button"

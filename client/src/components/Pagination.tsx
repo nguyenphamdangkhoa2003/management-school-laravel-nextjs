@@ -1,4 +1,16 @@
-const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
+import React from "react";
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  setCurrentPage: (page: number | ((prev: number) => number)) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  setCurrentPage,
+}) => {
   return (
     <div className="p-4 flex items-center justify-between text-gray-500">
       <button
@@ -13,7 +25,8 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
           <button
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-2 rounded-sm ${currentPage === page ? "bg-lamaSky" : ""}`}
+            className={`px-2 rounded-sm ${currentPage === page ? "bg-lamaSky text-white" : ""
+              }`}
           >
             {page}
           </button>

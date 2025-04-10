@@ -7,18 +7,21 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
 
-
 const schema = (type: "create" | "update") =>
   z.object({
     id: z.coerce.number().int().min(1, { message: "ID phải là số nguyên" }).optional(),
     subjectId: z.string().min(1, { message: "Vui lòng chọn môn học" }),
     teacherId: z.string().min(1, { message: "Vui lòng chọn giảng viên" }),
-  }).refine((data) => {
-    if (type === "update" && !data.id) {
-      return false;
-    }
-    return true;
-  }, { message: "ID là bắt buộc khi cập nhật", path: ["id"] });
+  }).refine(
+    (data) => {
+      if (type === "update" && !data.id) {
+        return false;
+      }
+      return true;
+    },
+    { message: "ID là bắt buộc khi cập nhật", path: ["id"] }
+  );
+
 type Inputs = z.infer<ReturnType<typeof schema>>;
 
 const SubjectTeacherForm = ({
@@ -38,7 +41,6 @@ const SubjectTeacherForm = ({
     defaultValues: {
       subjectId: data?.subjectId || "",
       teacherId: data?.teacherId || "",
-
     },
   });
 
@@ -95,13 +97,17 @@ const SubjectTeacherForm = ({
     subjectTeacherData.append("teacher_id", formData.teacherId);
     subjectTeacherData.append("subject_id", formData.subjectId);
 
+    // Chỉ thêm id khi type là "update" và id tồn tại
+    if (type === "update" && formData.id) {
+      subjectTeacherData.append("id", String(formData.id)); // Chuyển id thành string
+    }
+
     try {
       if (type === "create") {
         await addSubjectTeacher(subjectTeacherData);
         setTimeout(() => window.location.reload(), 1500);
-      } else if (type === "update") {
-        subjectTeacherData.append("id", formData?.id);
-        await updateSubjectTeacher(formData?.id, subjectTeacherData);
+      } else if (type === "update" && formData.id) { // Kiểm tra formData.id
+        await updateSubjectTeacher(formData.id, subjectTeacherData);
         setTimeout(() => window.location.reload(), 1500);
       }
       setShowForm(false);
@@ -136,8 +142,7 @@ const SubjectTeacherForm = ({
                 error={errors?.id}
                 hidden
               />
-            )
-            }
+            )}
             {/* Select chọn môn học */}
             <div>
               <label className="block font-medium">Chọn môn học</label>

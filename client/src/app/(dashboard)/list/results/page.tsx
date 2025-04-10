@@ -16,7 +16,7 @@ const columns = [
   { header: "Điểm quá trình", accessor: "processscore" },
   { header: "Điểm giữa kì", accessor: "midtermscore" },
   { header: "Điểm cuối kì", accessor: "finalscore" },
-  { header: "Điểm trung bình", accessor: "averagescore" },
+  { header: "Điểm tổng", accessor: "averagescore" },
   { header: "Tùy chọn", accessor: "action" },
 ];
 
@@ -80,19 +80,22 @@ const ResutlsList = () => {
   // }, [currentPage]);
 
   const renderRow = (item: Result) => {
-    const p = item.subject?.process_percent || 0;
-    const m = item.subject?.midterm_percent || 0;
-    const f = item.subject?.final_percent || 0;
 
-    const ps = item.process_score || 0;
-    const ss = item.semi_score || 0;
-    const fs = item.final_score || 0;
 
-    const totalWeight = p + m + f;
-    const average =
-      totalWeight > 0
-        ? ((ps * p + ss * m + fs * f) / totalWeight).toFixed(2)
-        : "0.00";
+    const ps = item.process_score;
+    const ss = item.semi_score;
+    const fs = item.final_score;
+    let average = "";
+    if (ps != null && ss != null && fs != null) {
+      const p = item.subject?.process_percent || 0;
+      const m = item.subject?.midterm_percent || 0;
+      const f = item.subject?.final_percent || 0;
+      const totalWeight = p + m + f;
+      average =
+        totalWeight > 0
+          ? ((ps * p + ss * m + fs * f) / totalWeight).toFixed(2)
+          : "0.00";
+    }
 
     return (
       <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">

@@ -45,7 +45,7 @@ const ProfilePage = () => {
     if (!id) return;
 
     axios
-      .get(`http://127.0.0.1:8000/api/teachers/${id}`)
+      .get(`https://khachsan2k.id.vn/api/teachers/${id}`)
       .then((res) => {
         const teacherData = res.data.data;
         setOriginalData(teacherData);
@@ -90,14 +90,14 @@ const ProfilePage = () => {
         setShowSuccess(false);
         router.push(`/teacher/${id}`);
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error(
         "Lỗi khi cập nhật giảng viên:",
         error.response?.data || error
       );
       alert(
         error.response?.data?.message ||
-          "Có lỗi xảy ra khi cập nhật, vui lòng thử lại."
+        "Có lỗi xảy ra khi cập nhật, vui lòng thử lại."
       );
     }
   };
