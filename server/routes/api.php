@@ -162,6 +162,9 @@ Route::delete('/subject-teachers/{id}', [SubjectTeacherController::class, 'destr
 Route::apiResource('rooms', RoomController::class);
 Route::get('rooms/search/query', [RoomController::class, 'search']);
 
+// Thêm route cho API lấy điểm của sinh viên
+Route::get('/student-scores', [App\Http\Controllers\StudentScoreController::class, 'getStudentScores']);
+
 // Personal Access Token Routes
 // Route::get("/tokens", [PersonalAccessTokenController::class, "index"]);
 // Route::get("/tokens/{id}", [PersonalAccessTokenController::class, "show"])->where('id', '[0-9]+');

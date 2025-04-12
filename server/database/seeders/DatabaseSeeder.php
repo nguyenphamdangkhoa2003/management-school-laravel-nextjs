@@ -56,17 +56,22 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // SUBJECTS
-        $subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Science", "Literature", "English"];
-        $subjectIds = [];
-        foreach ($subjects as $s) {
-            $subject = Subject::create([
-                "name" => $s,
-                "credit" => rand(1, 3),
-                "course_credit" => rand(1, 3),
-            ]);
-            $subjectIds[] = $subject->id;
-        }
+      // SUBJECTS
+$subjects = ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Science", "Literature", "English"];
+$subjectIds = [];
+
+foreach ($subjects as $s) {
+    $subject = Subject::create([
+        "name" => $s,
+        "credit" => (string) rand(1, 3),
+        "course_credit" => (string) rand(1, 3),
+        "process_percent" => 20,
+        "midterm_percent" => 20,
+        "final_percent" => 60,
+    ]);
+    $subjectIds[] = $subject->id;
+}
+
 
         //Teacher
         $teacherIds = [];
