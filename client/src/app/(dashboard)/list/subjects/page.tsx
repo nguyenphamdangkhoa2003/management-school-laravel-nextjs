@@ -79,6 +79,9 @@ const SubjectListPage = () => {
                 subjectname: item.name,
                 credit: item.credit,
                 credittuit: item.course_credit,
+                process_percent: item.process_percent,
+                midterm_percent: item.midterm_percent,
+                final_percent: item.final_percent,
               }} />
               <FormModal table="subject" type="delete" id={item.id} />
             </>

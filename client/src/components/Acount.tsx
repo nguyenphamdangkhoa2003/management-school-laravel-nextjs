@@ -15,12 +15,6 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
-        icon: "/setting.png",
-        label: "Cài đặt",
-        href: "/settings",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
-      {
         icon: "/logout.png",
         label: "Đăng xuất",
         href: "/logout",

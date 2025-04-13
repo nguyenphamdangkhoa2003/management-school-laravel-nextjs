@@ -26,6 +26,7 @@ const SigninPage = () => {
             const data = await login(username, password);
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.guard);
+            localStorage.setItem("id", data.user.id);
             localStorage.setItem("user", JSON.stringify(data.user));
 
             const rolePaths = {

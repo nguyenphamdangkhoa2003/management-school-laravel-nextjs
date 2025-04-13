@@ -840,6 +840,20 @@ export const deleteResult = async (id: number) => {
   }
 }
 
+export const getResultByStudentId = async (id: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/student-scores?student_id=${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Lỗi khi lấy danh sách điểm",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+
+}
+
 
 //niên khóa
 export const getAllgrades = async (page = 1, perPage = 10) => {

@@ -25,29 +25,29 @@ const schema = (type: "create" | "update") =>
       .coerce
       .number()
       .int()
-      .min(0, { message: "Quá trình không được để trống" })
-      .max(2, { message: "Quá trình không được quá 2 điểm" }),
+      .min(0, { message: "% Quá trình không được để trống" })
+      .max(20, { message: "% Quá trình không được quá 20 điểm" }),
 
     midterm: z
       .coerce
       .number()
       .int()
-      .min(1, { message: "Giữa kì không được để trống và phải ≥ 1" })
-      .max(5, { message: "Giữa kì không được quá 5 điểm" }),
+      .min(0, { message: "% Giữa kì không được để trống" })
+      .max(50, { message: "% Giữa kì không được quá 50 điểm" }),
 
     final: z
       .coerce
       .number()
       .int()
-      .min(5, { message: "Cuối kì không được nhỏ hơn 5" })
-      .max(10, { message: "Cuối kì không được quá 10 điểm" }),
+      .min(50, { message: "% Cuối kì không được nhỏ hơn 50" })
+      .max(100, { message: "% Cuối kì không được quá 100 điểm" }),
   })
-    .refine((data) => data.process + data.midterm <= 5, {
-      message: "Tổng điểm quá trình và giữa kì không được lớn hơn 5",
+    .refine((data) => data.process + data.midterm <= 50, {
+      message: "Tổng điểm quá trình và giữa kì không được lớn hơn 50",
       path: ["midterm"],
     })
-    .refine((data) => data.process + data.midterm + data.final == 10, {
-      message: "Tổng điểm quá trình, giữa kì và cuối kì phải bằng 10",
+    .refine((data) => data.process + data.midterm + data.final == 100, {
+      message: "Tổng điểm quá trình, giữa kì và cuối kì phải bằng 100",
       path: ["final"],
     })
     .refine((data) => {
@@ -91,13 +91,12 @@ const ClassForm = ({
       let test;
       if (type === "create") {
         test = await addSubject(formData);
-        setTimeout(() => window.location.reload(), 1500);
       }
       else if (type === "update") {
 
         test = await updateSubject(data?.id, formData)
-        setTimeout(() => window.location.reload(), 1500);
       }
+      setTimeout(() => window.location.reload(), 100);
       setShowForm(false);
       setErrorMessage(null);
     } catch (err: any) {
@@ -159,7 +158,7 @@ const ClassForm = ({
               label="Quá trình"
               name="process"
               type="number"
-              defaultValue={data?.process}
+              defaultValue={data?.process_percent}
               register={register}
               error={errors?.process}
             />
@@ -168,7 +167,7 @@ const ClassForm = ({
               label="Giữa kì"
               name="midterm"
               type="number"
-              defaultValue={data?.midterm}
+              defaultValue={data?.midterm_percent}
               register={register}
               error={errors?.midterm}
             />
@@ -177,7 +176,7 @@ const ClassForm = ({
               label="Cuối kì"
               name="final"
               type="number"
-              defaultValue={data?.final}
+              defaultValue={data?.final_percent}
               register={register}
               error={errors?.final}
             />
