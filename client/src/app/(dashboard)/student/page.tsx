@@ -2,7 +2,6 @@
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalender";
 import EventCalendar from "@/components/EventCalendar";
-import { calendarEvents } from "@/lib/data";
 import { getLessonByStudentid } from "@/services/api";
 import { useState, useEffect } from "react";
 
@@ -34,7 +33,7 @@ const StudentPage = () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
         <EventCalendar />
-        <Announcements />
+
       </div>
     </div>
   );

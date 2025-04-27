@@ -43,7 +43,7 @@ const ProfilePage = () => {
     if (!id) return;
 
     axios
-      .get(`http://127.0.0.1:8000/api/students/${id}`)
+      .get(`https://khachsan2k.id.vn/api/students/${id}`)
       .then((res) => {
         console.log("API response:", res.data);
         const studentData = res.data;

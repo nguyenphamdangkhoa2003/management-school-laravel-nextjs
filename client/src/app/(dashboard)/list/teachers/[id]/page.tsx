@@ -223,7 +223,7 @@ const SingleTeacherPage = () => {
           </div>
         </div>
         <Performance />
-        <Announcements />
+
       </div>
     </div>
   );

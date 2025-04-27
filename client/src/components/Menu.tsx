@@ -13,14 +13,6 @@ const menuItems = [
         href: "/admin",
         visible: ["admin"],
       },
-
-      {
-        icon: "/home.png",
-        label: "Trang chủ",
-        href: "/",
-        visible: ["teacher", "student", "parent"],
-      },
-
       {
         icon: "/teacher.png",
         label: "Lịch dạy",

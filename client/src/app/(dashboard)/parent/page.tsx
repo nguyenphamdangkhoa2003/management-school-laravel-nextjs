@@ -13,7 +13,7 @@ const ParentPage = () => {
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
-        <Announcements />
+
       </div>
     </div>
   );

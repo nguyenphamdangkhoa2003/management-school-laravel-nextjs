@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { login } from "@/services/api";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,21 @@ const SigninPage = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const id = localStorage.getItem('id');
+    const role = localStorage.getItem('role');
+    if (id) {
+      if (role === "admin")
+        router.push("/admin");
+      else if (role === "student")
+        router.push("/student");
+      else
+        router.push("/teacher");
+
+    }
+
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
